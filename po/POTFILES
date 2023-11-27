@@ -1,0 +1,6 @@
+data/net.hemish.kamm.desktop.in
+data/net.hemish.kamm.metainfo.xml.in
+data/net.hemish.kamm.gschema.xml
+src/main.py
+src/window.py
+src/window.ui

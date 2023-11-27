@@ -1,0 +1,14 @@
+{
+    "name": "python3-pytodotxt",
+    "buildsystem": "simple",
+    "build-commands": [
+        "pip3 install --verbose --exists-action=i --no-index --find-links=\"file://${PWD}\" --prefix=${FLATPAK_DEST} \"pytodotxt\" --no-build-isolation"
+    ],
+    "sources": [
+        {
+            "type": "file",
+            "url": "https://files.pythonhosted.org/packages/84/ad/ba5e78667b92c21c751b3f6205e6a34f61fe43461a7bae6854d87cdbb0d2/pytodotxt-1.5.0-py3-none-any.whl",
+            "sha256": "423e237fd83eaa03a0de52ddd0b56592fec7ed6a71bdcea8da1cb703b4f16620"
+        }
+    ]
+}

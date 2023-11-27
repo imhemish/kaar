@@ -1,0 +1,71 @@
+using Gtk 4.0;
+using Adw 1;
+using Gio 2.0;
+
+menu menu {
+    item ("About Kamm", "app.about")
+    item ("Preferences", "app.preferences")
+}
+
+template $KammWindow: Adw.ApplicationWindow {
+    Box {
+        orientation: vertical;
+        vexpand: true;
+        hexpand: true;
+
+        Adw.HeaderBar {
+            [start]
+            Gtk.Button {
+                icon-name: "document-save-symbolic";
+            }
+            [end]
+            Gtk.MenuButton {
+                icon-name: "open-menu-symbolic";
+                menu-model: menu;
+            }
+        }
+
+        Adw.ToolbarView {
+            hexpand: true;
+            vexpand: true;
+            [bottom]
+            Gtk.Box {
+                hexpand: true;
+                vexpand: true;
+                halign: center;
+                styles ["toolbar"]
+                
+                Gtk.Button {
+                    halign: center;
+                    icon-name: "object-select-symbolic";
+                    styles ["suggested-action"]
+                }
+                
+                Gtk.Button {
+                    halign: center;
+                    icon-name: "user-trash-symbolic";
+                    styles ["destructive-action"]
+                    }
+                
+
+                Gtk.Button {
+                    halign: center;
+                    icon-name: "document-edit-symbolic";
+                    action-name: "app.new";
+                    styles ["suggested-action"]
+                }
+            }
+
+            content: Adw.ClampScrollable {
+                margin-top: 15;
+                margin-bottom: 15;
+                vexpand: true;
+                hexpand: true;
+                Gtk.ListView list_view {
+                    styles ["boxed-list"]
+                    
+                }
+            };
+        }
+    }
+}

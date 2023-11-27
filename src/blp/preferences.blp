@@ -1,0 +1,22 @@
+using Gtk 4.0;
+using Adw 1;
+
+template $KammPreferencesWindow: Adw.PreferencesWindow {
+    Adw.PreferencesPage {
+        Adw.PreferencesGroup {
+            Adw.ActionRow {
+                title: "File Location";
+                
+                [suffix]
+                Gtk.Button open_button {
+                    vexpand: false;
+                    valign: center;
+                    styles ["flat"]
+                    icon-name: "document-open-symbolic";
+                }
+
+                activatable-widget: open_button;
+            }
+        }
+    }
+}

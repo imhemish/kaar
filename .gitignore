@@ -1,0 +1,4 @@
+/subprojects/blueprint-compiler
+.vscode
+.flatpak
+.flatpak-builder
