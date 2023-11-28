@@ -28,8 +28,7 @@ class KammWindow(Adw.ApplicationWindow):
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        single_selection = Gtk.SingleSelection()
-        single_selection.set_model(self.get_application().list_store)
-        self.list_view.set_model(single_selection)
+        
+        self.list_view.set_model(self.get_application().single_selection)
         self.list_view.set_factory(TaskFactory())
 

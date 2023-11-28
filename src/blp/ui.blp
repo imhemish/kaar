@@ -8,71 +8,145 @@ menu menu {
 }
 
 template $KammWindow: Adw.ApplicationWindow {
-    Box {
-        orientation: vertical;
-        vexpand: true;
-        hexpand: true;
+    height-request: 400;
+    width-request: 250;
+    Adw.Breakpoint {
+        condition ("max-width: 500")
 
-        Adw.HeaderBar {
-            [start]
-            Gtk.Button {
-                icon-name: "document-save-symbolic";
-            }
-            [end]
-            Gtk.MenuButton {
-                icon-name: "open-menu-symbolic";
-                menu-model: menu;
-            }
+        setters {
+            split_view.collapsed: true;
         }
+    }
 
-        Adw.ToolbarView {
-            vexpand: true;
-            
-            
-            [bottom]
-            Gtk.Box {
-                hexpand: true;
+    Adw.OverlaySplitView split_view {
+        show-sidebar: bind sidebar_button.active;
+
+        sidebar: Gtk.Box {
+            orientation: vertical;
+
+            Adw.HeaderBar {
+                styles ["flat"]
+                title-widget: Gtk.Label {
+                    label: "Filters";
+                };
+                [start]
+                Gtk.ToggleButton {
+                    icon-name: "view-list-symbolic";
+                    active: bind sidebar_button.active bidirectional;
+                }
+            }
+
+            Gtk.ListBox {
+                styles [
+                    "navigation-sidebar"
+                ]
+
+                margin-start: 1;
+                margin-end: 1;
+                margin-top: 1;
+                margin-bottom: 1;
+
+                Adw.ActionRow {
+                    title: "All Tasks";
+                }
+            }
+        };
+
+        content: Box {
+            orientation: vertical;
+
+            Adw.HeaderBar {
+                styles [
+                    "flat"
+                ]
+
+                [start]
+                Gtk.ToggleButton sidebar_button {
+                    icon-name: "view-list-symbolic";
+                    active: bind split_view.show-sidebar;
+                    visible: bind split_view.show-sidebar inverted;
+                }
+
+                [start]
+                Gtk.Button {
+                    icon-name: "document-save-symbolic";
+                }
+
+                [end]
+                Gtk.MenuButton {
+                    icon-name: "open-menu-symbolic";
+                    menu-model: menu;
+                }
+            }
+
+            Adw.ToolbarView {
                 vexpand: true;
-                halign: center;
-                styles ["toolbar"]
-                
-                Gtk.Button {
+
+                [bottom]
+                Gtk.Box {
+                    hexpand: true;
+                    vexpand: true;
                     halign: center;
-                    icon-name: "object-select-symbolic";
-                    styles ["suggested-action"]
-                }
-                
-                Gtk.Button {
-                    halign: center;
-                    icon-name: "user-trash-symbolic";
-                    styles ["destructive-action"]
+
+                    styles [
+                         "toolbar"
+                        
+                    ]
+
+                    Gtk.Button {
+                        halign: center;
+                        icon-name: "object-select-symbolic";
+
+                        styles [
+                            "suggested-action"
+                        ]
                     }
-                
 
-                Gtk.Button {
-                    halign: center;
-                    icon-name: "document-edit-symbolic";
-                    action-name: "app.edit";
-                    styles ["suggested-action"]
-                }
-                Gtk.Button {
-                    icon-name: "list-add-symbolic";
-                    action-name: "app.new";
-                    styles ["suggested-action"]
-                }
-            }
+                    Gtk.Button {
+                        halign: center;
+                        icon-name: "user-trash-symbolic";
+                        action-name: "app.delete";
 
-            content: Gtk.ScrolledWindow {Adw.ClampScrollable {
-                margin-top: 15;
-                margin-bottom: 15;
-                
-                hexpand: true;
-                Gtk.ListView list_view {
-                    styles ["boxed-list"]
-                    
+                        styles [
+                            "destructive-action"
+                        ]
+                    }
+
+                    Gtk.Button {
+                        halign: center;
+                        icon-name: "document-edit-symbolic";
+                        action-name: "app.edit";
+
+                        styles [
+                            "suggested-action"
+                        ]
+                    }
+
+                    Gtk.Button {
+                        icon-name: "list-add-symbolic";
+                        action-name: "app.new";
+
+                        styles [
+                            "suggested-action"
+                        ]
+                    }
                 }
+
+                content: Gtk.ScrolledWindow {
+                    Gtk.ListView list_view {
+
+                        
+                        margin-bottom: 2;
+                        hexpand: true;
+
+
+                        styles [
+                           
+                            "border-radius: 10px;"
+                        ]
+                    }
+                };
             }
-            };
-        }
+        };
     }
 }

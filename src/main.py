@@ -28,6 +28,7 @@ from gi.repository import Gtk, Gio, Adw
 from .window import KammWindow
 from .preferences_window import KammPreferencesWindow
 from .model import TodoTask
+from pytodotxt import TodoTxt, TodoTxtParser
 
 
 class KammApplication(Adw.Application):
@@ -39,13 +40,19 @@ class KammApplication(Adw.Application):
         self.create_action('quit', lambda *_: self.quit(), ['<primary>q'])
         self.create_action('about', self.on_about_action)
         self.create_action('preferences', self.on_preferences_action)
-        self.create_action('new', self.new_task)
-        self.create_action('edit', self.edit_task)
+        self.create_action('new', self.new_task, ['<primary>n'])
+        self.create_action('edit', self.edit_task, ['<primary>e', 'F2', 'Return'])
+        self.create_action('delete', self.delete_task, ['<primary>d', 'Delete'])
 
         self.list_store = Gio.ListStore()
-        self.list_store.append(TodoTask("x 1"))
-        self.list_store.append(TodoTask("2"))
-        self.list_store.append(TodoTask("3"))
+        self.single_selection = Gtk.SingleSelection()
+        self.single_selection.set_model(self.list_store)
+        todotxt = TodoTxt("/home/hemish/todo2.txt", parser=TodoTxtParser(task_type=TodoTask))
+        todotxt.parse()
+        print(todotxt)
+        for task in todotxt.tasks:
+            print(task)
+            self.list_store.append(task)
 
     def do_activate(self):
         """Called when the application is activated.
@@ -76,6 +83,7 @@ class KammApplication(Adw.Application):
     
     def new_task(self, *args):
         self.list_store.append(TodoTask())
+        self.props.active_window.list_view.scroll_to(len(self.single_selection)-1, Gtk.ListScrollFlags.FOCUS)
     
     def edit_task(self, *args):
         object = self.props.active_window.list_view.get_model().get_selected_item()
@@ -83,6 +91,10 @@ class KammApplication(Adw.Application):
             object.mode = "edit"
         else:
             object.mode = 'view'
+    
+    def delete_task(self, *args):
+        index = self.props.active_window.list_view.get_model().get_selected()
+        self.list_store.remove(index)
         
 
     def create_action(self, name, callback, shortcuts=None):
