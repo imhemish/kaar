@@ -84,7 +84,7 @@ class KammApplication(Adw.Application):
     
     def new_task(self, *args):
         self.list_store.append(TodoTask())
-        self.props.active_window.list_view.scroll_to(len(self.single_selection)-1, Gtk.ListScrollFlags.FOCUS)
+        self.props.active_window.list_view.scroll_to(len(self.single_selection)-1, Gtk.ListScrollFlags.SELECT)
     
     def edit_task(self, *args):
         object = self.props.active_window.list_view.get_model().get_selected_item()

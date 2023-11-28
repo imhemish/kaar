@@ -4,6 +4,7 @@ using Adw 1;
 template $TaskStack: Gtk.Stack {
     Gtk.StackPage {
         name: "edit";
+
         child: Adw.EntryRow entry_row {
             show-apply-button: true;
         };
@@ -11,13 +12,12 @@ template $TaskStack: Gtk.Stack {
 
     Gtk.StackPage {
         name: "view";
+
         child: Adw.ActionRow preview_row {
             use-markup: true;
+
             [prefix]
-            Gtk.Label check_label {
-                // Initially not visible
-                visible: false;
-                label: "✓";
+            Gtk.CheckButton check_button {
             }
         };
     }
