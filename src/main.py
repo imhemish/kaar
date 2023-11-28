@@ -19,6 +19,7 @@
 
 import sys
 import gi
+import random
 
 gi.require_version('Gtk', '4.0')
 gi.require_version('Adw', '1')
@@ -39,11 +40,12 @@ class KammApplication(Adw.Application):
         self.create_action('about', self.on_about_action)
         self.create_action('preferences', self.on_preferences_action)
         self.create_action('new', self.new_task)
+        self.create_action('edit', self.edit_task)
 
         self.list_store = Gio.ListStore()
-        self.list_store.append(TodoTask("1", False))
-        self.list_store.append(TodoTask("2", True))
-        self.list_store.append(TodoTask("3", False))
+        self.list_store.append(TodoTask("x 1"))
+        self.list_store.append(TodoTask("2"))
+        self.list_store.append(TodoTask("3"))
 
     def do_activate(self):
         """Called when the application is activated.
@@ -73,7 +75,15 @@ class KammApplication(Adw.Application):
         preferences.present()
     
     def new_task(self, *args):
-        self.list_store[0].description = "random"
+        self.list_store.append(TodoTask())
+    
+    def edit_task(self, *args):
+        object = self.props.active_window.list_view.get_model().get_selected_item()
+        if object.mode == 'view':
+            object.mode = "edit"
+        else:
+            object.mode = 'view'
+        
 
     def create_action(self, name, callback, shortcuts=None):
         """Add an application action.

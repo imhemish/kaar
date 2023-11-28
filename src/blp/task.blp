@@ -3,20 +3,22 @@ using Adw 1;
 
 template $TaskStack: Gtk.Stack {
     Gtk.StackPage {
-        name: "entry";
+        name: "edit";
         child: Adw.EntryRow entry_row {
             show-apply-button: true;
         };
     }
 
     Gtk.StackPage {
-        name: "preview";
+        name: "view";
         child: Adw.ActionRow preview_row {
+            use-markup: true;
             [prefix]
-            Gtk.Label priority {}
-
-            [suffix]
-            Gtk.Label due {}
+            Gtk.Label check_label {
+                // Initially not visible
+                visible: false;
+                label: "✓";
+            }
         };
     }
 }

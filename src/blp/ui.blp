@@ -26,8 +26,9 @@ template $KammWindow: Adw.ApplicationWindow {
         }
 
         Adw.ToolbarView {
-            hexpand: true;
             vexpand: true;
+            
+            
             [bottom]
             Gtk.Box {
                 hexpand: true;
@@ -51,20 +52,26 @@ template $KammWindow: Adw.ApplicationWindow {
                 Gtk.Button {
                     halign: center;
                     icon-name: "document-edit-symbolic";
+                    action-name: "app.edit";
+                    styles ["suggested-action"]
+                }
+                Gtk.Button {
+                    icon-name: "list-add-symbolic";
                     action-name: "app.new";
                     styles ["suggested-action"]
                 }
             }
 
-            content: Adw.ClampScrollable {
+            content: Gtk.ScrolledWindow {Adw.ClampScrollable {
                 margin-top: 15;
                 margin-bottom: 15;
-                vexpand: true;
+                
                 hexpand: true;
                 Gtk.ListView list_view {
                     styles ["boxed-list"]
                     
                 }
+            }
             };
         }
     }
