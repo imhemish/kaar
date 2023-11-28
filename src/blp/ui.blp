@@ -10,6 +10,7 @@ menu menu {
 template $KammWindow: Adw.ApplicationWindow {
     height-request: 400;
     width-request: 250;
+
     Adw.Breakpoint {
         condition ("max-width: 500")
 
@@ -25,10 +26,14 @@ template $KammWindow: Adw.ApplicationWindow {
             orientation: vertical;
 
             Adw.HeaderBar {
-                styles ["flat"]
-                title-widget: Gtk.Label {
-                    label: "Filters";
+                styles [
+                    "flat"
+                ]
+                title-widget: Adw.WindowTitle {
+                    title: "Filters";
                 };
+
+
                 [start]
                 Gtk.ToggleButton {
                     icon-name: "view-list-symbolic";
@@ -48,6 +53,7 @@ template $KammWindow: Adw.ApplicationWindow {
 
                 Adw.ActionRow {
                     title: "All Tasks";
+                    name: "all";
                 }
             }
         };
@@ -56,10 +62,6 @@ template $KammWindow: Adw.ApplicationWindow {
             orientation: vertical;
 
             Adw.HeaderBar {
-                styles [
-                    "flat"
-                ]
-
                 [start]
                 Gtk.ToggleButton sidebar_button {
                     icon-name: "view-list-symbolic";
@@ -68,14 +70,20 @@ template $KammWindow: Adw.ApplicationWindow {
                 }
 
                 [start]
-                Gtk.Button {
-                    icon-name: "document-save-symbolic";
+                Gtk.ToggleButton {
+                    icon-name: "system-search-symbolic";
+                    active: bind search_bar.search-mode-enabled bidirectional;
                 }
 
                 [end]
                 Gtk.MenuButton {
                     icon-name: "open-menu-symbolic";
                     menu-model: menu;
+                }
+
+                [start]
+                Gtk.Button {
+                    icon-name: "document-save-symbolic";
                 }
             }
 
@@ -89,13 +97,13 @@ template $KammWindow: Adw.ApplicationWindow {
                     halign: center;
 
                     styles [
-                         "toolbar"
-                        
+                        "toolbar"
                     ]
 
                     Gtk.Button {
                         halign: center;
                         icon-name: "object-select-symbolic";
+                        action-name: "app.complete";
 
                         styles [
                             "suggested-action"
@@ -132,18 +140,26 @@ template $KammWindow: Adw.ApplicationWindow {
                     }
                 }
 
-                content: Gtk.ScrolledWindow {
-                    Gtk.ListView list_view {
+                
 
-                        
-                        margin-bottom: 2;
-                        hexpand: true;
+                content: Box {
+                    orientation: vertical;
+                    Gtk.SearchBar search_bar {
+                        show-close-button: true;
+                    Gtk.SearchEntry {
+                        valign: center;
+                    }
+                }
+                    Gtk.ScrolledWindow {
+                        Gtk.ListView list_view {
+                            margin-bottom: 2;
+                            hexpand: true;
+                            vexpand: true;
 
-
-                        styles [
-                           
-                            "border-radius: 10px;"
-                        ]
+                            styles [
+                                "border-radius: 10px;"
+                            ]
+                        }
                     }
                 };
             }

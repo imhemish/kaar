@@ -17,6 +17,26 @@ template $KammPreferencesWindow: Adw.PreferencesWindow {
 
                 activatable-widget: open_button;
             }
+            Adw.ExpanderRow{
+                title: "Auto Save";
+                subtitle: "Automatically save the todofile";
+                show-enable-switch: true;
+                Adw.SpinRow {
+                    numeric: true;
+                    
+                    adjustment: Gtk.Adjustment {
+                        step-increment: 1;
+                        lower: 0;
+                        page-increment: 10;
+                        upper: 10;
+                        value: 5;
+                    };
+                    
+                    title: "Threshold";
+                    subtitle: "Number of seconds to be inactive after which file is saved";
+                    
+                }
+            }
         }
     }
 }

@@ -43,6 +43,7 @@ class KammApplication(Adw.Application):
         self.create_action('new', self.new_task, ['<primary>n'])
         self.create_action('edit', self.edit_task, ['<primary>e', 'F2', 'Return'])
         self.create_action('delete', self.delete_task, ['<primary>d', 'Delete'])
+        self.create_action('complete', self.complete_task, ['<primary>x'])
 
         self.list_store = Gio.ListStore()
         self.single_selection = Gtk.SingleSelection()
@@ -95,6 +96,14 @@ class KammApplication(Adw.Application):
     def delete_task(self, *args):
         index = self.props.active_window.list_view.get_model().get_selected()
         self.list_store.remove(index)
+    
+    def complete_task(self, *args):
+        object = self.props.active_window.list_view.get_model().get_selected_item()
+        if not object.completed:
+            object.completed = True
+        else:
+            object.completed = False
+        object.line = str(object)
         
 
     def create_action(self, name, callback, shortcuts=None):
