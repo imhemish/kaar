@@ -5,6 +5,7 @@ using Gio 2.0;
 menu menu {
     item ("About Kamm", "app.about")
     item ("Preferences", "app.preferences")
+    item("Keyboard Shortcuts", "win.show-help-overlay")
 }
 
 template $KammWindow: Adw.ApplicationWindow {
@@ -137,7 +138,7 @@ template $KammWindow: Adw.ApplicationWindow {
                     orientation: vertical;
                     Gtk.SearchBar search_bar {
                         show-close-button: true;
-                    Gtk.SearchEntry {
+                    Gtk.SearchEntry search_entry {
                         valign: center;
                     }
                 }

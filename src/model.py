@@ -3,12 +3,15 @@ from pytodotxt import Task
 from gi.repository import GObject, Gtk, Adw
 import datetime
 
+# This represents a single task row, which is actually made up of stack
+# containing two views: edit and view as defined in task.blp
 @Gtk.Template(resource_path='/net/hemish/kamm/blp/task.ui')
 class TaskStack(Gtk.Stack):
     __gtype_name__ = "TaskStack"
     entry_row = Gtk.Template.Child()
     preview_row = Gtk.Template.Child()
     check_button = Gtk.Template.Child()
+    priority_label = Gtk.Template.Child()
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
@@ -23,13 +26,12 @@ class TaskStack(Gtk.Stack):
     # to the nature of line property
     def on_view_change(self, *args):
         if self.get_visible_child_name() == 'edit':
-            print("mode changed to edit, so updating text")
             self.entry_row.set_text(str(self.object))
+            self.entry_row.grab_focus()
         else:
-            print("mode changed to view, so updating descirpiotn")
             self.object.line = self.entry_row.get_text()
 
-        
+# factory which would be used by list view for displaying tasks
 class TaskFactory(Gtk.SignalListItemFactory):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
@@ -53,8 +55,11 @@ class TaskFactory(Gtk.SignalListItemFactory):
         task_object.bind_property("completed", task_stack.check_button, "active", GObject.BindingFlags.BIDIRECTIONAL)
         task_stack.preview_row.set_subtitle(task_object.dates)
         task_object.bind_property("dates", task_stack.preview_row, "subtitle")
+        task_stack.priority_label.set_label(task_object._duplicatepriority)
+        task_object.bind_property("duplicatepriority", task_stack.priority_label, "label")
         
 
+# a subclass of pytodotxt.Task to be consumed by Gtk Widgets and GObjects
 class TodoTask(Task, GObject.Object):
     mode = GObject.Property(type=str, default="view")
     def __init__(self, *args):
@@ -64,9 +69,11 @@ class TodoTask(Task, GObject.Object):
         self._line = str(self)
         self._dates = self.calculate_date_string()
         self._duplicatedescription = self.bare_description()
+        self._duplicatepriority = self.priority
     
     @GObject.Property(type=str)
     def line(self):
+        self._line = str(self)
         return self._line
     
     @line.setter
@@ -76,6 +83,7 @@ class TodoTask(Task, GObject.Object):
         self.duplicatedescription = self.bare_description()
         self.completed = self.is_completed
         self.dates = self._dates
+        self.duplicatepriority = self.priority
     
     @GObject.Property(type=str)
     def duplicatedescription(self):
@@ -93,6 +101,16 @@ class TodoTask(Task, GObject.Object):
     @duplicatedescription.setter
     def duplicatedescription(self, value):
         self._duplicatedescription = value
+
+    @GObject.Property(type=str)
+    def duplicatepriority(self):
+        self._duplicatepriority = self.priority
+        return self._duplicatepriority
+
+    @duplicatepriority.setter
+    def duplicatepriority(self, value):
+        self._duplicatepriority = value
+        self.priority = value
 
     def calculate_date_string(self):
         date = ""

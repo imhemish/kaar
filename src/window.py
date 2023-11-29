@@ -25,10 +25,16 @@ from .model import TaskStack, TaskFactory
 class KammWindow(Adw.ApplicationWindow):
     __gtype_name__ = 'KammWindow'
     list_view = Gtk.Template.Child()
+    search_entry = Gtk.Template.Child()
+    search_bar = Gtk.Template.Child()
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         
         self.list_view.set_model(self.get_application().single_selection)
         self.list_view.set_factory(TaskFactory())
+
+        self.search_entry.connect("search-changed", lambda entry: self.get_application().search_filter.changed(Gtk.FilterChange.DIFFERENT))
+
+        self.search_bar.set_key_capture_widget(self)
 

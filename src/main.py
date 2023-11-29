@@ -45,9 +45,11 @@ class KammApplication(Adw.Application):
         self.create_action('delete', self.delete_task, ['<primary>d', 'Delete'])
         self.create_action('complete', self.complete_task, ['<primary>x'])
 
+
+
         self.list_store = Gio.ListStore()
-        self.single_selection = Gtk.SingleSelection()
-        self.single_selection.set_model(self.list_store)
+
+        
         todotxt = TodoTxt("/home/hemish/todo2.txt", parser=TodoTxtParser(task_type=TodoTask))
         todotxt.parse()
         print(todotxt)
@@ -61,10 +63,24 @@ class KammApplication(Adw.Application):
         We raise the application's main window, creating it if
         necessary.
         """
+        
         win = self.props.active_window
         if not win:
+
+            # These should exist before window is there
+            self.search_filter = Gtk.CustomFilter()
+            
+            self.search_model = Gtk.FilterListModel()
+            self.search_model.set_model(self.list_store)
+            self.search_model.set_filter(self.search_filter)
+            self.single_selection = Gtk.SingleSelection()
+            self.single_selection.set_model(self.search_model)
+
             win = KammWindow(application=self)
-        win.present()
+            
+            self.search_filter.set_filter_func(lambda object: self.props.active_window.search_entry.get_text().lower() in str(object).lower())
+
+            win.present()
 
     def on_about_action(self, widget, _):
         """Callback for the app.about action."""
@@ -83,8 +99,12 @@ class KammApplication(Adw.Application):
         preferences.present()
     
     def new_task(self, *args):
-        self.list_store.append(TodoTask())
+        task = TodoTask()
+        self.list_store.append(task)
         self.props.active_window.list_view.scroll_to(len(self.single_selection)-1, Gtk.ListScrollFlags.SELECT)
+        
+        # Auto set the mode to edit on blank task
+        task.mode = 'edit'
     
     def edit_task(self, *args):
         object = self.props.active_window.list_view.get_model().get_selected_item()
