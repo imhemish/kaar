@@ -44,19 +44,38 @@ class KammApplication(Adw.Application):
         self.create_action('edit', self.edit_task, ['<primary>e', 'F2', 'Return'])
         self.create_action('delete', self.delete_task, ['<primary>d', 'Delete'])
         self.create_action('complete', self.complete_task, ['<primary>x'])
+        self.create_action('save', self.save_file, ['<primary>s'])
+        self.create_action('reload', self.reload_file, ['<primary>r'])
 
+        self.settings: Gio.Settings = Gio.Settings('net.hemish.kamm')
 
+        self.should_autosave = self.settings.get_boolean("autosave")
 
         self.list_store = Gio.ListStore()
 
-        
-        todotxt = TodoTxt("/home/hemish/todo2.txt", parser=TodoTxtParser(task_type=TodoTask))
-        todotxt.parse()
-        print(todotxt)
-        for task in todotxt.tasks:
+        self.file_uri = self.settings.get_string("uri")
+
+        #Initially loading file
+        self.reload_file()
+
+    def reload_file(self, *args):
+        self.list_store.remove_all()
+        self.file_path = Gio.File.new_for_uri(self.file_uri).get_parse_name()
+
+        self.todotxt = TodoTxt(self.file_path, parser=TodoTxtParser(task_type=TodoTask))
+        try:
+            self.todotxt.parse()
+            print("success")
+        except Exception as e:
+            print(e)
+        print(self.todotxt)
+        for task in self.todotxt.tasks:
             print(task)
             self.list_store.append(task)
-
+    
+    def save_file(self, *args):
+        self.todotxt.save()
+    
     def do_activate(self):
         """Called when the application is activated.
 

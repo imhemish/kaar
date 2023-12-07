@@ -1,5 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <schemalist gettext-domain="kamm">
 	<schema id="net.hemish.kamm" path="/net/hemish/kamm/">
+		<key name="autosave" type="b">
+			<default>true</default>
+			<summary>Autosave</summary>
+			<description>
+				Whether to autosave the file or not, when the tasks are changed
+			</description>
+		</key>
+		<key name="uri" type="s">
+			<default>''</default>
+			<summary>File URI</summary>
+			<description>
+				The URI of the file to which tasks are saved to
+			</description>
+		</key>
 	</schema>
 </schemalist>

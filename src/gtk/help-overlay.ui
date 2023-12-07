@@ -46,6 +46,30 @@
                 <property name="action-name">app.delete</property>
               </object>
             </child>
+            <child>
+              <object class="GtkShortcutsShortcut">
+                <property name="title">Mark selected task as complete</property>
+                <property name="action-name">app.complete</property>
+              </object>
+            </child>
+          </object>
+        </child>
+
+        <child>
+          <object class="GtkShortcutsGroup">
+            <property name="title">File</property>
+            <child>
+              <object class="GtkShortcutsShortcut">
+              <property name="title">Save</property>
+              <property name="action-name">app.save</property>
+              </object>
+            </child>
+            <child>
+              <object class="GtkShortcutsShortcut">
+              <property name="title">Reload</property>
+              <property name="action-name">app.reload</property>
+              </object>
+            </child>
           </object>
         </child>
       </object>

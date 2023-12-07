@@ -8,7 +8,7 @@ import datetime
 @Gtk.Template(resource_path='/net/hemish/kamm/blp/task.ui')
 class TaskStack(Gtk.Stack):
     __gtype_name__ = "TaskStack"
-    entry_row = Gtk.Template.Child()
+    entry_row: Adw.EntryRow = Gtk.Template.Child()
     preview_row = Gtk.Template.Child()
     check_button = Gtk.Template.Child()
     priority_label = Gtk.Template.Child()
@@ -29,7 +29,16 @@ class TaskStack(Gtk.Stack):
             self.entry_row.set_text(str(self.object))
             self.entry_row.grab_focus()
         else:
+            app = self.get_ancestor(Adw.ApplicationWindow).get_application()
+
             self.object.line = self.entry_row.get_text()
+
+            # Save the file if 'autosave' gsetting is True
+            # this block of code should necessarily be after setting self.object.line
+            # so that we save the new value, otherwise older values will be saved
+            if app.should_autosave:
+                print(app.should_autosave)
+                app.save_file()
 
 # factory which would be used by list view for displaying tasks
 class TaskFactory(Gtk.SignalListItemFactory):
@@ -55,7 +64,8 @@ class TaskFactory(Gtk.SignalListItemFactory):
         task_object.bind_property("completed", task_stack.check_button, "active", GObject.BindingFlags.BIDIRECTIONAL)
         task_stack.preview_row.set_subtitle(task_object.dates)
         task_object.bind_property("dates", task_stack.preview_row, "subtitle")
-        task_stack.priority_label.set_label(task_object._duplicatepriority)
+        if task_object.duplicatepriority != None: 
+            task_stack.priority_label.set_label(task_object._duplicatepriority)
         task_object.bind_property("duplicatepriority", task_stack.priority_label, "label")
         
 
@@ -104,8 +114,7 @@ class TodoTask(Task, GObject.Object):
 
     @GObject.Property(type=str)
     def duplicatepriority(self):
-        self._duplicatepriority = self.priority
-        return self._duplicatepriority
+        return self.priority
 
     @duplicatepriority.setter
     def duplicatepriority(self, value):

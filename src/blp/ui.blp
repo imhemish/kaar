@@ -5,7 +5,7 @@ using Gio 2.0;
 menu menu {
     item ("About Kamm", "app.about")
     item ("Preferences", "app.preferences")
-    item("Keyboard Shortcuts", "win.show-help-overlay")
+    item ("Keyboard Shortcuts", "win.show-help-overlay")
 }
 
 template $KammWindow: Adw.ApplicationWindow {
@@ -14,14 +14,27 @@ template $KammWindow: Adw.ApplicationWindow {
 
     Adw.Breakpoint {
         condition ("max-width: 500")
-
         setters {
             split_view.collapsed: true;
+        }
+    }
+   
+
+    Adw.Breakpoint {
+        condition ("max-width: 700")
+
+        setters {
+            bottom_toolbar.visible: true;
+            headerbar_new.visible: false;
+            headerbar_edit.visible: false;
+            headerbar_delete.visible: false;
+
         }
     }
 
     Adw.OverlaySplitView split_view {
         show-sidebar: bind sidebar_button.active;
+        collapsed: false;
 
         sidebar: Gtk.Box {
             orientation: vertical;
@@ -30,10 +43,10 @@ template $KammWindow: Adw.ApplicationWindow {
                 styles [
                     "flat"
                 ]
+
                 title-widget: Adw.WindowTitle {
                     title: "Filters";
                 };
-
 
                 [start]
                 Gtk.ToggleButton {
@@ -54,7 +67,17 @@ template $KammWindow: Adw.ApplicationWindow {
 
                 Adw.ActionRow {
                     title: "All Tasks";
-                    name: "all";
+                    icon-name: "user-home-symbolic";
+                }
+
+                Adw.ActionRow {
+                    title: "Due Tasks";
+                    icon-name: "document-open-recent-symbolic";
+                }
+
+                Adw.ActionRow {
+                    title: "Complete";
+                    icon-name: "object-select-symbolic";
                 }
             }
         };
@@ -63,6 +86,10 @@ template $KammWindow: Adw.ApplicationWindow {
             orientation: vertical;
 
             Adw.HeaderBar {
+                styles [
+                    "flat"
+                ]
+
                 [start]
                 Gtk.ToggleButton sidebar_button {
                     icon-name: "view-list-symbolic";
@@ -76,6 +103,34 @@ template $KammWindow: Adw.ApplicationWindow {
                     active: bind search_bar.search-mode-enabled bidirectional;
                 }
 
+                [start]
+                Gtk.Button headerbar_delete {
+                    icon-name: "user-trash-symbolic";
+                    action-name: "app.delete";
+                    visible: true;
+
+
+                }
+
+                [start]
+                Gtk.Button headerbar_edit {
+                    halign: center;
+                    icon-name: "document-edit-symbolic";
+                    action-name: "app.edit";
+                    visible: true;
+
+
+                }
+
+                [start]
+                Gtk.Button headerbar_new {
+                    icon-name: "list-add-symbolic";
+                    action-name: "app.new";
+                    visible: true;
+
+
+                }
+
                 [end]
                 Gtk.MenuButton {
                     icon-name: "open-menu-symbolic";
@@ -83,7 +138,7 @@ template $KammWindow: Adw.ApplicationWindow {
                 }
 
                 [start]
-                Gtk.Button {
+                Gtk.Button save_button {
                     icon-name: "document-save-symbolic";
                 }
             }
@@ -92,15 +147,15 @@ template $KammWindow: Adw.ApplicationWindow {
                 vexpand: true;
 
                 [bottom]
-                Gtk.Box {
+                Gtk.Box bottom_toolbar {
                     hexpand: true;
                     vexpand: true;
                     halign: center;
+                    visible: false;
 
                     styles [
                         "toolbar"
                     ]
-
 
                     Gtk.Button {
                         halign: center;
@@ -132,25 +187,32 @@ template $KammWindow: Adw.ApplicationWindow {
                     }
                 }
 
-                
-
                 content: Box {
                     orientation: vertical;
+
                     Gtk.SearchBar search_bar {
                         show-close-button: true;
-                    Gtk.SearchEntry search_entry {
-                        valign: center;
-                    }
-                }
-                    Gtk.ScrolledWindow {
-                        Gtk.ListView list_view {
-                            margin-bottom: 2;
-                            hexpand: true;
-                            vexpand: true;
 
-                            styles [
-                                "border-radius: 10px;"
-                            ]
+                        Gtk.SearchEntry search_entry {
+                            valign: center;
+                        }
+                    }
+
+                    Gtk.ScrolledWindow {
+                        Adw.ClampScrollable {
+                            Gtk.ListView list_view {
+                                styles [
+                                    "navigation-sidebar"
+                                ]
+
+                                margin-bottom: 8;
+                                margin-end: 8;
+                                margin-start: 8;
+                                margin-top: 8;
+                                hexpand: true;
+                                vexpand: true;
+                                show-separators: false;
+                            }
                         }
                     }
                 };
