@@ -19,7 +19,7 @@
 
 import sys
 import gi
-import random
+import time
 
 gi.require_version('Gtk', '4.0')
 gi.require_version('Adw', '1')
@@ -35,6 +35,7 @@ class KammApplication(Adw.Application):
     """The main application singleton class."""
 
     def __init__(self):
+        print("application initiated")
         super().__init__(application_id='net.hemish.kamm',
                          flags=Gio.ApplicationFlags.DEFAULT_FLAGS)
         self.create_action('quit', lambda *_: self.quit(), ['<primary>q'])
@@ -47,7 +48,11 @@ class KammApplication(Adw.Application):
         self.create_action('save', self.save_file, ['<primary>s'])
         self.create_action('reload', self.reload_file, ['<primary>r'])
 
+        print("actions created")
+
         self.settings: Gio.Settings = Gio.Settings('net.hemish.kamm')
+
+        print("settings initialised")
 
         self.should_autosave = self.settings.get_boolean("autosave")
 
@@ -56,14 +61,20 @@ class KammApplication(Adw.Application):
         self.file_uri = self.settings.get_string("uri")
 
         #Initially loading file
+        print("reload file called")
         self.reload_file()
 
+        print("file haas been loaded")
+
     def reload_file(self, *args):
+        print("hooney i was callee")
         self.list_store.remove_all()
         self.file_path = Gio.File.new_for_uri(self.file_uri).get_parse_name()
+        print(self.file_path)
 
         self.todotxt = TodoTxt(self.file_path, parser=TodoTxtParser(task_type=TodoTask))
         try:
+            print("trying")
             self.todotxt.parse()
             print("success")
         except Exception as e:
@@ -74,9 +85,27 @@ class KammApplication(Adw.Application):
             self.list_store.append(task)
     
     def save_file(self, *args):
+        # TODO: Implement progressbar animatin
+        #pb: Gtk.ProgressBar = self.props.active_window.progress_bar
+        #pb.set_fraction(0)
+        #pb.set_visible(True)
+        #len_list = len(self.list_store)
+        # x = 0
+        self.todotxt.tasks = []
+        for item in self.list_store:
+            self.todotxt.tasks.append(item)
+            #x += 1
+            #pb.set_fraction(x/len_list)
+            #print("progressed by {}".format(x/len_list))
         self.todotxt.save()
+        #pb.set_visible(False)
+    
+    def save_if_required(self):
+        if self.settings.get_boolean("autosave"):
+            self.save_file()
     
     def do_activate(self):
+        print("window was activated")
         """Called when the application is activated.
 
         We raise the application's main window, creating it if
@@ -120,7 +149,7 @@ class KammApplication(Adw.Application):
     def new_task(self, *args):
         task = TodoTask()
         self.list_store.append(task)
-        self.props.active_window.list_view.scroll_to(len(self.single_selection)-1, Gtk.ListScrollFlags.SELECT)
+        self.props.active_window.list_view.scroll_to(len(self.single_selection)+1, Gtk.ListScrollFlags.SELECT)
         
         # Auto set the mode to edit on blank task
         task.mode = 'edit'
@@ -135,6 +164,7 @@ class KammApplication(Adw.Application):
     def delete_task(self, *args):
         index = self.props.active_window.list_view.get_model().get_selected()
         self.list_store.remove(index)
+        self.save_if_required()
     
     def complete_task(self, *args):
         object = self.props.active_window.list_view.get_model().get_selected_item()
@@ -143,6 +173,8 @@ class KammApplication(Adw.Application):
         else:
             object.completed = False
         object.line = str(object)
+
+        self.save_if_required()
         
 
     def create_action(self, name, callback, shortcuts=None):

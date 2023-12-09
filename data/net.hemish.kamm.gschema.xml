@@ -15,5 +15,12 @@
 				The URI of the file to which tasks are saved to
 			</description>
 		</key>
+		<key name="vertically-center-tasks" type="b">
+			<default>false</default>
+			<summary>Vertically Center Tasks</summary>
+			<description>
+				Whether to vertically center tasks or not in the tasks view
+			</description>
+		</key>
 	</schema>
 </schemalist>

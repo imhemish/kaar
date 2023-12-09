@@ -19,7 +19,7 @@
 
 from gi.repository import Adw
 from gi.repository import Gtk, Gio
-from .model import TaskStack, TaskFactory
+from .model import TaskFactory
 
 @Gtk.Template(resource_path='/net/hemish/kamm/blp/ui.ui')
 class KammWindow(Adw.ApplicationWindow):
@@ -28,9 +28,18 @@ class KammWindow(Adw.ApplicationWindow):
     search_entry: Gtk.SearchEntry = Gtk.Template.Child()
     search_bar: Gtk.SearchBar = Gtk.Template.Child()
     save_button: Gtk.Button = Gtk.Template.Child()
+    progress_bar: Gtk.ProgressBar = Gtk.Template.Child()
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
+
+        self.settings: Gio.Settings = self.get_application().settings
+
+        # TODO: Auto vertically align without restart when preference is changed
+        if self.settings.get_boolean("vertically-center-tasks"):
+            self.list_view.set_valign(Gtk.Align.CENTER)
+
+        self.settings.bind("autosave", self.save_button, "visible", Gio.SettingsBindFlags.INVERT_BOOLEAN)
         
         self.list_view.set_model(self.get_application().single_selection)
         self.list_view.set_factory(TaskFactory())
@@ -38,7 +47,4 @@ class KammWindow(Adw.ApplicationWindow):
         self.search_entry.connect("search-changed", lambda entry: self.get_application().search_filter.changed(Gtk.FilterChange.DIFFERENT))
 
         self.search_bar.set_key_capture_widget(self)
-
-        self.get_application().settings.bind("autosave", self.save_button, "visible", Gio.SettingsBindFlags.INVERT_BOOLEAN)
-
-
+        self.list_view.remove_css_class("view")

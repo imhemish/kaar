@@ -2,9 +2,7 @@ using Gtk 4.0;
 using Adw 1;
 
 template $TaskStack: Gtk.Stack {
-
-    
-    
+    styles ["frame"]
     Gtk.StackPage {
         name: "edit";
 
@@ -16,15 +14,61 @@ template $TaskStack: Gtk.Stack {
     Gtk.StackPage {
         name: "view";
 
-        child: Adw.ActionRow preview_row {
-            use-markup: true;
+        child: Gtk.Box {
+            margin-top: 5;
+            margin-bottom: 5;
+            orientation: vertical;
+            spacing: 5;
 
-            [prefix]
-            Gtk.CheckButton check_button {
+            Gtk.FlowBox tags_flow_box {
+                orientation: vertical;
+                selection-mode: none;
+                halign: end;
+                hexpand: true;
+
+
+                
             }
 
-            [suffix]
-            Gtk.Label priority_label {}
+            Gtk.Box {
+                
+                halign: fill;
+                orientation: horizontal;
+                margin-start: 5;
+
+                Gtk.CheckButton check_button {}
+
+                Gtk.Label task_label {
+                    margin-start: 10;
+                    halign: start;
+                    label: "our task";
+                }
+
+                Gtk.Separator {
+                    hexpand: true;
+
+                    styles [
+                        "spacer"
+                    ]
+                }
+
+                Gtk.Label priority_label {
+                    halign: end;
+                }
+            }
+
+            Gtk.FlowBox dates_flow_box {
+                selection-mode: none;
+                halign: end;
+                hexpand: true;
+                orientation: vertical;
+
+                Gtk.Box {
+                    Gtk.Label {
+                        label: "dates";
+                    }
+                }
+            }
         };
     }
 }

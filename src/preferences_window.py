@@ -7,12 +7,18 @@ class KammPreferencesWindow(Adw.PreferencesWindow):
     location: Adw.ActionRow = Gtk.Template.Child()
     autosave: Adw.SwitchRow = Gtk.Template.Child()
     open_button: Gtk.Button = Gtk.Template.Child()
+    vertically_center_tasks: Adw.SwitchRow = Gtk.Template.Child()
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.settings: Gio.Settings = self.get_transient_for().get_application().settings
+        self.settings: Gio.Settings = self.get_transient_for().settings
+
         self.autosave.set_active(self.settings.get_boolean("autosave"))
         self.settings.bind("autosave", self.autosave, "active", Gio.SettingsBindFlags.SET)
+
+        self.vertically_center_tasks.set_active(self.settings.get_boolean("vertically-center-tasks"))
+        self.settings.bind("vertically-center-tasks", self.vertically_center_tasks, "active", Gio.SettingsBindFlags.SET)
+
         self.settings.bind("uri", self.location, "subtitle", Gio.SettingsBindFlags.GET)
         self.open_button.connect("clicked", self.on_open_button)
     

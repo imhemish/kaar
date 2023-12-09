@@ -4,6 +4,7 @@ using Adw 1;
 template $KammPreferencesWindow: Adw.PreferencesWindow {
     Adw.PreferencesPage {
         Adw.PreferencesGroup {
+            title: "File";
             Adw.ActionRow location {
                 title: "File Location";
                 
@@ -18,9 +19,17 @@ template $KammPreferencesWindow: Adw.PreferencesWindow {
                 activatable-widget: open_button;
             }
             Adw.SwitchRow autosave {
-                active: true;
                 title: "Auto Save";
                 subtitle: "Automatically save the todofile";
+            }
+        }
+
+        Adw.PreferencesGroup {
+            title: "Appearance";
+
+            Adw.SwitchRow vertically_center_tasks {
+                title: "Vertically Center Tasks";
+                subtitle: "Whether to vertically center tasks or not in the tasks view";
             }
         }
     }
