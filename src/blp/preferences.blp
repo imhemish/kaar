@@ -3,6 +3,7 @@ using Adw 1;
 
 template $KammPreferencesWindow: Adw.PreferencesWindow {
     Adw.PreferencesPage {
+        title: "General";
         Adw.PreferencesGroup {
             title: "File";
             Adw.ActionRow location {
@@ -30,6 +31,16 @@ template $KammPreferencesWindow: Adw.PreferencesWindow {
             Adw.SwitchRow vertically_center_tasks {
                 title: "Vertically Center Tasks";
                 subtitle: "Whether to vertically center tasks or not in the tasks view";
+            }
+        }
+    }
+
+    Adw.PreferencesPage {
+        title: "Extensions";
+        Adw.PreferencesGroup {
+            Adw.SwitchRow hidden_tasks {
+                title: "Hidden Tasks";
+                subtitle: 'Whether to hide tasks if h:1 is set';
             }
         }
     }

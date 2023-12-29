@@ -22,5 +22,12 @@
 				Whether to vertically center tasks or not in the tasks view
 			</description>
 		</key>
+		<key name="hidden-tasks" type="b">
+			<default>false</default>
+			<summary>Hidden Tasks</summary>
+			<description>
+				Whether to hide tasks if h:1 is set
+			</description>
+		</key>
 	</schema>
 </schemalist>

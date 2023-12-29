@@ -8,16 +8,27 @@ class KammPreferencesWindow(Adw.PreferencesWindow):
     autosave: Adw.SwitchRow = Gtk.Template.Child()
     open_button: Gtk.Button = Gtk.Template.Child()
     vertically_center_tasks: Adw.SwitchRow = Gtk.Template.Child()
+    hidden_tasks: Adw.SwitchRow = Gtk.Template.Child()
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.settings: Gio.Settings = self.get_transient_for().settings
 
+
         self.autosave.set_active(self.settings.get_boolean("autosave"))
-        self.settings.bind("autosave", self.autosave, "active", Gio.SettingsBindFlags.SET)
+        self.settings.bind("autosave", self.autosave, "active", Gio.SettingsBindFlags.DEFAULT)
+
 
         self.vertically_center_tasks.set_active(self.settings.get_boolean("vertically-center-tasks"))
-        self.settings.bind("vertically-center-tasks", self.vertically_center_tasks, "active", Gio.SettingsBindFlags.SET)
+        self.settings.bind("vertically-center-tasks", self.vertically_center_tasks, "active", Gio.SettingsBindFlags.DEFAULT)
+        
+
+        self.hidden_tasks.set_active(self.settings.get_boolean("hidden-tasks"))
+        self.settings.bind("hidden-tasks", self.hidden_tasks, "active", Gio.SettingsBindFlags.DEFAULT)
+
+        # When hidden tasks is toggled, automatically hide or unhide tasks depending upon whether h:1 is set or not
+        self.settings.connect("changed::hidden-tasks", lambda *args: self.get_transient_for().get_application().tasks_filter.changed(Gtk.FilterChange.DIFFERENT))
+
 
         self.settings.bind("uri", self.location, "subtitle", Gio.SettingsBindFlags.GET)
         self.open_button.connect("clicked", self.on_open_button)

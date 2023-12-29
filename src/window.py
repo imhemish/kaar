@@ -32,8 +32,11 @@ class KammWindow(Adw.ApplicationWindow):
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
+        app = self.get_application()
+        self.settings: Gio.Settings = app.settings
 
-        self.settings: Gio.Settings = self.get_application().settings
+        # Initially filter out the tasks
+        app.tasks_filter.changed(Gtk.FilterChange.DIFFERENT)
 
         # TODO: Auto vertically align without restart when preference is changed
         if self.settings.get_boolean("vertically-center-tasks"):

@@ -29,6 +29,7 @@ from .window import KammWindow
 from .preferences_window import KammPreferencesWindow
 from .model import TodoTask
 from pytodotxt import TodoTxt, TodoTxtParser
+from .filtering import Filtering
 
 
 class KammApplication(Adw.Application):
@@ -117,17 +118,26 @@ class KammApplication(Adw.Application):
 
             # These should exist before window is there
             self.search_filter = Gtk.CustomFilter()
+            self.tasks_filter = Gtk.CustomFilter()
             
             self.search_model = Gtk.FilterListModel()
+            self.tasks_filter_model = Gtk.FilterListModel()
+
             self.search_model.set_model(self.list_store)
             self.search_model.set_filter(self.search_filter)
+
+            self.tasks_filter_model.set_model(self.search_model)
+            self.tasks_filter_model.set_filter(self.tasks_filter)
+
             self.single_selection = Gtk.SingleSelection()
-            self.single_selection.set_model(self.search_model)
+            self.single_selection.set_model(self.tasks_filter_model)
 
             win = KammWindow(application=self)
             
             self.search_filter.set_filter_func(lambda object: self.props.active_window.search_entry.get_text().lower() in str(object).lower())
 
+            self.filtering: Filtering = Filtering(self)
+            self.tasks_filter.set_filter_func(self.filtering.filter)
             win.present()
 
     def on_about_action(self, widget, _):
