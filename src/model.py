@@ -41,7 +41,6 @@ class TaskStack(Gtk.Stack):
             self.entry_row.set_text(str(self.object))
             self.entry_row.grab_focus()
         else:
-            print(self.get_ancestor(Adw.ApplicationWindow))
             app = self.get_ancestor(Adw.ApplicationWindow).get_application()
 
             self.object.line = self.entry_row.get_text()
@@ -66,21 +65,28 @@ class TaskFactory(Gtk.SignalListItemFactory):
     
     def bind_task_item(self, fact, list_item):
         task_stack = list_item.get_child()
-        task_object = list_item.get_item()
+        task_object: GObject.Object = list_item.get_item()
         task_stack.object = task_object
+
         task_stack.task_label.set_label(task_object._duplicatedescription)
         task_object.bind_property("duplicatedescription", task_stack.task_label, "label")
+
         task_stack.set_visible_child_name(task_object.mode)
         task_object.bind_property("mode", task_stack, "visible-child-name", GObject.BindingFlags.BIDIRECTIONAL)
+
         task_stack.entry_row.set_text(task_object.line)
+
         if task_object.completed:
             task_stack.check_button.set_active(True)
         task_object.bind_property("completed", task_stack.check_button, "active", GObject.BindingFlags.BIDIRECTIONAL)
+
         #task_stack.preview_row.set_subtitle(task_object.dates)
         #task_object.bind_property("dates", task_stack.preview_row, "subtitle")
+
         if task_object.duplicatepriority != None: 
             task_stack.priority_label.set_label(task_object._duplicatepriority)
         task_object.bind_property("duplicatepriority", task_stack.priority_label, "label")
+
         task_stack.tags_flow_box.remove_all()
         for tag in task_object.tags:
             task_stack.tags_flow_box.append(task_stack.create_flow_box_item(tag))
