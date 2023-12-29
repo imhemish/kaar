@@ -48,18 +48,34 @@ class KammApplication(Adw.Application):
         self.create_action('complete', self.complete_task, ['<primary>x'])
         self.create_action('save', self.save_file, ['<primary>s'])
         self.create_action('reload', self.reload_file, ['<primary>r'])
+        self.create_action('hide', self.hide_tasks, ['<primary>h'])
 
         print("actions created")
 
         self.settings: Gio.Settings = Gio.Settings('net.hemish.kamm')
-
-        print("settings initialised")
 
         self.should_autosave = self.settings.get_boolean("autosave")
 
         self.list_store = Gio.ListStore()
 
         self.file_uri = self.settings.get_string("uri")
+
+        self.search_filter = Gtk.CustomFilter()
+        self.tasks_filter = Gtk.CustomFilter()
+        self.search_model = Gtk.FilterListModel()
+        self.tasks_filter_model = Gtk.FilterListModel()
+        self.search_model.set_model(self.list_store)
+        self.search_model.set_filter(self.search_filter)
+        self.tasks_filter_model.set_model(self.search_model)
+        self.tasks_filter_model.set_filter(self.tasks_filter)
+        self.single_selection = Gtk.SingleSelection()
+        self.single_selection.set_model(self.tasks_filter_model)
+        
+        self.filtering: Filtering = Filtering(self)
+        self.tasks_filter.set_filter_func(self.filtering.filter)
+
+        # When hidden tasks is toggled, automatically hide or unhide tasks depending upon whether h:1 is set or not
+        self.settings.connect("changed::hidden-tasks", lambda *args: self.tasks_filter.changed(Gtk.FilterChange.DIFFERENT))
 
         #Initially loading file
         print("reload file called")
@@ -84,6 +100,9 @@ class KammApplication(Adw.Application):
         for task in self.todotxt.tasks:
             print(task)
             self.list_store.append(task)
+        # Reload filters
+        self.tasks_filter.changed(Gtk.FilterChange.DIFFERENT)
+        self.search_filter.changed(Gtk.FilterChange.DIFFERENT)
     
     def save_file(self, *args):
         # TODO: Implement progressbar animatin
@@ -115,29 +134,8 @@ class KammApplication(Adw.Application):
         
         win = self.props.active_window
         if not win:
-
-            # These should exist before window is there
-            self.search_filter = Gtk.CustomFilter()
-            self.tasks_filter = Gtk.CustomFilter()
-            
-            self.search_model = Gtk.FilterListModel()
-            self.tasks_filter_model = Gtk.FilterListModel()
-
-            self.search_model.set_model(self.list_store)
-            self.search_model.set_filter(self.search_filter)
-
-            self.tasks_filter_model.set_model(self.search_model)
-            self.tasks_filter_model.set_filter(self.tasks_filter)
-
-            self.single_selection = Gtk.SingleSelection()
-            self.single_selection.set_model(self.tasks_filter_model)
-
             win = KammWindow(application=self)
-            
             self.search_filter.set_filter_func(lambda object: self.props.active_window.search_entry.get_text().lower() in str(object).lower())
-
-            self.filtering: Filtering = Filtering(self)
-            self.tasks_filter.set_filter_func(self.filtering.filter)
             win.present()
 
     def on_about_action(self, widget, _):
@@ -185,7 +183,9 @@ class KammApplication(Adw.Application):
         object.line = str(object)
 
         self.save_if_required()
-        
+    
+    def hide_tasks(self, *args):
+        self.settings.set_boolean("hidden-tasks", not self.settings.get_boolean("hidden-tasks"))
 
     def create_action(self, name, callback, shortcuts=None):
         """Add an application action.

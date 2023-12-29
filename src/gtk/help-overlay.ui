@@ -52,6 +52,12 @@
                 <property name="action-name">app.complete</property>
               </object>
             </child>
+            <child>
+              <object class="GtkShortcutsShortcut">
+                <property name="title">Toggle hidden tasks</property>
+                <property name="action-name">app.hide</property>
+              </object>
+            </child>
           </object>
         </child>
 
