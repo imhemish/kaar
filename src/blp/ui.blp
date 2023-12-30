@@ -93,12 +93,6 @@ template $KammWindow: Adw.ApplicationWindow {
                 }
 
                 [start]
-                Gtk.ToggleButton {
-                    icon-name: "system-search-symbolic";
-                    active: bind search_bar.search-mode-enabled bidirectional;
-                }
-
-                [start]
                 Gtk.Button headerbar_delete {
                     icon-name: "user-trash-symbolic";
                     action-name: "app.delete";
@@ -130,6 +124,12 @@ template $KammWindow: Adw.ApplicationWindow {
                 Gtk.MenuButton {
                     icon-name: "open-menu-symbolic";
                     menu-model: menu;
+                }
+                
+                [end]
+                Gtk.ToggleButton {
+                    icon-name: "system-search-symbolic";
+                    active: bind search_bar.search-mode-enabled bidirectional;
                 }
 
                 [end]

@@ -15,7 +15,7 @@ class TaskStack(Gtk.Stack):
     tags_flow_box: Gtk.FlowBox = Gtk.Template.Child()
     dates_flow_box: Gtk.FlowBox = Gtk.Template.Child()
 
-    def create_flow_box_item(self, object) -> Gtk.Box:
+    def create_flow_box_item(self, object: str) -> Gtk.Box:
         print("create function was called")
         box = Gtk.Box()
         box.set_valign(Gtk.Align.END)
@@ -48,6 +48,10 @@ class TaskStack(Gtk.Stack):
             self.tags_flow_box.remove_all()
             for tag in self.object.tags:
                 self.tags_flow_box.append(self.create_flow_box_item(tag))
+
+            self.dates_flow_box.remove_all()
+            for date in self.object._dates:
+                self.dates_flow_box.append(self.create_flow_box_item(date))
             # Save the file if 'autosave' gsetting is True
             # this block of code should necessarily be after setting self.object.line
             # so that we save the new value, otherwise older values will be saved
@@ -84,12 +88,16 @@ class TaskFactory(Gtk.SignalListItemFactory):
         #task_object.bind_property("dates", task_stack.preview_row, "subtitle")
 
         if task_object.duplicatepriority != None: 
-            task_stack.priority_label.set_label(task_object._duplicatepriority)
+            task_stack.priority_label.set_label(task_object.duplicatepriority)
         task_object.bind_property("duplicatepriority", task_stack.priority_label, "label")
 
         task_stack.tags_flow_box.remove_all()
         for tag in task_object.tags:
             task_stack.tags_flow_box.append(task_stack.create_flow_box_item(tag))
+        
+        task_stack.dates_flow_box.remove_all()
+        for date in task_object._dates:
+            task_stack.dates_flow_box.append(task_stack.create_flow_box_item(date))
 
 
         
@@ -103,9 +111,8 @@ class TodoTask(Task, GObject.Object):
         GObject.Object.__init__(self)
         self.mode = 'view'
         self._line = str(self)
-        self._dates = self.calculate_date_string()
+        self._dates = self.calculate_date_strings()
         self._duplicatedescription = self.bare_description()
-        self._duplicatepriority = self.priority
         self.tags = [*map(lambda x: "+"+x, self.projects), *map(lambda x: "@"+x, self.contexts)]
         
 
@@ -121,7 +128,7 @@ class TodoTask(Task, GObject.Object):
         self._line = str(self)
         self.duplicatedescription = self.bare_description()
         self.completed = self.is_completed
-        self.dates = self._dates
+        self._dates = self.calculate_date_strings() # Doesnt matter what value you pass here
         self.duplicatepriority = self.priority
         self.tags = [*map(lambda x: "+"+x, self.projects), *map(lambda x: "@"+x, self.contexts)]
     
@@ -148,21 +155,17 @@ class TodoTask(Task, GObject.Object):
 
     @duplicatepriority.setter
     def duplicatepriority(self, value):
-        self._duplicatepriority = value
         self.priority = value
 
-    def calculate_date_string(self):
-        date = ""
+    def calculate_date_strings(self):
+        dates = []
         due = self.attributes.get("due")
         if due:
-            date += f'Due: {datetime.date.fromisoformat(str(due[0])).strftime("%x")}'
-        return date
+            dates.append(f'Due: {datetime.date.fromisoformat(str(due[0])).strftime("%x")}')
+        if self.creation_date:
+            dates.append(f'Created: {datetime.date.fromisoformat(str(self.creation_date)).strftime("%x")}')
+        if self.completion_date:
+            dates.append(f'Completed: {datetime.date.fromisoformat(str(self.completion_date)).strftime("%x")}')
 
-    @GObject.Property(type=str)
-    def dates(self):
-        return self.calculate_date_string()
-    
-    @dates.setter
-    def dates(self, value):
-        self._dates = self.calculate_date_string()
+        return dates
 
