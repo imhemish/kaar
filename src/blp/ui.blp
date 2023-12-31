@@ -12,6 +12,9 @@ template $KammWindow: Adw.ApplicationWindow {
     height-request: 400;
     width-request: 280;
    
+   
+
+
 
     Adw.Breakpoint {
         condition ("max-width: 540")
@@ -22,7 +25,6 @@ template $KammWindow: Adw.ApplicationWindow {
             headerbar_edit.visible: false;
             headerbar_delete.visible: false;
             split_view.collapsed: true;
-
         }
     }
 
@@ -50,9 +52,8 @@ template $KammWindow: Adw.ApplicationWindow {
             }
 
             Gtk.ListBox filters_box {
-
                 selection-mode: single;
-                
+
                 styles [
                     "navigation-sidebar"
                 ]
@@ -82,9 +83,10 @@ template $KammWindow: Adw.ApplicationWindow {
             }
         };
 
-        content: Box {
-            orientation: vertical;
+        content: Adw.ToolbarView {
+            vexpand: true;
 
+            [top]
             Adw.HeaderBar {
                 styles [
                     "flat"
@@ -102,8 +104,6 @@ template $KammWindow: Adw.ApplicationWindow {
                     icon-name: "user-trash-symbolic";
                     action-name: "app.delete";
                     visible: true;
-
-
                 }
 
                 [start]
@@ -112,8 +112,6 @@ template $KammWindow: Adw.ApplicationWindow {
                     icon-name: "document-edit-symbolic";
                     action-name: "app.edit";
                     visible: true;
-
-
                 }
 
                 [start]
@@ -121,8 +119,6 @@ template $KammWindow: Adw.ApplicationWindow {
                     icon-name: "list-add-symbolic";
                     action-name: "app.new";
                     visible: true;
-
-
                 }
 
                 [end]
@@ -130,7 +126,7 @@ template $KammWindow: Adw.ApplicationWindow {
                     icon-name: "open-menu-symbolic";
                     menu-model: menu;
                 }
-                
+
                 [end]
                 Gtk.ToggleButton {
                     icon-name: "system-search-symbolic";
@@ -144,78 +140,72 @@ template $KammWindow: Adw.ApplicationWindow {
                 }
             }
 
-            Adw.ToolbarView {
-                vexpand: true;
+            [top]
+            Gtk.SearchBar search_bar {
+                show-close-button: true;
 
-                [bottom]
-                Gtk.Box bottom_toolbar {
-                    hexpand: true;
-                    vexpand: true;
+                Gtk.SearchEntry search_entry {
+                    valign: center;
+                }
+            }
+
+            [bottom]
+            Gtk.Box bottom_toolbar {
+                hexpand: true;
+                vexpand: true;
+                halign: center;
+                visible: false;
+
+                styles [
+                    "toolbar"
+                ]
+
+                Gtk.Button {
                     halign: center;
-                    visible: false;
+                    icon-name: "user-trash-symbolic";
+                    action-name: "app.delete";
 
                     styles [
-                        "toolbar"
+                        "destructive-action"
                     ]
-
-                    Gtk.Button {
-                        halign: center;
-                        icon-name: "user-trash-symbolic";
-                        action-name: "app.delete";
-
-                        styles [
-                            "destructive-action"
-                        ]
-                    }
-
-                    Gtk.Button {
-                        halign: center;
-                        icon-name: "document-edit-symbolic";
-                        action-name: "app.edit";
-
-                        styles [
-                            "suggested-action"
-                        ]
-                    }
-
-                    Gtk.Button {
-                        icon-name: "list-add-symbolic";
-                        action-name: "app.new";
-
-                        styles [
-                            "suggested-action"
-                        ]
-                    }
                 }
 
-                content: Box {
-                    orientation: vertical;
+                Gtk.Button {
+                    halign: center;
+                    icon-name: "document-edit-symbolic";
+                    action-name: "app.edit";
 
-                    Gtk.SearchBar search_bar {
-                        show-close-button: true;
+                    styles [
+                        "suggested-action"
+                    ]
+                }
 
-                        Gtk.SearchEntry search_entry {
-                            valign: center;
-                        }
-                    }
-                    
-                    Gtk.Overlay {
-                        Gtk.ScrolledWindow {
+                Gtk.Button {
+                    icon-name: "list-add-symbolic";
+                    action-name: "app.new";
+
+                    styles [
+                        "suggested-action"
+                    ]
+                }
+            }
+
+            content: Box {
+                orientation: vertical;
+
+                Gtk.Overlay {
+                    Gtk.ScrolledWindow {
                         Adw.ClampScrollable {
-                            
                             Gtk.ListView list_view {
                                 margin-start: 4;
                                 margin-end: 4;
 
-                                styles ["background"]
-                                
+                                styles [
+                                    "background"
+                                ]
 
                                 vexpand: true;
-                                
-                                
                             }
-                            
-                            
                         }
                     }
 
@@ -224,11 +214,13 @@ template $KammWindow: Adw.ApplicationWindow {
                         valign: start;
                         hexpand: true;
                         visible: false;
-                        styles ["osd"]
+
+                        styles [
+                            "osd"
+                        ]
                     }
-                    }
-                };
-            }
+                }
+            };
         };
     }
 }

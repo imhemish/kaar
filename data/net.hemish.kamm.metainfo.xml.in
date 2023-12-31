@@ -1,9 +1,34 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version='1.0' encoding='utf-8'?>
 <component type="desktop">
-	<id>net.hemish.kamm.desktop</id>
-	<metadata_license>CC0-1.0</metadata_license>
-	<project_license>GPL-3.0-or-later</project_license>
-	<description>
-	  <p>No description</p>
-	</description>
+  <!--Created with jdAppStreamEdit 8.0-->
+  <id>net.hemish.kamm</id>
+  <name></name>
+  <summary></summary>
+  <developer_name>Hemish</developer_name>
+  <launchable type="desktop-id">net.hemish.kamm.desktop</launchable>
+  <metadata_license>CC0-1.0</metadata_license>
+  <project_license>GPL-3.0-or-later</project_license>
+  <update_contact>hemish04082005@gmail.com</update_contact>
+  <description>
+    <p>No description</p>
+  </description>
+  <url type="homepage">https://github.com/imhemish/kamm</url>
+  <url type="bugtracker">https://github.com/imhemish/kamm/issues</url>
+  <url type="vcs-browser">https://github.com/imhemish/kamm</url>
+  <categories>
+    <category>Office</category>
+    <category>Utility</category>
+    <category>TextTools</category>
+    <category>GNOME</category>
+  </categories>
+  <requires>
+    <internet>offline-only</internet>
+  </requires>
+  <supports>
+    <control>pointing</control>
+    <control>keyboard</control>
+    <control>touch</control>
+    <internet>offline-only</internet>
+  </supports>
+  <content_rating type="oars-1.1"/>
 </component>
