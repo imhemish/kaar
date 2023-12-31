@@ -41,7 +41,12 @@ class TaskStack(Gtk.Stack):
             self.entry_row.set_text(str(self.object))
             self.entry_row.grab_focus()
         else:
-            app = self.get_ancestor(Adw.ApplicationWindow).get_application()
+            try:
+                # Sometimes get_ancestor causes error because the widget sometimes
+                # are disowned, that's why a try
+                app = self.get_ancestor(Adw.ApplicationWindow).get_application()
+            except:
+                pass
 
             self.object.line = self.entry_row.get_text()
 
@@ -55,7 +60,10 @@ class TaskStack(Gtk.Stack):
             # Save the file if 'autosave' gsetting is True
             # this block of code should necessarily be after setting self.object.line
             # so that we save the new value, otherwise older values will be saved
-            app.save_if_required()
+            try:
+                app.save_if_required()
+            except:
+                pass
 
 # factory which would be used by list view for displaying tasks
 class TaskFactory(Gtk.SignalListItemFactory):

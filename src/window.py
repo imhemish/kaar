@@ -19,6 +19,7 @@
 
 from gi.repository import Adw, Gtk, Gio
 from .model import TaskFactory
+from .sorting import TaskSorting
 
 @Gtk.Template(resource_path='/net/hemish/kamm/blp/ui.ui')
 class KammWindow(Adw.ApplicationWindow):
@@ -29,6 +30,8 @@ class KammWindow(Adw.ApplicationWindow):
     save_button: Gtk.Button = Gtk.Template.Child()
     progress_bar: Gtk.ProgressBar = Gtk.Template.Child()
     filters_box: Gtk.ListBox = Gtk.Template.Child()
+    sorting_direction_button: Gtk.Button = Gtk.Template.Child()
+    sorting_dropdown: Gtk.DropDown = Gtk.Template.Child()
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
@@ -53,3 +56,7 @@ class KammWindow(Adw.ApplicationWindow):
         self.list_view.remove_css_class("view")
 
         self.filters_box.connect("row-selected", lambda *args: self.get_application().filtering.set_current_filtering(args[1].get_name()))
+
+        # Remember Enum values start with 1, but Gtk.DropDown selected index starts from 0
+        self.sorting_dropdown.set_selected(TaskSorting.DUE_DATE.value-1)
+        self.sorting_dropdown.connect("notify::selected", lambda *args: self.get_application().sorter.set_sorting(TaskSorting(self.sorting_dropdown.get_selected()+1)))

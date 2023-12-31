@@ -11,10 +11,6 @@ menu menu {
 template $KammWindow: Adw.ApplicationWindow {
     height-request: 400;
     width-request: 280;
-   
-   
-
-
 
     Adw.Breakpoint {
         condition ("max-width: 540")
@@ -51,34 +47,83 @@ template $KammWindow: Adw.ApplicationWindow {
                 }
             }
 
-            Gtk.ListBox filters_box {
-                selection-mode: single;
+            Gtk.Box {
+                orientation: vertical;
+                spacing: 15;
 
-                styles [
-                    "navigation-sidebar"
-                ]
+                Gtk.ListBox filters_box {
+                    valign: start;
+                    selection-mode: single;
 
-                margin-start: 1;
-                margin-end: 1;
-                margin-top: 1;
-                margin-bottom: 1;
+                    styles [
+                        "navigation-sidebar"
+                    ]
 
-                Adw.ActionRow {
-                    name: "all";
-                    title: "All Tasks";
-                    icon-name: "user-home-symbolic";
+                    margin-start: 1;
+                    margin-end: 1;
+                    margin-top: 1;
+                    margin-bottom: 1;
+
+                    Adw.ActionRow {
+                        name: "all";
+                        title: "All Tasks";
+                        icon-name: "user-home-symbolic";
+                    }
+
+                    Adw.ActionRow {
+                        name: "due";
+                        title: "Due Tasks";
+                        icon-name: "document-open-recent-symbolic";
+                    }
+
+                    Adw.ActionRow {
+                        name: "complete";
+                        title: "Complete";
+                        icon-name: "object-select-symbolic";
+                    }
                 }
 
-                Adw.ActionRow {
-                    name: "due";
-                    title: "Due Tasks";
-                    icon-name: "document-open-recent-symbolic";
+                Gtk.Separator {
+                    vexpand: true;
+                    styles ["spacer"]
                 }
 
-                Adw.ActionRow {
-                    name: "complete";
-                    title: "Complete";
-                    icon-name: "object-select-symbolic";
+                Gtk.Label {
+                    label: "Sort by";
+                    halign: start;
+                    margin-start: 15;
+                }
+
+                Gtk.Box {
+                    hexpand: true;
+                    valign: end;
+                    orientation: horizontal;
+                    spacing: 5;
+                    margin-bottom: 15;
+                    margin-start: 15;
+                    
+                    DropDown sorting_dropdown {
+                        valign: start;
+                        model: Gtk.StringList {
+                            strings [
+                                "Description",
+                                "Due Date",
+                                "Creation Date",
+                                "Completion Date"
+                            ]
+                        };
+                    }
+
+                    Gtk.Button sorting_direction_button {
+                        name: "descending";
+                        icon-name: "view-sort-descending-symbolic";
+                        valign: end;
+                    }
+
+                    Gtk.Separator {
+                        styles ["spacer"]
+                    }
+
                 }
             }
         };

@@ -43,7 +43,8 @@ kamm_sources = [
   'window.py',
   'preferences_window.py',
   'model.py',
-  'filtering.py'
+  'filtering.py',
+  'sorting.py'
 ]
 
 install_data(kamm_sources, install_dir: moduledir)

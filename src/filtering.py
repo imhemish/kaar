@@ -31,7 +31,6 @@ class Filtering(GObject.Object):
     def filter(self, object: TodoTask):
         # Make sure to use 'in' instead of '==' in here in if-else
         # because attributes.get returns a list and not a single element
-        print("Filtering for {}".format(object.bare_description))
         flag = False
 
 
@@ -62,9 +61,6 @@ class Filtering(GObject.Object):
         hidden_attribute = object.attributes.get('h')
         if hidden_attribute != None:
             if ('1' in hidden_attribute) and (self.should_hide_hidden_tasks):
-                print("um it should be hidden")
                 flag = False
-        
-        print("I am returning {}".format(flag))
         
         return flag

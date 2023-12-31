@@ -30,6 +30,7 @@ from .preferences_window import KammPreferencesWindow
 from .model import TodoTask
 from pytodotxt import TodoTxt, TodoTxtParser
 from .filtering import Filtering
+from .sorting import TaskSorter
 
 
 class KammApplication(Adw.Application):
@@ -68,8 +69,12 @@ class KammApplication(Adw.Application):
         self.search_model.set_filter(self.search_filter)
         self.tasks_filter_model.set_model(self.search_model)
         self.tasks_filter_model.set_filter(self.tasks_filter)
+        self.tasks_sorting_model = Gtk.SortListModel()
+        self.sorter = TaskSorter()
+        self.tasks_sorting_model.set_sorter(self.sorter)
+        self.tasks_sorting_model.set_model(self.tasks_filter_model)
         self.single_selection = Gtk.SingleSelection()
-        self.single_selection.set_model(self.tasks_filter_model)
+        self.single_selection.set_model(self.tasks_sorting_model)
         
         self.filtering: Filtering = Filtering(self, lambda: self.tasks_filter.changed(Gtk.FilterChange.DIFFERENT))
         self.tasks_filter.set_filter_func(self.filtering.filter)
