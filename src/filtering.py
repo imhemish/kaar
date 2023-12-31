@@ -16,10 +16,17 @@ class Filtering(GObject.Object):
     def should_hide_hidden_tasks(self, value):
         self._should_hide_hidden_tasks = value
 
-    def __init__(self, application):
+    def __init__(self, application, changed_callback):
         super().__init__()
         self.should_hide_hidden_tasks = application.settings.get_boolean("hidden-tasks")
         application.settings.bind("hidden-tasks", self, "should_hide_hidden_tasks", Gio.SettingsBindFlags.GET)
+
+        # Notifies the models that filtering has changed
+        self.changed_callback = changed_callback
+
+    def set_current_filtering(self, filter: str):
+        self.current_filtering = filter
+        self.changed_callback()
 
     def filter(self, object: TodoTask):
         # Make sure to use 'in' instead of '==' in here in if-else

@@ -17,8 +17,7 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-from gi.repository import Adw
-from gi.repository import Gtk, Gio
+from gi.repository import Adw, Gtk, Gio
 from .model import TaskFactory
 
 @Gtk.Template(resource_path='/net/hemish/kamm/blp/ui.ui')
@@ -29,6 +28,7 @@ class KammWindow(Adw.ApplicationWindow):
     search_bar: Gtk.SearchBar = Gtk.Template.Child()
     save_button: Gtk.Button = Gtk.Template.Child()
     progress_bar: Gtk.ProgressBar = Gtk.Template.Child()
+    filters_box: Gtk.ListBox = Gtk.Template.Child()
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
@@ -51,3 +51,5 @@ class KammWindow(Adw.ApplicationWindow):
 
         self.search_bar.set_key_capture_widget(self)
         self.list_view.remove_css_class("view")
+
+        self.filters_box.connect("row-selected", lambda *args: self.get_application().filtering.set_current_filtering(args[1].get_name()))

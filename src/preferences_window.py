@@ -12,6 +12,8 @@ class KammPreferencesWindow(Adw.PreferencesWindow):
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
+
+        # Use same Gio.Settings instance for entire app
         self.settings: Gio.Settings = self.get_transient_for().settings
 
 

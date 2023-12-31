@@ -43,7 +43,7 @@ class KammApplication(Adw.Application):
         self.create_action('about', self.on_about_action)
         self.create_action('preferences', self.on_preferences_action)
         self.create_action('new', self.new_task, ['<primary>n'])
-        self.create_action('edit', self.edit_task, ['<primary>e', 'F2', 'Return'])
+        self.create_action('edit', self.edit_task, ['<primary>e', 'F2'])
         self.create_action('delete', self.delete_task, ['<primary>d', 'Delete'])
         self.create_action('complete', self.complete_task, ['<primary>x'])
         self.create_action('save', self.save_file, ['<primary>s'])
@@ -71,7 +71,7 @@ class KammApplication(Adw.Application):
         self.single_selection = Gtk.SingleSelection()
         self.single_selection.set_model(self.tasks_filter_model)
         
-        self.filtering: Filtering = Filtering(self)
+        self.filtering: Filtering = Filtering(self, lambda: self.tasks_filter.changed(Gtk.FilterChange.DIFFERENT))
         self.tasks_filter.set_filter_func(self.filtering.filter)
 
         # When hidden tasks is toggled, automatically hide or unhide tasks depending upon whether h:1 is set or not

@@ -49,8 +49,10 @@ template $KammWindow: Adw.ApplicationWindow {
                 }
             }
 
-            Gtk.Box {
-                orientation: vertical;
+            Gtk.ListBox filters_box {
+
+                selection-mode: single;
+                
                 styles [
                     "navigation-sidebar"
                 ]
@@ -61,16 +63,19 @@ template $KammWindow: Adw.ApplicationWindow {
                 margin-bottom: 1;
 
                 Adw.ActionRow {
+                    name: "all";
                     title: "All Tasks";
                     icon-name: "user-home-symbolic";
                 }
 
                 Adw.ActionRow {
+                    name: "due";
                     title: "Due Tasks";
                     icon-name: "document-open-recent-symbolic";
                 }
 
                 Adw.ActionRow {
+                    name: "complete";
                     title: "Complete";
                     icon-name: "object-select-symbolic";
                 }

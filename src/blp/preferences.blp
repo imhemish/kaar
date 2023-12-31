@@ -4,6 +4,8 @@ using Adw 1;
 template $KammPreferencesWindow: Adw.PreferencesWindow {
     Adw.PreferencesPage {
         title: "General";
+        icon-name: "applications-system-symbolic";
+
         Adw.PreferencesGroup {
             title: "File";
             Adw.ActionRow location {
@@ -37,6 +39,8 @@ template $KammPreferencesWindow: Adw.PreferencesWindow {
 
     Adw.PreferencesPage {
         title: "Extensions";
+        icon-name: "preferences-other-symbolic";
+        
         Adw.PreferencesGroup {
             Adw.SwitchRow hidden_tasks {
                 title: "Hidden Tasks";
