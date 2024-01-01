@@ -28,102 +28,108 @@ template $KammWindow: Adw.ApplicationWindow {
         show-sidebar: bind sidebar_button.active;
         collapsed: false;
 
-        sidebar: Gtk.Box {
-            orientation: vertical;
-
-            Adw.HeaderBar {
-                styles [
-                    "flat"
-                ]
-
-                title-widget: Adw.WindowTitle {
-                    title: "Filters";
-                };
-
-                [start]
-                Gtk.ToggleButton {
-                    icon-name: "view-list-symbolic";
-                    active: bind sidebar_button.active bidirectional;
-                }
-            }
-
+        sidebar: Gtk.WindowHandle {
             Gtk.Box {
                 orientation: vertical;
-                spacing: 15;
 
-                Gtk.ListBox filters_box {
-                    valign: start;
-                    selection-mode: single;
-
+                Adw.HeaderBar {
                     styles [
-                        "navigation-sidebar"
+                        "flat"
                     ]
 
-                    margin-start: 1;
-                    margin-end: 1;
-                    margin-top: 1;
-                    margin-bottom: 1;
+                    title-widget: Adw.WindowTitle {
+                        title: "Filters";
+                    };
 
-                    Adw.ActionRow {
-                        name: "all";
-                        title: "All Tasks";
-                        icon-name: "user-home-symbolic";
+                    [start]
+                    Gtk.ToggleButton {
+                        icon-name: "view-list-symbolic";
+                        active: bind sidebar_button.active bidirectional;
                     }
-
-                    Adw.ActionRow {
-                        name: "due";
-                        title: "Due Tasks";
-                        icon-name: "document-open-recent-symbolic";
-                    }
-
-                    Adw.ActionRow {
-                        name: "complete";
-                        title: "Complete";
-                        icon-name: "object-select-symbolic";
-                    }
-                }
-
-                Gtk.Separator {
-                    vexpand: true;
-                    styles ["spacer"]
-                }
-
-                Gtk.Label {
-                    label: "Sort by";
-                    halign: start;
-                    margin-start: 15;
                 }
 
                 Gtk.Box {
-                    hexpand: true;
-                    valign: end;
-                    orientation: horizontal;
-                    spacing: 5;
-                    margin-bottom: 15;
-                    margin-start: 15;
-                    
-                    DropDown sorting_dropdown {
-                        valign: start;
-                        model: Gtk.StringList {
-                            strings [
-                                "Description",
-                                "Due Date",
-                                "Creation Date",
-                                "Completion Date"
-                            ]
-                        };
-                    }
+                    orientation: vertical;
+                    spacing: 15;
 
-                    Gtk.Button sorting_direction_button {
-                        name: "descending";
-                        icon-name: "view-sort-descending-symbolic";
-                        valign: end;
+                    Gtk.ListBox filters_box {
+                        valign: start;
+                        selection-mode: browse;
+
+                        styles [
+                            "navigation-sidebar"
+                        ]
+
+                        margin-start: 1;
+                        margin-end: 1;
+                        margin-top: 1;
+                        margin-bottom: 1;
+
+                        Adw.ActionRow {
+                            name: "all";
+                            title: "All Tasks";
+                            icon-name: "user-home-symbolic";
+                        }
+
+                        Adw.ActionRow {
+                            name: "due";
+                            title: "Due Tasks";
+                            icon-name: "document-open-recent-symbolic";
+                        }
+
+                        Adw.ActionRow {
+                            name: "complete";
+                            title: "Complete";
+                            icon-name: "object-select-symbolic";
+                        }
                     }
 
                     Gtk.Separator {
-                        styles ["spacer"]
+                        vexpand: true;
+
+                        styles [
+                            "spacer"
+                        ]
                     }
 
+                    Gtk.Label {
+                        label: "Sort by";
+                        halign: start;
+                        margin-start: 15;
+                    }
+
+                    Gtk.Box {
+                        hexpand: true;
+                        valign: end;
+                        orientation: horizontal;
+                        spacing: 5;
+                        margin-bottom: 15;
+                        margin-start: 15;
+
+                        DropDown sorting_dropdown {
+                            valign: start;
+
+                            model: Gtk.StringList {
+                                strings [
+                                    "Description",
+                                    "Due Date",
+                                    "Creation Date",
+                                    "Completion Date"
+                                ]
+                            };
+                        }
+
+                        Gtk.Button sorting_direction_button {
+                            icon-name: "view-sort-descending-symbolic";
+                            valign: end;
+                        }
+
+                        Gtk.Separator {
+                            styles [
+                                "spacer"
+                            ]
+                        }
+                    }
                 }
             }
         };

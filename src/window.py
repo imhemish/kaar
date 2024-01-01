@@ -20,6 +20,7 @@
 from gi.repository import Adw, Gtk, Gio
 from .model import TaskFactory
 from .sorting import TaskSorting
+from .sorting import SortingDirection
 
 @Gtk.Template(resource_path='/net/hemish/kamm/blp/ui.ui')
 class KammWindow(Adw.ApplicationWindow):
@@ -56,7 +57,21 @@ class KammWindow(Adw.ApplicationWindow):
         self.list_view.remove_css_class("view")
 
         self.filters_box.connect("row-selected", lambda *args: self.get_application().filtering.set_current_filtering(args[1].get_name()))
+        # Select first row, i.e. All Tasks
+        self.filters_box.select_row(self.filters_box.get_row_at_index(0))
 
         # Remember Enum values start with 1, but Gtk.DropDown selected index starts from 0
         self.sorting_dropdown.set_selected(TaskSorting.DUE_DATE.value-1)
         self.sorting_dropdown.connect("notify::selected", lambda *args: self.get_application().sorter.set_sorting(TaskSorting(self.sorting_dropdown.get_selected()+1)))
+
+        self.sorting_direction_button.connect("clicked", self.on_sorting_direction_button)
+    
+    def on_sorting_direction_button(self, button, *args):
+        button_icon_name = button.get_icon_name()
+        if button_icon_name == 'view-sort-descending-symbolic':
+            button_icon_name = 'view-sort-ascending-symbolic'
+            self.get_application().sorter.set_direction(SortingDirection.ASCENDING)
+        else:
+            button_icon_name = 'view-sort-descending-symbolic'
+            self.get_application().sorter.set_direction(SortingDirection.DESCENDING)
+        button.set_icon_name(button_icon_name)
