@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <gresources>
-  <gresource prefix="/net/hemish/kamm">
+  <gresource prefix="/net/hemish/kaar">
     <file preprocess="xml-stripblanks">blp/ui.ui</file>
     <file preprocess="xml-stripblanks">blp/preferences.ui</file>
     <file preprocess="xml-stripblanks">blp/task.ui</file>

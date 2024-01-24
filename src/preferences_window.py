@@ -24,9 +24,9 @@ sorting_strings = {
     "COMPLETION_DATE": _("Competion Date")
 }
 
-@Gtk.Template(resource_path='/net/hemish/kamm/blp/preferences.ui')
-class KammPreferencesWindow(Adw.PreferencesWindow):
-    __gtype_name__ = 'KammPreferencesWindow'
+@Gtk.Template(resource_path='/net/hemish/kaar/blp/preferences.ui')
+class KaarPreferencesWindow(Adw.PreferencesWindow):
+    __gtype_name__ = 'KaarPreferencesWindow'
     location: Adw.ActionRow = Gtk.Template.Child()
     autosave: Adw.SwitchRow = Gtk.Template.Child()
     open_button: Gtk.Button = Gtk.Template.Child()

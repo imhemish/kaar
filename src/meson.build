@@ -1,5 +1,5 @@
 pkgdatadir = get_option('prefix') / get_option('datadir') / meson.project_name()
-moduledir = pkgdatadir / 'kamm'
+moduledir = pkgdatadir / 'kaar'
 gnome = import('gnome')
 
 blueprints = custom_target('blueprints',
@@ -12,8 +12,8 @@ blueprints = custom_target('blueprints',
   command: [find_program('blueprint-compiler'), 'batch-compile', '@OUTPUT@', '@CURRENT_SOURCE_DIR@', '@INPUT@'],
 )
 
-gnome.compile_resources('kamm',
-  'kamm.gresource.xml',
+gnome.compile_resources('kaar',
+  'kaar.gresource.xml',
   gresource_bundle: true,
   install: true,
   install_dir: pkgdatadir,
@@ -29,15 +29,15 @@ conf.set('localedir', get_option('prefix') / get_option('localedir'))
 conf.set('pkgdatadir', pkgdatadir)
 
 configure_file(
-  input: 'kamm.in',
-  output: 'kamm',
+  input: 'kaar.in',
+  output: 'kaar',
   configuration: conf,
   install: true,
   install_dir: get_option('bindir'),
   install_mode: 'r-xr--r--'
 )
 
-kamm_sources = [
+kaar_sources = [
   '__init__.py',
   'main.py',
   'window.py',
@@ -47,4 +47,4 @@ kamm_sources = [
   'sorting.py'
 ]
 
-install_data(kamm_sources, install_dir: moduledir)
+install_data(kaar_sources, install_dir: moduledir)

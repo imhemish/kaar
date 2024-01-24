@@ -1,1 +1,1 @@
-i18n.gettext('kamm', preset: 'glib')
+i18n.gettext('kaar', preset: 'glib')

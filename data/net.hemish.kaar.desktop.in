@@ -1,7 +1,7 @@
 [Desktop Entry]
-Name=kamm
-Exec=kamm
-Icon=net.hemish.kamm
+Name=Kaar
+Exec=kaar
+Icon=net.hemish.kaar
 Terminal=false
 Type=Application
 Categories=GTK;

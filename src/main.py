@@ -25,8 +25,8 @@ gi.require_version('Gtk', '4.0')
 gi.require_version('Adw', '1')
 
 from gi.repository import Gtk, Gio, Adw
-from .window import KammWindow
-from .preferences_window import KammPreferencesWindow, converter
+from .window import KaarWindow
+from .preferences_window import KaarPreferencesWindow, converter
 from .model import TodoTask
 from pytodotxt import TodoTxt, TodoTxtParser
 from .filtering import Filtering
@@ -43,12 +43,12 @@ def _async(func):
         return thread
     return wrapper
 
-class KammApplication(Adw.Application):
+class KaarApplication(Adw.Application):
     """The main application singleton class."""
 
     def __init__(self):
         print("application initiated")
-        super().__init__(application_id='net.hemish.kamm',
+        super().__init__(application_id='net.hemish.kaar',
                          flags=Gio.ApplicationFlags.DEFAULT_FLAGS)
         self.create_action('quit', lambda *_: self.quit(), ['<primary>q'])
         self.create_action('about', self.on_about_action)
@@ -63,7 +63,7 @@ class KammApplication(Adw.Application):
 
         print("actions created")
 
-        self.settings: Gio.Settings = Gio.Settings('net.hemish.kamm')
+        self.settings: Gio.Settings = Gio.Settings('net.hemish.kaar')
 
         self.should_autosave = self.settings.get_boolean("autosave")
 
@@ -169,15 +169,15 @@ class KammApplication(Adw.Application):
         
         win = self.props.active_window
         if not win:
-            win = KammWindow(application=self)
+            win = KaarWindow(application=self)
             self.search_filter.set_filter_func(lambda object: self.props.active_window.search_entry.get_text().lower() in str(object).lower())
             win.present()
 
     def on_about_action(self, widget, _):
         """Callback for the app.about action."""
         about = Adw.AboutWindow(transient_for=self.props.active_window,
-                                application_name='kamm',
-                                application_icon='net.hemish.kamm',
+                                application_name='Kaar',
+                                application_icon='net.hemish.kaar',
                                 developer_name='Hemish',
                                 version='0.1.0',
                                 developers=['Hemish'],
@@ -186,7 +186,7 @@ class KammApplication(Adw.Application):
 
     def on_preferences_action(self, widget, _):
         """Callback for the app.preferences action."""
-        preferences = KammPreferencesWindow(transient_for=self.props.active_window)
+        preferences = KaarPreferencesWindow(transient_for=self.props.active_window)
         preferences.present()
     
     def new_task(self, *args):
@@ -241,5 +241,5 @@ class KammApplication(Adw.Application):
 
 def main(version):
     """The application's entry point."""
-    app = KammApplication()
+    app = KaarApplication()
     return app.run(sys.argv)

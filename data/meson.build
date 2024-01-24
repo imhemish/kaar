@@ -1,6 +1,6 @@
 desktop_file = i18n.merge_file(
-        input: 'net.hemish.kamm.desktop.in',
-       output: 'net.hemish.kamm.desktop',
+        input: 'net.hemish.kaar.desktop.in',
+       output: 'net.hemish.kaar.desktop',
          type: 'desktop',
        po_dir: '../po',
       install: true,
@@ -13,8 +13,8 @@ if desktop_utils.found()
 endif
 
 appstream_file = i18n.merge_file(
-        input: 'net.hemish.kamm.metainfo.xml.in',
-       output: 'net.hemish.kamm.metainfo.xml',
+        input: 'net.hemish.kaar.metainfo.xml.in',
+       output: 'net.hemish.kaar.metainfo.xml',
        po_dir: '../po',
       install: true,
   install_dir: get_option('datadir') / 'metainfo'
@@ -24,7 +24,7 @@ appstreamcli = find_program('appstreamcli', required: false, disabler: true)
 test('Validate appstream file', appstreamcli,
      args: ['validate', '--no-net', '--explain', appstream_file])
 
-install_data('net.hemish.kamm.gschema.xml',
+install_data('net.hemish.kaar.gschema.xml',
   install_dir: get_option('datadir') / 'glib-2.0' / 'schemas'
 )
 

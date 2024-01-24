@@ -20,9 +20,9 @@
 from gi.repository import Adw, Gtk, Gio, Gdk
 from .model import TaskFactory
 
-@Gtk.Template(resource_path='/net/hemish/kamm/blp/ui.ui')
-class KammWindow(Adw.ApplicationWindow):
-    __gtype_name__ = 'KammWindow'
+@Gtk.Template(resource_path='/net/hemish/kaar/blp/ui.ui')
+class KaarWindow(Adw.ApplicationWindow):
+    __gtype_name__ = 'KaarWindow'
     list_view: Gtk.ListView = Gtk.Template.Child()
     search_entry: Gtk.SearchEntry = Gtk.Template.Child()
     search_bar: Gtk.SearchBar = Gtk.Template.Child()
@@ -60,6 +60,6 @@ class KammWindow(Adw.ApplicationWindow):
 
 
         css_provider = Gtk.CssProvider()
-        css_provider.load_from_resource("/net/hemish/kamm/style.css")
+        css_provider.load_from_resource("/net/hemish/kaar/style.css")
         Gtk.StyleContext.add_provider_for_display(Gdk.Display.get_default(), css_provider, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION)
 

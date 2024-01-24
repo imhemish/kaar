@@ -1,9 +1,9 @@
 {
-    "app-id" : "net.hemish.kamm",
+    "app-id" : "net.hemish.kaar",
     "runtime" : "org.gnome.Platform",
     "runtime-version" : "45",
     "sdk" : "org.gnome.Sdk",
-    "command" : "kamm",
+    "command" : "kaar",
     "finish-args" : [
         "--share=ipc",
         "--socket=fallback-x11",
@@ -25,7 +25,7 @@
     "modules" : [
         "python3-pytodotxt.json",
         {
-            "name" : "kamm",
+            "name" : "kaar",
             "builddir" : true,
             "buildsystem" : "meson",
             "sources" : [

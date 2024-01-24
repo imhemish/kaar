@@ -5,10 +5,10 @@ using Gio 2.0;
 menu menu {
     item ("Preferences", "app.preferences")
     item ("Keyboard Shortcuts", "win.show-help-overlay")
-    item ("About Kamm", "app.about")
+    item ("About Kaar", "app.about")
 }
 
-template $KammWindow: Adw.ApplicationWindow {
+template $KaarWindow: Adw.ApplicationWindow {
     height-request: 400;
     width-request: 280;
 
@@ -92,6 +92,9 @@ template $KammWindow: Adw.ApplicationWindow {
 
             [top]
             Adw.HeaderBar {
+                title-widget: Adw.WindowTitle {
+                    title: "Kaar";
+                };
                 styles [
                     "flat"
                 ]

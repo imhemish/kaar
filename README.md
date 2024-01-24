@@ -1,4 +1,4 @@
-# Kamm
+# Kaar
 
 A [todo.txt](http://todotxt.org) based to-do app
 
@@ -31,9 +31,14 @@ The dependencies required for building by meson are:
 # Supported extensions on todo.txt
 
 - Hidden Tasks (`h:1` hides the task)
+- Due Dates (example: `due:2023-04-08`)
 
 # Inspiration
 
 Features and UI of this app are derived from [Mindstream](https://github.com/xuhcc/mindstream) and [qtodotxt2](https://github.com/QTodoTxt/QTodoTxt2)
+
+# Name
+
+The name 'Kaar' (kār) is a word present in both Sanskrit (कार) and Classical Persian (کار) as a cognate from Indo-Iranian language family which can mean things like action, work, doer in their descendants such as Urdu, Hindi, Punjabi, etc.
 
 > Made with Python, GTK4, cosy Libadwaita 🥰 in India 🇮🇳

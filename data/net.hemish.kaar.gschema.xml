@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 
-<schemalist gettext-domain="kamm">
-	<schema id="net.hemish.kamm" path="/net/hemish/kamm/">
+<schemalist gettext-domain="kaar">
+	<schema id="net.hemish.kaar" path="/net/hemish/kaar/">
 		<key name="autosave" type="b">
 			<default>true</default>
 			<summary>Autosave</summary>

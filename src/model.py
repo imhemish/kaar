@@ -5,7 +5,7 @@ import datetime
 
 # This represents a single task row, which is actually made up of stack
 # containing two views: edit and view as defined in task.blp
-@Gtk.Template(resource_path='/net/hemish/kamm/blp/task.ui')
+@Gtk.Template(resource_path='/net/hemish/kaar/blp/task.ui')
 class TaskStack(Gtk.Stack):
     __gtype_name__ = "TaskStack"
     entry_row: Adw.EntryRow = Gtk.Template.Child()

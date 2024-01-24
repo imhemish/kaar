@@ -1,6 +1,11 @@
-data/net.hemish.kamm.desktop.in
-data/net.hemish.kamm.metainfo.xml.in
-data/net.hemish.kamm.gschema.xml
+data/net.hemish.kaar.desktop.in
+data/net.hemish.kaar.metainfo.xml.in
+data/net.hemish.kaar.gschema.xml
 src/main.py
 src/window.py
-src/window.ui
+src/blp/preferences.blp
+src/blp/task.blp
+src/blp/ui.blp
+src/sorting.py
+src/model.py
+src/preferences_window.py

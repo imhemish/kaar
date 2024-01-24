@@ -1,20 +1,20 @@
 <?xml version='1.0' encoding='utf-8'?>
 <component type="desktop">
   <!--Created with jdAppStreamEdit 8.0-->
-  <id>net.hemish.kamm</id>
+  <id>net.hemish.kaar</id>
   <name></name>
   <summary></summary>
   <developer_name>Hemish</developer_name>
-  <launchable type="desktop-id">net.hemish.kamm.desktop</launchable>
+  <launchable type="desktop-id">net.hemish.kaar.desktop</launchable>
   <metadata_license>CC0-1.0</metadata_license>
   <project_license>GPL-3.0-or-later</project_license>
   <update_contact>hemish04082005@gmail.com</update_contact>
   <description>
     <p>No description</p>
   </description>
-  <url type="homepage">https://github.com/imhemish/kamm</url>
-  <url type="bugtracker">https://github.com/imhemish/kamm/issues</url>
-  <url type="vcs-browser">https://github.com/imhemish/kamm</url>
+  <url type="homepage">https://github.com/imhemish/kaar</url>
+  <url type="bugtracker">https://github.com/imhemish/kaar/issues</url>
+  <url type="vcs-browser">https://github.com/imhemish/kaar</url>
   <categories>
     <category>Office</category>
     <category>Utility</category>

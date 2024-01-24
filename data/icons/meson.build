@@ -1,4 +1,4 @@
-application_id = 'net.hemish.kamm'
+application_id = 'net.hemish.kaar'
 
 scalable_dir = 'hicolor' / 'scalable' / 'apps'
 install_data(
