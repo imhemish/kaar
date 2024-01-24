@@ -1,0 +1,22 @@
+.tag {
+    border-radius: 12px;
+}
+
+.tag label {
+    margin-top: 5px;
+    margin-bottom: 5px;
+    margin-left: 5px;
+    margin-right: 5px;
+    font-size: small;
+}
+
+.task {
+    border-radius: 12px;
+}
+
+listview row {
+    border-radius: 12px;
+    margin-top: 2px;
+    margin-bottom: 2px;
+    border: 2px solid @borders;
+}

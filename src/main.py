@@ -26,12 +26,22 @@ gi.require_version('Adw', '1')
 
 from gi.repository import Gtk, Gio, Adw
 from .window import KammWindow
-from .preferences_window import KammPreferencesWindow
+from .preferences_window import KammPreferencesWindow, converter
 from .model import TodoTask
 from pytodotxt import TodoTxt, TodoTxtParser
 from .filtering import Filtering
-from .sorting import TaskSorter
+from .sorting import TaskSorter, TaskSorting
+import threading
 
+# copied from Linux Mint's code
+# a decorator that makes a function run in background via threading
+def _async(func):
+    def wrapper(*args, **kwargs):
+        thread = threading.Thread(target=func, args=args, kwargs=kwargs)
+        thread.daemon = True
+        thread.start()
+        return thread
+    return wrapper
 
 class KammApplication(Adw.Application):
     """The main application singleton class."""
@@ -70,7 +80,14 @@ class KammApplication(Adw.Application):
         self.tasks_filter_model.set_model(self.search_model)
         self.tasks_filter_model.set_filter(self.tasks_filter)
         self.tasks_sorting_model = Gtk.SortListModel()
-        self.sorter = TaskSorter()
+
+        sorting_priority = []
+        for i in range(4):
+            sorting_priority.append(TaskSorting[self.settings.get_string(converter(i))])
+
+        print(sorting_priority)
+
+        self.sorter = TaskSorter(sorting_priority=sorting_priority)
         self.tasks_sorting_model.set_sorter(self.sorter)
         self.tasks_sorting_model.set_model(self.tasks_filter_model)
         self.single_selection = Gtk.SingleSelection()
@@ -82,12 +99,19 @@ class KammApplication(Adw.Application):
         # When hidden tasks is toggled, automatically hide or unhide tasks depending upon whether h:1 is set or not
         self.settings.connect("changed::hidden-tasks", lambda *args: self.tasks_filter.changed(Gtk.FilterChange.DIFFERENT))
 
+        for i in range(4):
+            self.settings.connect(f"changed::{converter(i)}", self.on_sorting_change)
         #Initially loading file
         print("reload file called")
         self.reload_file()
 
         print("file haas been loaded")
 
+    def on_sorting_change(self, *args):
+        sorting_priority = []
+        for i in range(4):
+            sorting_priority.append(TaskSorting[self.settings.get_string(converter(i))])
+        self.sorter.set_sorting_priority(sorting_priority)
     def reload_file(self, *args):
         print("hooney i was callee")
         self.list_store.remove_all()
@@ -110,20 +134,26 @@ class KammApplication(Adw.Application):
         self.search_filter.changed(Gtk.FilterChange.DIFFERENT)
     
     def save_file(self, *args):
-        # TODO: Implement progressbar animatin
-        #pb: Gtk.ProgressBar = self.props.active_window.progress_bar
-        #pb.set_fraction(0)
-        #pb.set_visible(True)
-        #len_list = len(self.list_store)
-        # x = 0
+        pb: Gtk.ProgressBar = self.props.active_window.progress_bar
+        pb.set_fraction(0)
+        pb.set_visible(True)
+
         self.todotxt.tasks = []
+
+        @_async
+        def report_progress():
+            for i in range(10):
+                pb.set_fraction((i+1)/10)
+                time.sleep(0.03)
+            time.sleep(0.15)
+            pb.set_visible(False)
+
         for item in self.list_store:
             self.todotxt.tasks.append(item)
-            #x += 1
-            #pb.set_fraction(x/len_list)
-            #print("progressed by {}".format(x/len_list))
+
         self.todotxt.save()
-        #pb.set_visible(False)
+
+        report_progress()
     
     def save_if_required(self):
         if self.settings.get_boolean("autosave"):
@@ -162,7 +192,8 @@ class KammApplication(Adw.Application):
     def new_task(self, *args):
         task = TodoTask()
         self.list_store.append(task)
-        self.props.active_window.list_view.scroll_to(len(self.single_selection)+1, Gtk.ListScrollFlags.SELECT)
+        # FIXME: the below function doesnt work with sorting functionality, as the new task is not added at end
+        # self.props.active_window.list_view.scroll_to(len(self.single_selection), Gtk.ListScrollFlags.SELECT)
         
         # Auto set the mode to edit on blank task
         task.mode = 'edit'

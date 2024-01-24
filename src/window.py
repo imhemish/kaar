@@ -1,6 +1,6 @@
 # window.py
 #
-# Copyright 2023 Hemish
+# Copyright 2024 Hemish
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -17,10 +17,8 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-from gi.repository import Adw, Gtk, Gio
+from gi.repository import Adw, Gtk, Gio, Gdk
 from .model import TaskFactory
-from .sorting import TaskSorting
-from .sorting import SortingDirection
 
 @Gtk.Template(resource_path='/net/hemish/kamm/blp/ui.ui')
 class KammWindow(Adw.ApplicationWindow):
@@ -31,8 +29,6 @@ class KammWindow(Adw.ApplicationWindow):
     save_button: Gtk.Button = Gtk.Template.Child()
     progress_bar: Gtk.ProgressBar = Gtk.Template.Child()
     filters_box: Gtk.ListBox = Gtk.Template.Child()
-    sorting_direction_button: Gtk.Button = Gtk.Template.Child()
-    sorting_dropdown: Gtk.DropDown = Gtk.Template.Child()
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
@@ -42,9 +38,11 @@ class KammWindow(Adw.ApplicationWindow):
         # Initially filter out the tasks
         app.tasks_filter.changed(Gtk.FilterChange.DIFFERENT)
 
-        # TODO: Auto vertically align without restart when preference is changed
         if self.settings.get_boolean("vertically-center-tasks"):
             self.list_view.set_valign(Gtk.Align.CENTER)
+        
+        # args[1] is the name of key received from changed signal which is vertically-center-tasks itself
+        self.settings.connect("changed::vertically-center-tasks", lambda *args: self.list_view.set_valign(Gtk.Align.CENTER) if self.settings.get_boolean(args[1]) else self.list_view.set_valign(Gtk.Align.START))
 
         self.settings.bind("autosave", self.save_button, "visible", Gio.SettingsBindFlags.INVERT_BOOLEAN)
         
@@ -60,18 +58,8 @@ class KammWindow(Adw.ApplicationWindow):
         # Select first row, i.e. All Tasks
         self.filters_box.select_row(self.filters_box.get_row_at_index(0))
 
-        # Remember Enum values start with 1, but Gtk.DropDown selected index starts from 0
-        self.sorting_dropdown.set_selected(TaskSorting.DUE_DATE.value-1)
-        self.sorting_dropdown.connect("notify::selected", lambda *args: self.get_application().sorter.set_sorting(TaskSorting(self.sorting_dropdown.get_selected()+1)))
 
-        self.sorting_direction_button.connect("clicked", self.on_sorting_direction_button)
-    
-    def on_sorting_direction_button(self, button, *args):
-        button_icon_name = button.get_icon_name()
-        if button_icon_name == 'view-sort-descending-symbolic':
-            button_icon_name = 'view-sort-ascending-symbolic'
-            self.get_application().sorter.set_direction(SortingDirection.ASCENDING)
-        else:
-            button_icon_name = 'view-sort-descending-symbolic'
-            self.get_application().sorter.set_direction(SortingDirection.DESCENDING)
-        button.set_icon_name(button_icon_name)
+        css_provider = Gtk.CssProvider()
+        css_provider.load_from_resource("/net/hemish/kamm/style.css")
+        Gtk.StyleContext.add_provider_for_display(Gdk.Display.get_default(), css_provider, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION)
+

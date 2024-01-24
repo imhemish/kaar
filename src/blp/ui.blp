@@ -3,9 +3,9 @@ using Adw 1;
 using Gio 2.0;
 
 menu menu {
-    item ("About Kamm", "app.about")
     item ("Preferences", "app.preferences")
     item ("Keyboard Shortcuts", "win.show-help-overlay")
+    item ("About Kamm", "app.about")
 }
 
 template $KammWindow: Adw.ApplicationWindow {
@@ -81,53 +81,6 @@ template $KammWindow: Adw.ApplicationWindow {
                             name: "complete";
                             title: "Complete";
                             icon-name: "object-select-symbolic";
-                        }
-                    }
-
-                    Gtk.Separator {
-                        vexpand: true;
-
-                        styles [
-                            "spacer"
-                        ]
-                    }
-
-                    Gtk.Label {
-                        label: "Sort by";
-                        halign: start;
-                        margin-start: 15;
-                    }
-
-                    Gtk.Box {
-                        hexpand: true;
-                        valign: end;
-                        orientation: horizontal;
-                        spacing: 5;
-                        margin-bottom: 15;
-                        margin-start: 15;
-
-                        DropDown sorting_dropdown {
-                            valign: start;
-
-                            model: Gtk.StringList {
-                                strings [
-                                    "Description",
-                                    "Due Date",
-                                    "Creation Date",
-                                    "Completion Date"
-                                ]
-                            };
-                        }
-
-                        Gtk.Button sorting_direction_button {
-                            icon-name: "view-sort-descending-symbolic";
-                            valign: end;
-                        }
-
-                        Gtk.Separator {
-                            styles [
-                                "spacer"
-                            ]
                         }
                     }
                 }

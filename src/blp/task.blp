@@ -2,7 +2,7 @@ using Gtk 4.0;
 using Adw 1;
 
 template $TaskStack: Gtk.Stack {
-    styles ["frame"]
+    styles ["task"]
     Gtk.StackPage {
         name: "edit";
 
@@ -15,8 +15,6 @@ template $TaskStack: Gtk.Stack {
         name: "view";
 
         child: Gtk.Box {
-            margin-top: 5;
-            margin-bottom: 5;
             orientation: vertical;
             spacing: 5;
 
@@ -25,6 +23,7 @@ template $TaskStack: Gtk.Stack {
                 selection-mode: none;
                 halign: end;
                 hexpand: true;
+                vexpand: true;
 
 
                 
@@ -40,7 +39,9 @@ template $TaskStack: Gtk.Stack {
 
                 Gtk.Label task_label {
                     margin-start: 10;
-                    halign: start;
+                    wrap: true;
+                    lines: 1;
+                    
                 }
 
                 Gtk.Separator {
@@ -61,12 +62,8 @@ template $TaskStack: Gtk.Stack {
                 halign: end;
                 hexpand: true;
                 orientation: vertical;
+                vexpand: true;
 
-                Gtk.Box {
-                    Gtk.Label {
-                        label: "dates";
-                    }
-                }
             }
         };
     }

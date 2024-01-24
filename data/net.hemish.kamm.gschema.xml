@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
+
+
 <schemalist gettext-domain="kamm">
 	<schema id="net.hemish.kamm" path="/net/hemish/kamm/">
 		<key name="autosave" type="b">
@@ -28,6 +30,18 @@
 			<description>
 				Whether to hide tasks if h:1 is set
 			</description>
+		</key>
+		<key name="sorting-priority-first" type="s">
+			<default>"DUE_DATE"</default>
+		</key>
+		<key name="sorting-priority-second" type="s">
+			<default>"CREATION_DATE"</default>
+		</key>
+		<key name="sorting-priority-third" type="s">
+			<default>"DESCRIPTION"</default>
+		</key>
+		<key name="sorting-priority-fourth" type="s">
+			<default>"COMPLETION_DATE"</default>
 		</key>
 	</schema>
 </schemalist>

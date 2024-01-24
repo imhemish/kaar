@@ -1,113 +1,163 @@
 import gi
 
-from gi.repository import Gtk
+from gi.repository import Gtk, GObject
 from enum import Enum
-# from .model import TodoTask
+from .model import TodoTask
 from datetime import date
 from pytodotxt import Task
 
-# should be same order as in ui.blp file for sorting
+# should be same order as in gschema
 TaskSorting = Enum('TaskSorting', [
-    "DESCRIPTION",
     "DUE_DATE",
     "CREATION_DATE",
+    "DESCRIPTION",
     "COMPLETION_DATE"
     ])
 
-SortingDirection = Enum('SortingDirection', ["ASCENDING", "DESCENDING"])
+class DueDateSorter(Gtk.Sorter):
+    def __init__(self, *args):
+        super().__init__(*args)
+    
+    def do_get_order(self):
+        return Gtk.SorterOrder.PARTIAL
+    
+    def do_compare(self, item1: TodoTask, item2: TodoTask) -> Gtk.Ordering:
+        print("SDue Date Compare")
+        flag: Gtk.Ordering = Gtk.Ordering.EQUAL
+
+        if item1.attributes.get('due') == None and item2.attributes.get('due') == None:
+            pass # By default, EQUAL
+        elif item1.attributes.get('due') == None and item2.attributes.get('due') != None:
+            flag = Gtk.Ordering.LARGER
+        elif item1.attributes.get('due') != None and item2.attributes.get('due') == None:
+            flag = Gtk.Ordering.SMALLER
+        elif date.fromisoformat(item1.attributes.get('due')[0]) > date.fromisoformat(item2.attributes.get('due')[0]):
+            flag = Gtk.Ordering.LARGER
+        elif date.fromisoformat(item1.attributes.get('due')[0]) < date.fromisoformat(item2.attributes.get('due')[0]):
+            flag = Gtk.Ordering.SMALLER
+        
+        return flag
+
+class CreationDateSorter(Gtk.Sorter):
+    def __init__(self, *args):
+        super().__init__(*args)
+    
+    def do_get_order(self):
+        return Gtk.SorterOrder.PARTIAL
+    
+    def do_compare(self, item1: TodoTask, item2: TodoTask) -> Gtk.Ordering:
+        flag: Gtk.Ordering = Gtk.Ordering.EQUAL
+        print("Creation Date compare")
+        if item1.creation_date == None and item2.creation_date == None:
+            pass
+        elif item1.creation_date == None and item2.creation_date != None:
+            flag = Gtk.Ordering.SMALLER
+        elif item1.creation_date != None and item2.creation_date == None:
+            flag = Gtk.Ordering.LARGER
+        elif date.fromisoformat(item1.creation_date) > date.fromisoformat(item2.creation_date):
+            # The task which has earlier creation date, ie. was created a long time ago
+            # ought to be completed first, its a little opinionated, but ok
+            flag = Gtk.Ordering.SMALLER
+        elif date.fromisoformat(item1.creation_date) < date.fromisoformat(item2.creation_date):
+            flag = Gtk.Ordering.LARGER
+        
+        return flag
+
+class CompletionDateSorter(Gtk.Sorter):
+    def __init__(self, *args):
+        super().__init__(*args)
+    
+    def do_get_order(self):
+        return Gtk.SorterOrder.PARTIAL
+    
+    def do_compare(self, item1: TodoTask, item2: TodoTask) -> Gtk.Ordering:
+        print("Completion Date compare")
+        flag: Gtk.Ordering = Gtk.Ordering.EQUAL
+        if item1.completion_date == None and item2.completion_date == None:
+            pass
+        elif item1.creation_date == None and item2.completion_date != None:
+            flag = Gtk.Ordering.SMALLER
+        elif item1.completion_date != None and item2.completion_date == None:
+            flag = Gtk.Ordering.LARGER
+        elif date.fromisoformat(item1.completion_date) > date.fromisoformat(item2.completion_date):
+            # The task which has later completion date, ie. was just completed
+            # would be shown first
+            flag = Gtk.Ordering.LARGER
+        elif date.fromisoformat(item1.completion_date) < date.fromisoformat(item2.completion_date):
+            flag = Gtk.Ordering.SMALLER
+        
+        return flag
+
+# Ideally we should be using a Gtk.StringSorter for sorting description because
+# it efficiently and correctly sortes string including non-latin unicode characters
+# But it requires use of Gtk.Expression which is broken in PyGObject
+# See https://gitlab.gnome.org/GNOME/pygobject/-/issues/457
+# (I think its fixed? but i dont know how to implement it)
+class DescriptionSorter(Gtk.Sorter):
+    def __init__(self):
+        super().__init__()
+    def do_get_order(self):
+        return Gtk.SorterOrder.PARTIAL
+    
+    def do_compare(self, item1: TodoTask, item2: TodoTask) -> Gtk.Ordering:
+        print("Description compare")
+        flag: Gtk.Ordering = Gtk.Ordering.EQUAL
+        item1_description = item1.bare_description()
+        item2_description = item2.bare_description()
+        if item1_description == None and item2_description == None:
+            pass
+        elif item1_description == None and item2_description != None:
+            flag = Gtk.Ordering.SMALLER
+        elif item1_description != None and item2.description == None:
+            flag = Gtk.Ordering.LARGER
+        elif item1_description > item2_description:
+            flag = flag = Gtk.Ordering.LARGER
+        elif item1_description < item2_description:
+            flag = flag = Gtk.Ordering.SMALLER
+        return flag
 
 class TaskSorter(Gtk.Sorter):
-    # Setting defaults
-    current_sorting: TaskSorting = TaskSorting.DUE_DATE
-    # Default direction is descending because generally you ought
-    # to complete tasks in reverse priority
 
-    def __init__(self, direction: SortingDirection = SortingDirection.DESCENDING):
+    def __init__(self, sorting_priority):
         super().__init__()
-        self.direction = direction
-    
-    def set_direction(self, direction: SortingDirection):
-        self.direction = direction
-
+        self.multi_sorter = Gtk.MultiSorter()
+        self.sorting_priority = sorting_priority
+        for i in self.sorting_objects_from_sorting_priority(self.sorting_priority):
+            self.multi_sorter.append(i)
         self.changed(Gtk.SorterChange.DIFFERENT)
+        
+
+    @staticmethod
+    def sorting_objects_from_sorting_priority(sorting_priority):
+        sorters = []
+        for i in sorting_priority:
+            if i == TaskSorting.DUE_DATE:
+                sorters.append(DueDateSorter())
+            elif i == TaskSorting.CREATION_DATE:
+                sorters.append(CreationDateSorter())
+            elif i == TaskSorting.DESCRIPTION:
+                sorters.append(DescriptionSorter())
+            elif i == TaskSorting.COMPLETION_DATE:
+                sorters.append(CompletionDateSorter())
+        return sorters
+
     
-    def set_sorting(self, new_sorting: TaskSorting) -> None:
-        self.current_sorting = new_sorting
-        print("New sorting: {}".format(self.current_sorting))
+    def set_sorting_priority(self, new_sorting_priority) -> None:
+        self.sorting_priority = new_sorting_priority
+        print("New sorting: {}".format(self.sorting_priority))
+        
+        for i in range(self.multi_sorter.get_n_items()):
+            self.multi_sorter.remove(i)
+        for i in self.sorting_objects_from_sorting_priority(self.sorting_priority):
+            self.multi_sorter.append(i)
 
         # Notify to models that sorting algorithm has changed
         self.changed(Gtk.SorterChange.DIFFERENT)
     
     # Overriding Gtk.Sorter.compare method
     def do_compare(self, item1, item2) -> Gtk.Ordering:
-        flag: Gtk.Ordering = Gtk.Ordering.EQUAL
+        print("Running compare function for {} and {}".format(item1, item2))
+        return self.multi_sorter.compare(item1, item2)
 
-        if self.current_sorting == TaskSorting.DESCRIPTION:
-            # TODO: Add preference for case sensitive description filtering
-            if item1.bare_description().lower() > item2.bare_description().lower():
-                flag = Gtk.Ordering.LARGER
-            elif item1.bare_description().lower() < item2.bare_description().lower():
-                flag = Gtk.Ordering.SMALLER
-        
-        elif self.current_sorting == TaskSorting.CREATION_DATE:
-
-            # If some task does not have a creation date, then the other gets priority
-            if item1.creation_date == None:
-                if item2.creation_date == None:
-                    # Flag remains Gtk.Ordering.EQUAL
-                    pass
-                else:
-                    flag = Gtk.Ordering.SMALLER
-            elif date.fromisoformat(item1.creation_date) > date.fromisoformat(item2.creation_date):
-                flag = Gtk.Ordering.LARGER
-            elif date.fromisoformat(item1.creation_date) < date.fromisoformat(item2.creation_date):
-                flag = Gtk.Ordering.SMALLER
-            else:
-                # A little bit opnionated here
-                # If creation date of each is equal, then I am comparing due date
-                if item1.attributes.get('due') == None:
-                    if item2.attributes.get('due') == None:
-                        pass
-                    else:
-                        flag = Gtk.Ordering.SMALLER
-                elif date.fromisoformat(item1.attributes.get('due')[0]) > date.fromisoformat(item2.attributes.get('due')[0]):
-                    flag = Gtk.Ordering.LARGER
-                elif date.fromisoformat(item1.attributes.get('due')[0]) < date.fromisoformat(item2.attributes.get('due')[0]):
-                    flag = Gtk.Ordering.SMALLER
-
-        elif self.current_sorting == TaskSorting.COMPLETION_DATE:
-            if item1.completion_date == None:
-                if item2.completion_date == None:
-                    pass
-                else:
-                    flag = Gtk.Ordering.SMALLER
-            elif date.fromisoformat(item1.completion_date) > date.fromisoformat(item2.completion_date):
-                flag = Gtk.Ordering.LARGER
-            elif date.fromisoformat(item1.completion_date) < date.fromisoformat(item2.completion_date):
-                flag = Gtk.Ordering.SMALLER
-        
-        elif self.current_sorting == TaskSorting.DUE_DATE:
-            print("Sorting on the basis of due date")
-            if item1.attributes.get('due') == None and item2.attributes.get('due') == None:
-                pass # By default, EQUAL
-            elif item1.attributes.get('due') == None and item2.attributes.get('due') != None:
-                flag = Gtk.Ordering.LARGER
-            elif item1.attributes.get('due') != None and item2.attributes.get('due') == None:
-                flag = Gtk.Ordering.SMALLER
-            elif date.fromisoformat(item1.attributes.get('due')[0]) > date.fromisoformat(item2.attributes.get('due')[0]):
-                flag = Gtk.Ordering.LARGER
-            elif date.fromisoformat(item1.attributes.get('due')[0]) < date.fromisoformat(item2.attributes.get('due')[0]):
-                flag = Gtk.Ordering.SMALLER
-        
-        if flag == Gtk.Ordering.SMALLER and self.direction == SortingDirection.ASCENDING:
-            flag = Gtk.Ordering.LARGER
-        elif flag == Gtk.Ordering.LARGER and self.direction == SortingDirection.ASCENDING:
-            flag = Gtk.Ordering.SMALLER
-        
-        return flag
-
-task1 = Task('due:2023-04-08')
-task2 = Task()
-
-sorter = TaskSorter()
-print(sorter.do_compare(task1, task2))
+    def do_get_order(self):
+        return Gtk.SorterOrder.PARTIAL

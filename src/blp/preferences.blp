@@ -28,11 +28,32 @@ template $KammPreferencesWindow: Adw.PreferencesWindow {
         }
 
         Adw.PreferencesGroup {
+            Adw.ExpanderRow {
+            title: "Sorting Priority";
+            [suffix]
+            Gtk.Box {
+                styles ["toolbar"]
+                orientation: horizontal;
+                Gtk.Button priority_up_button {icon-name: "go-up-symbolic";}
+                Gtk.Button priority_down_button {icon-name: "go-down-symbolic";}
+            }
+            Gtk.ListBox priority_list_box {
+                styles ["boxed-list"]
+            Adw.ActionRow {name: "DUE_DATE"; title: "DUE_DATE";}
+            Adw.ActionRow {name: "CREATION_DATE"; title: "CREATION_DATE";}
+            Adw.ActionRow {name: "DESCRIPTION"; title: "DESCRIPTION";}
+            Adw.ActionRow {name: "COMPLETION_DATE"; title: "COMPLETION_DATE";}
+            }
+        }
+        }
+        
+
+        Adw.PreferencesGroup {
             title: "Appearance";
 
             Adw.SwitchRow vertically_center_tasks {
                 title: "Vertically Center Tasks";
-                subtitle: "Whether to vertically center tasks or not in the tasks view (Requires restart)";
+                subtitle: "Whether to vertically center tasks or not in the tasks view";
             }
         }
     }

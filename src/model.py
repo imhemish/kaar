@@ -1,6 +1,6 @@
 import gi
 from pytodotxt import Task
-from gi.repository import GObject, Gtk, Adw, Gio
+from gi.repository import GObject, Gtk, Adw
 import datetime
 
 # This represents a single task row, which is actually made up of stack
@@ -80,7 +80,7 @@ class TaskFactory(Gtk.SignalListItemFactory):
         task_object: GObject.Object = list_item.get_item()
         task_stack.object = task_object
 
-        task_stack.task_label.set_label(task_object._duplicatedescription)
+        task_stack.task_label.set_label(task_object.duplicatedescription)
         task_object.bind_property("duplicatedescription", task_stack.task_label, "label")
 
         task_stack.set_visible_child_name(task_object.mode)
@@ -91,9 +91,6 @@ class TaskFactory(Gtk.SignalListItemFactory):
         if task_object.completed:
             task_stack.check_button.set_active(True)
         task_object.bind_property("completed", task_stack.check_button, "active", GObject.BindingFlags.BIDIRECTIONAL)
-
-        #task_stack.preview_row.set_subtitle(task_object.dates)
-        #task_object.bind_property("dates", task_stack.preview_row, "subtitle")
 
         if task_object.duplicatepriority != None: 
             task_stack.priority_label.set_label(task_object.duplicatepriority)
@@ -113,6 +110,7 @@ class TaskFactory(Gtk.SignalListItemFactory):
 # a subclass of pytodotxt.Task to be consumed by Gtk Widgets and GObjects
 class TodoTask(Task, GObject.Object):
     mode = GObject.Property(type=str, default="view")
+    __gtype_name__ = "TodoTask"
 
     def __init__(self, *args):
         super().__init__(*args)
@@ -120,7 +118,6 @@ class TodoTask(Task, GObject.Object):
         self.mode = 'view'
         self._line = str(self)
         self._dates = self.calculate_date_strings()
-        self._duplicatedescription = self.bare_description()
         self.tags = [*map(lambda x: "+"+x, self.projects), *map(lambda x: "@"+x, self.contexts)]
         
 
@@ -134,7 +131,7 @@ class TodoTask(Task, GObject.Object):
     def line(self, value):
         self.parse(value)
         self._line = str(self)
-        self.duplicatedescription = self.bare_description()
+        self.notify("duplicatedescription")
         self.completed = self.is_completed
         self._dates = self.calculate_date_strings() # Doesnt matter what value you pass here
         self.duplicatepriority = self.priority
@@ -142,7 +139,6 @@ class TodoTask(Task, GObject.Object):
     
     @GObject.Property(type=str)
     def duplicatedescription(self):
-        self._duplicatedescription = self.bare_description()
         return self.bare_description()
 
     @GObject.Property(type=bool, default=False)
@@ -152,10 +148,6 @@ class TodoTask(Task, GObject.Object):
     @completed.setter
     def completed(self, value):
         self.is_completed = value
-    
-    @duplicatedescription.setter
-    def duplicatedescription(self, value):
-        self._duplicatedescription = value
 
     @GObject.Property(type=str)
     def duplicatepriority(self):
