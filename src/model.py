@@ -18,11 +18,13 @@ class TaskStack(Gtk.Stack):
     def create_flow_box_item(self, object: str) -> Gtk.Box:
         print("create function was called")
         box = Gtk.Box()
-        box.set_valign(Gtk.Align.END)
         box.set_hexpand(False)
         box.add_css_class("tag")
         box.add_css_class("osd")
-        box.append(Gtk.Label.new(object))
+        label = Gtk.Label.new(object)
+        label.set_hexpand(False)
+        label.set_halign(Gtk.Align.CENTER)
+        box.append(label)
         return box
     
     def __init__(self, **kwargs):
@@ -44,7 +46,7 @@ class TaskStack(Gtk.Stack):
             try:
                 # Sometimes get_ancestor causes error because the widget sometimes
                 # are disowned, that's why a try
-                app = self.get_ancestor(Adw.ApplicationWindow).get_application()
+                app: Adw.Application = self.get_ancestor(Adw.ApplicationWindow).get_application()
             except:
                 pass
 
@@ -57,10 +59,13 @@ class TaskStack(Gtk.Stack):
             self.dates_flow_box.remove_all()
             for date in self.object._dates:
                 self.dates_flow_box.append(self.create_flow_box_item(date))
-            # Save the file if 'autosave' gsetting is True
-            # this block of code should necessarily be after setting self.object.line
-            # so that we save the new value, otherwise older values will be saved
+            
             try:
+                app.props.active_window.update_projects_and_contexts_filters()
+
+                # Save the file if 'autosave' gsetting is True
+                # this should necessarily be after setting self.object.line
+                # so that we save the new value, otherwise older values will be saved
                 app.save_if_required()
             except:
                 pass

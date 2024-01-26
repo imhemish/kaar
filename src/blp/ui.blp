@@ -43,12 +43,14 @@ template $KaarWindow: Adw.ApplicationWindow {
 
                     [start]
                     Gtk.ToggleButton {
-                        icon-name: "view-list-symbolic";
+                        icon-name: "view-dual-symbolic";
                         active: bind sidebar_button.active bidirectional;
                     }
                 }
 
-                Gtk.Box {
+                Gtk.ScrolledWindow {
+                    Gtk.Box {
+                    vexpand: true;
                     orientation: vertical;
                     spacing: 15;
 
@@ -83,6 +85,32 @@ template $KaarWindow: Adw.ApplicationWindow {
                             icon-name: "object-select-symbolic";
                         }
                     }
+
+                    Gtk.Label {
+                        label: "Projects";
+                        halign: start;
+                        margin-start: 15;
+                        styles ["heading"]
+                    }
+
+                    Gtk.ListBox projects_box {
+                        styles ["navigation-sidebar"]
+                        selection-mode: multiple;
+
+                    }
+
+                    Gtk.Label {
+                        label: "Contexts";
+                        halign: start;
+                        margin-start: 15;
+                        styles ["heading"]
+                    }
+
+                    Gtk.ListBox contexts_box {
+                        styles ["navigation-sidebar"]
+                        selection-mode: multiple;
+                    }
+                }
                 }
             }
         };
@@ -101,7 +129,7 @@ template $KaarWindow: Adw.ApplicationWindow {
 
                 [start]
                 Gtk.ToggleButton sidebar_button {
-                    icon-name: "view-list-symbolic";
+                    icon-name: "view-dual-symbolic";
                     active: bind split_view.show-sidebar;
                     visible: bind split_view.show-sidebar inverted;
                 }

@@ -2,8 +2,8 @@
 <component type="desktop">
   <!--Created with jdAppStreamEdit 8.0-->
   <id>net.hemish.kaar</id>
-  <name></name>
-  <summary></summary>
+  <name>Kaar</name>
+  <summary>todo.txt based To-Do app</summary>
   <developer_name>Hemish</developer_name>
   <launchable type="desktop-id">net.hemish.kaar.desktop</launchable>
   <metadata_license>CC0-1.0</metadata_license>
@@ -20,6 +20,7 @@
     <category>Utility</category>
     <category>TextTools</category>
     <category>GNOME</category>
+    <category>GTK</category>
   </categories>
   <requires>
     <internet>offline-only</internet>
@@ -31,4 +32,15 @@
     <internet>offline-only</internet>
   </supports>
   <content_rating type="oars-1.1"/>
+  <keywords>
+    <keyword>todo.txt</keyword>
+    <keyword>todotxt</keyword>
+    <keyword>text</keyword>
+    <keyword>tasks</keyword>
+    <keyword>work</keyword>
+  </keywords>
+  <custom>
+    <value key="Purism::form_factor">workstation</value>
+    <value key="Purism::form_factor">mobile</value>
+  </custom>
 </component>

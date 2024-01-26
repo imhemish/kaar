@@ -19,14 +19,10 @@ template $TaskStack: Gtk.Stack {
             spacing: 5;
 
             Gtk.FlowBox tags_flow_box {
-                orientation: vertical;
+                orientation: horizontal;
+                halign: fill;
                 selection-mode: none;
-                halign: end;
-                hexpand: true;
                 vexpand: true;
-
-
-                
             }
 
             Gtk.Box {
@@ -60,7 +56,6 @@ template $TaskStack: Gtk.Stack {
             Gtk.FlowBox dates_flow_box {
                 selection-mode: none;
                 halign: end;
-                hexpand: true;
                 orientation: vertical;
                 vexpand: true;
 

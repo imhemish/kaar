@@ -208,6 +208,7 @@ class KaarApplication(Adw.Application):
     def delete_task(self, *args):
         index = self.props.active_window.list_view.get_model().get_selected()
         self.list_store.remove(index)
+        self.props.active_window.update_projects_and_contexts_filters()
         self.save_if_required()
     
     def complete_task(self, *args):

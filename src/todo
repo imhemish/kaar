@@ -1,6 +1,8 @@
 TODO: improve sorting
 
-TODO: add filters via contexts and projects, and due dates
+TODO: improve projects and contexts filtering UI
+
+TODO: show a placeholder when single selection mode is empty, via stack
 
 TODO: improve search functionality
 
