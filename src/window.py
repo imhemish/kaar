@@ -17,20 +17,20 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-from gi.repository import Adw, Gtk, Gio, Gdk
+from gi.repository import Adw, Gtk, Gio
 from .model import TaskFactory, TodoTask
+from .tab import TabChild
 
 @Gtk.Template(resource_path='/net/hemish/kaar/blp/ui.ui')
 class KaarWindow(Adw.ApplicationWindow):
     __gtype_name__ = 'KaarWindow'
-    list_view: Gtk.ListView = Gtk.Template.Child()
     search_entry: Gtk.SearchEntry = Gtk.Template.Child()
     search_bar: Gtk.SearchBar = Gtk.Template.Child()
     save_button: Gtk.Button = Gtk.Template.Child()
-    progress_bar: Gtk.ProgressBar = Gtk.Template.Child()
     filters_box: Gtk.ListBox = Gtk.Template.Child()
     projects_box: Gtk.ListBox = Gtk.Template.Child()
     contexts_box: Gtk.ListBox = Gtk.Template.Child()
+    tab_view : Adw.TabView = Gtk.Template.Child()
 
     # Defining models for projects and contexts box which provide the filters
     projects_model: Gtk.StringList = Gtk.StringList()
@@ -38,34 +38,30 @@ class KaarWindow(Adw.ApplicationWindow):
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
+
         app = self.get_application()
         self.settings: Gio.Settings = app.settings
 
-        # Initially filter out the tasks
-        app.tasks_filter.changed(Gtk.FilterChange.DIFFERENT)
+        file = self.settings.get_string("uri")
 
-        if self.settings.get_boolean("vertically-center-tasks"):
-            self.list_view.set_valign(Gtk.Align.CENTER)
-        
-        # args[1] is the name of key received from changed signal which is "vertically-center-tasks" itself
-        self.settings.connect("changed::vertically-center-tasks", lambda *args: self.list_view.set_valign(Gtk.Align.CENTER) if self.settings.get_boolean(args[1]) else self.list_view.set_valign(Gtk.Align.START))
-
+        self.tab_view.append(TabChild(file, self.settings, self)).set_title(file.split("/")[-1])
+        self.tab_view.append(TabChild(file, self.settings, self))
         self.settings.bind("autosave", self.save_button, "visible", Gio.SettingsBindFlags.INVERT_BOOLEAN)
-        
-        self.list_view.set_model(self.get_application().single_selection)
-        self.list_view.set_factory(TaskFactory())
 
-        self.search_entry.connect("search-changed", lambda entry: self.get_application().search_filter.changed(Gtk.FilterChange.DIFFERENT))
+        self.tab_view.connect("notify::selected-page", lambda *args: self.update_projects_and_contexts_filters())
+        
+
+        self.search_entry.connect("search-changed", lambda entry: self.tab_view.get_selected_page().get_child().search_filter.changed(Gtk.FilterChange.DIFFERENT))
 
         self.search_bar.set_key_capture_widget(self)
-        self.list_view.remove_css_class("view")
 
-        self.filters_box.connect("row-selected", lambda *args: self.get_application().filtering.set_current_filtering(args[1].get_name()))
-        self.contexts_box.connect("selected-rows-changed", lambda *args: self.get_application().filtering.set_contexts([row.get_title() for row in args[0].get_selected_rows()]))
-        self.projects_box.connect("selected-rows-changed", lambda *args: self.get_application().filtering.set_projects([row.get_title() for row in args[0].get_selected_rows()]))
+        ######## List of contexts and projects in sidebar for filtering ########
+        self.filters_box.connect("row-selected", lambda *args: self.tab_view.get_selected_page().get_child().filtering.set_current_filtering(args[1].get_name()))
+        self.contexts_box.connect("selected-rows-changed", lambda *args: self.tab_view.get_selected_page().get_child().filtering.set_contexts([row.get_title() for row in args[0].get_selected_rows()]))
+        self.projects_box.connect("selected-rows-changed", lambda *args: self.tab_view.get_selected_page().get_child().filtering.set_projects([row.get_title() for row in args[0].get_selected_rows()]))
 
-        self.contexts_box.connect("unselect-all", lambda *args: self.get_application().filtering.set_contexts([]))
-        self.projects_box.connect("unselect-all", lambda *args: self.get_application().filtering.set_projects([]))
+        self.contexts_box.connect("unselect-all", lambda *args: self.tab_view.get_selected_page().get_child().filtering.set_contexts([]))
+        self.projects_box.connect("unselect-all", lambda *args: self.tab_view.get_selected_page().get_child().filtering.set_projects([]))
         
         # Select first row, i.e. All Tasks
         self.filters_box.select_row(self.filters_box.get_row_at_index(0))
@@ -74,10 +70,7 @@ class KaarWindow(Adw.ApplicationWindow):
         self.projects_box.bind_model(self.projects_model, self.create_flow_box_item, None, None)
 
         self.update_projects_and_contexts_filters()
-
-        css_provider = Gtk.CssProvider()
-        css_provider.load_from_resource("/net/hemish/kaar/style.css")
-        Gtk.StyleContext.add_provider_for_display(Gdk.Display.get_default(), css_provider, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION)
+        ############################################################################
 
     def create_flow_box_item(self, string_obj: Gtk.StringObject, *args) -> Adw.ActionRow:
         row: Adw.ActionRow = Adw.ActionRow()
@@ -85,13 +78,13 @@ class KaarWindow(Adw.ApplicationWindow):
         return row
     
     def update_projects_and_contexts_filters(self) -> None:
-        for k in range(self.contexts_model.get_n_items()):
+        for k in range(self.contexts_model.get_n_items()+1):
             self.contexts_model.remove(0)
         
-        for k in range(self.projects_model.get_n_items()):
+        for k in range(self.projects_model.get_n_items()+1):
             self.projects_model.remove(0)
 
-        store: Gio.ListStore = self.get_application().list_store
+        store: Gio.ListStore = self.tab_view.get_selected_page().get_child().list_store
 
         projects = set()
         contexts = set()

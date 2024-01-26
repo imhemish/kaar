@@ -5,9 +5,16 @@
 	<schema id="net.hemish.kaar" path="/net/hemish/kaar/">
 		<key name="autosave" type="b">
 			<default>true</default>
-			<summary>Autosave</summary>
+			<summary>Auto Save</summary>
 			<description>
-				Whether to autosave the file or not, when the tasks are changed
+				Whether to autosave the files or not, when the tasks are changed
+			</description>
+		</key>
+		<key name="restore-session" type="b">
+			<default>true</default>
+			<summary>Restore Session</summary>
+			<description>
+				Whether to try to restore files opened in last session or not
 			</description>
 		</key>
 		<key name="uri" type="s">

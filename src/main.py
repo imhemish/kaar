@@ -24,7 +24,7 @@ import time
 gi.require_version('Gtk', '4.0')
 gi.require_version('Adw', '1')
 
-from gi.repository import Gtk, Gio, Adw
+from gi.repository import Gtk, Gio, Adw, Gdk
 from .window import KaarWindow
 from .preferences_window import KaarPreferencesWindow, converter
 from .model import TodoTask
@@ -33,18 +33,8 @@ from .filtering import Filtering
 from .sorting import TaskSorter, TaskSorting
 import threading
 
-# copied from Linux Mint's code
-# a decorator that makes a function run in background via threading
-def _async(func):
-    def wrapper(*args, **kwargs):
-        thread = threading.Thread(target=func, args=args, kwargs=kwargs)
-        thread.daemon = True
-        thread.start()
-        return thread
-    return wrapper
-
 class KaarApplication(Adw.Application):
-    """The main application singleton class."""
+    settings: Gio.Settings
 
     def __init__(self):
         print("application initiated")
@@ -57,107 +47,18 @@ class KaarApplication(Adw.Application):
         self.create_action('edit', self.edit_task, ['<primary>e', 'F2'])
         self.create_action('delete', self.delete_task, ['<primary>d', 'Delete'])
         self.create_action('complete', self.complete_task, ['<primary>x'])
-        self.create_action('save', self.save_file, ['<primary>s'])
-        self.create_action('reload', self.reload_file, ['<primary>r'])
+        #self.create_action('save', self.save_file, ['<primary>s'])
+        #self.create_action('reload', self.reload_file, ['<primary>r'])
         self.create_action('hide', self.hide_tasks, ['<primary>h'])
 
-        print("actions created")
+        css_provider = Gtk.CssProvider()
+        css_provider.load_from_resource("/net/hemish/kaar/style.css")
+        Gtk.StyleContext.add_provider_for_display(Gdk.Display.get_default(), css_provider, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION)
 
         self.settings: Gio.Settings = Gio.Settings('net.hemish.kaar')
 
         self.should_autosave = self.settings.get_boolean("autosave")
 
-        self.list_store = Gio.ListStore()
-
-        self.file_uri = self.settings.get_string("uri")
-
-        self.search_filter = Gtk.CustomFilter()
-        self.tasks_filter = Gtk.CustomFilter()
-        self.search_model = Gtk.FilterListModel()
-        self.tasks_filter_model = Gtk.FilterListModel()
-        self.search_model.set_model(self.list_store)
-        self.search_model.set_filter(self.search_filter)
-        self.tasks_filter_model.set_model(self.search_model)
-        self.tasks_filter_model.set_filter(self.tasks_filter)
-        self.tasks_sorting_model = Gtk.SortListModel()
-
-        sorting_priority = []
-        for i in range(4):
-            sorting_priority.append(TaskSorting[self.settings.get_string(converter(i))])
-
-        print(sorting_priority)
-
-        self.sorter = TaskSorter(sorting_priority=sorting_priority)
-        self.tasks_sorting_model.set_sorter(self.sorter)
-        self.tasks_sorting_model.set_model(self.tasks_filter_model)
-        self.single_selection = Gtk.SingleSelection()
-        self.single_selection.set_model(self.tasks_sorting_model)
-        
-        self.filtering: Filtering = Filtering(self, lambda: self.tasks_filter.changed(Gtk.FilterChange.DIFFERENT))
-        self.tasks_filter.set_filter_func(self.filtering.filter)
-
-        # When hidden tasks is toggled, automatically hide or unhide tasks depending upon whether h:1 is set or not
-        self.settings.connect("changed::hidden-tasks", lambda *args: self.tasks_filter.changed(Gtk.FilterChange.DIFFERENT))
-
-        for i in range(4):
-            self.settings.connect(f"changed::{converter(i)}", self.on_sorting_change)
-        #Initially loading file
-        print("reload file called")
-        self.reload_file()
-
-        print("file haas been loaded")
-
-    def on_sorting_change(self, *args):
-        sorting_priority = []
-        for i in range(4):
-            sorting_priority.append(TaskSorting[self.settings.get_string(converter(i))])
-        self.sorter.set_sorting_priority(sorting_priority)
-    def reload_file(self, *args):
-        print("hooney i was callee")
-        self.list_store.remove_all()
-        self.file_path = Gio.File.new_for_uri(self.file_uri).get_parse_name()
-        print(self.file_path)
-
-        self.todotxt = TodoTxt(self.file_path, parser=TodoTxtParser(task_type=TodoTask))
-        try:
-            print("trying")
-            self.todotxt.parse()
-            print("success")
-        except Exception as e:
-            print(e)
-        print(self.todotxt)
-        for task in self.todotxt.tasks:
-            print(task)
-            self.list_store.append(task)
-        # Reload filters
-        self.tasks_filter.changed(Gtk.FilterChange.DIFFERENT)
-        self.search_filter.changed(Gtk.FilterChange.DIFFERENT)
-    
-    def save_file(self, *args):
-        pb: Gtk.ProgressBar = self.props.active_window.progress_bar
-        pb.set_fraction(0)
-        pb.set_visible(True)
-
-        self.todotxt.tasks = []
-
-        @_async
-        def report_progress():
-            for i in range(10):
-                pb.set_fraction((i+1)/10)
-                time.sleep(0.03)
-            time.sleep(0.15)
-            pb.set_visible(False)
-
-        for item in self.list_store:
-            self.todotxt.tasks.append(item)
-
-        self.todotxt.save()
-
-        report_progress()
-    
-    def save_if_required(self):
-        if self.settings.get_boolean("autosave"):
-            self.save_file()
     
     def do_activate(self):
         print("window was activated")
@@ -170,7 +71,6 @@ class KaarApplication(Adw.Application):
         win = self.props.active_window
         if not win:
             win = KaarWindow(application=self)
-            self.search_filter.set_filter_func(lambda object: self.props.active_window.search_entry.get_text().lower() in str(object).lower())
             win.present()
 
     def on_about_action(self, widget, _):

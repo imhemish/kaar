@@ -6,7 +6,8 @@ blueprints = custom_target('blueprints',
   input: files(
    'blp/ui.blp',
    'blp/task.blp',
-   'blp/preferences.blp'
+   'blp/preferences.blp',
+   'blp/tab.blp'
   ),
   output: '.',
   command: [find_program('blueprint-compiler'), 'batch-compile', '@OUTPUT@', '@CURRENT_SOURCE_DIR@', '@INPUT@'],
@@ -44,7 +45,9 @@ kaar_sources = [
   'preferences_window.py',
   'model.py',
   'filtering.py',
-  'sorting.py'
+  'sorting.py',
+  'tab.py',
+  'pseudo_async.py'
 ]
 
 install_data(kaar_sources, install_dir: moduledir)

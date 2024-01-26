@@ -1,0 +1,37 @@
+using Gtk 4.0;
+using Adw 1;
+
+template $TabChild : Gtk.Box {
+
+    orientation: vertical;
+    hexpand: true;
+    vexpand: true;
+
+    Gtk.Overlay {
+        Gtk.ScrolledWindow {
+            Adw.ClampScrollable {
+                Gtk.ListView list_view {
+                    margin-start: 4;
+                    margin-end: 4;
+
+                    styles [
+                        "background"
+                    ]
+
+                    vexpand: true;
+                }
+            }
+        }
+
+        [overlay]
+        Gtk.ProgressBar progress_bar {
+            valign: start;
+            hexpand: true;
+            visible: false;
+
+            styles [
+                "osd"
+            ]
+        }
+    }
+}

@@ -10,21 +10,19 @@ menu menu {
 
 template $KaarWindow: Adw.ApplicationWindow {
     height-request: 400;
-    width-request: 280;
+    width-request: 285;
 
     Adw.Breakpoint {
-        condition ("max-width: 540")
+        condition ("max-width: 560")
 
         setters {
-            bottom_toolbar.visible: true;
-            headerbar_new.visible: false;
-            headerbar_edit.visible: false;
-            headerbar_delete.visible: false;
             split_view.collapsed: true;
         }
     }
 
-    Adw.OverlaySplitView split_view {
+    Adw.TabOverview { 
+        view: tab_view;
+        child: Adw.OverlaySplitView split_view {
         show-sidebar: bind sidebar_button.active;
         collapsed: false;
 
@@ -119,13 +117,16 @@ template $KaarWindow: Adw.ApplicationWindow {
             vexpand: true;
 
             [top]
-            Adw.HeaderBar {
+            Adw.HeaderBar headerbar {
+
                 title-widget: Adw.WindowTitle {
                     title: "Kaar";
                 };
+
                 styles [
                     "flat"
                 ]
+
 
                 [start]
                 Gtk.ToggleButton sidebar_button {
@@ -135,25 +136,9 @@ template $KaarWindow: Adw.ApplicationWindow {
                 }
 
                 [start]
-                Gtk.Button headerbar_delete {
-                    icon-name: "user-trash-symbolic";
-                    action-name: "app.delete";
-                    visible: true;
-                }
-
-                [start]
-                Gtk.Button headerbar_edit {
-                    halign: center;
-                    icon-name: "document-edit-symbolic";
-                    action-name: "app.edit";
-                    visible: true;
-                }
-
-                [start]
-                Gtk.Button headerbar_new {
-                    icon-name: "list-add-symbolic";
-                    action-name: "app.new";
-                    visible: true;
+                Gtk.Button save_button {
+                    icon-name: "document-save-symbolic";
+                    action-name: "win.save";
                 }
 
                 [end]
@@ -163,19 +148,15 @@ template $KaarWindow: Adw.ApplicationWindow {
                 }
 
                 [end]
-                Gtk.ToggleButton {
-                    icon-name: "system-search-symbolic";
-                    active: bind search_bar.search-mode-enabled bidirectional;
+                Adw.TabButton {
+                    view: tab_view;
+                    action-name: "overview.open";
                 }
 
-                [end]
-                Gtk.Button save_button {
-                    icon-name: "document-save-symbolic";
-                    action-name: "app.save";
-                }
+                
             }
 
-            [top]
+            [bottom]
             Gtk.SearchBar search_bar {
                 show-close-button: true;
 
@@ -184,16 +165,25 @@ template $KaarWindow: Adw.ApplicationWindow {
                 }
             }
 
+            [top]
+            Adw.TabBar {
+                view: tab_view;
+            }
+
             [bottom]
             Gtk.Box bottom_toolbar {
                 hexpand: true;
                 vexpand: true;
                 halign: center;
-                visible: false;
 
                 styles [
                     "toolbar"
                 ]
+
+                Gtk.ToggleButton {
+                    icon-name: "system-search-symbolic";
+                    active: bind search_bar.search-mode-enabled bidirectional;
+                }
 
                 Gtk.Button {
                     halign: center;
@@ -223,39 +213,10 @@ template $KaarWindow: Adw.ApplicationWindow {
                         "suggested-action"
                     ]
                 }
+
             }
 
-            content: Box {
-                orientation: vertical;
-
-                Gtk.Overlay {
-                    Gtk.ScrolledWindow {
-                        Adw.ClampScrollable {
-                            Gtk.ListView list_view {
-                                margin-start: 4;
-                                margin-end: 4;
-
-                                styles [
-                                    "background"
-                                ]
-
-                                vexpand: true;
-                            }
-                        }
-                    }
-
-                    [overlay]
-                    Gtk.ProgressBar progress_bar {
-                        valign: start;
-                        hexpand: true;
-                        visible: false;
-
-                        styles [
-                            "osd"
-                        ]
-                    }
-                }
-            };
+            content: Adw.TabView tab_view {};
         };
-    }
+    };}
 }
