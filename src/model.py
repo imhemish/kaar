@@ -21,6 +21,7 @@ class TaskStack(Gtk.Stack):
         label.set_hexpand(False)
         label.add_css_class("tag")
         label.add_css_class("osd")
+        label.set_halign(Gtk.Align.START)
         return label
     
     def __init__(self, **kwargs):
@@ -42,7 +43,7 @@ class TaskStack(Gtk.Stack):
             try:
                 # Sometimes get_ancestor causes error because the widget sometimes
                 # are disowned, that's why a try
-                app: Adw.Application = self.get_ancestor(Adw.ApplicationWindow).get_application()
+                window: Adw.ApplicationWindow = self.get_ancestor(Adw.ApplicationWindow)
             except:
                 pass
 
@@ -57,12 +58,12 @@ class TaskStack(Gtk.Stack):
                 self.dates_flow_box.append(self.create_flow_box_item(date))
             
             try:
-                app.props.active_window.update_projects_and_contexts_filters()
+                window.update_projects_and_contexts_filters()
 
                 # Save the file if 'autosave' gsetting is True
                 # this should necessarily be after setting self.object.line
                 # so that we save the new value, otherwise older values will be saved
-                app.save_if_required()
+                window.tab_view.get_selected_page().get_child().save_if_required()
             except:
                 pass
 

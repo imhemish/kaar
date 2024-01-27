@@ -31,13 +31,13 @@
             <child>
               <object class="GtkShortcutsShortcut">
                 <property name="title">Add new task</property>
-                <property name="action-name">app.new</property>
+                <property name="action-name">win.new</property>
               </object>
             </child>
             <child>
               <object class="GtkShortcutsShortcut">
                 <property name="title">Edit selected task</property>
-                <property name="action-name">app.edit</property>
+                <property name="action-name">win.edit</property>
               </object>
             </child>
             <child>
@@ -49,7 +49,7 @@
             <child>
               <object class="GtkShortcutsShortcut">
                 <property name="title">Mark selected task as complete</property>
-                <property name="action-name">app.complete</property>
+                <property name="action-name">win.complete</property>
               </object>
             </child>
             <child>
@@ -67,13 +67,13 @@
             <child>
               <object class="GtkShortcutsShortcut">
               <property name="title">Save</property>
-              <property name="action-name">app.save</property>
+              <property name="action-name">win.save</property>
               </object>
             </child>
             <child>
               <object class="GtkShortcutsShortcut">
               <property name="title">Reload</property>
-              <property name="action-name">app.reload</property>
+              <property name="action-name">win.reload</property>
               </object>
             </child>
           </object>

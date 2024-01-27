@@ -22,10 +22,11 @@ template $TaskStack: Gtk.Stack {
             spacing: 5;
 
             Gtk.FlowBox tags_flow_box {
-                orientation: horizontal;
+                orientation: vertical ;
                 selection-mode: none;
                 vexpand: true;
-                halign: center;
+                hexpand: false;
+                halign: start;
             }
 
             Gtk.Box {

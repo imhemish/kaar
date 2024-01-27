@@ -32,6 +32,7 @@ class KaarWindow(Adw.ApplicationWindow):
     projects_box: Gtk.ListBox = Gtk.Template.Child()
     contexts_box: Gtk.ListBox = Gtk.Template.Child()
     tab_view : Adw.TabView = Gtk.Template.Child()
+    tab_overview : Adw.TabOverview = Gtk.Template.Child()
     open_button: Gtk.Button = Gtk.Template.Child()
     status_open_button: Gtk.Button = Gtk.Template.Child()
 
@@ -75,8 +76,20 @@ class KaarWindow(Adw.ApplicationWindow):
 
         self.check_if_no_tabs_are_open()
         self.tab_view.connect("notify::n-pages", self.check_if_no_tabs_are_open)
+        self.tab_view.connect("notify::n-pages", self.save_session_details)
+
+        self.tab_overview.connect("create-tab", self.on_open_button)
 
         self.create_action("delete", self.delete_task, ['<primary>d', 'Delete'] )
+        self.create_action('new', self.new_task, ['<primary>n'])
+        self.create_action('edit', self.edit_task, ['<primary>e', 'F2'])
+        self.create_action('complete', self.complete_task, ['<primary>x'])
+        self.create_action('save', self.save_meta, ['<primary>s'])
+        self.create_action('reload', self.reload_meta, ['<primary>r'])
+
+        if self.settings.get_boolean("restore-session"):
+            for file_uri in self.settings.get_strv("files"):
+                self.get_application().open_file(Gio.File.new_for_uri(file_uri))
 
     def create_flow_box_item(self, string_obj: Gtk.StringObject, *args) -> Adw.ActionRow:
         row: Adw.ActionRow = Adw.ActionRow()
@@ -88,6 +101,12 @@ class KaarWindow(Adw.ApplicationWindow):
             self.root_stack.set_visible_child_name("status")
         else:
             self.root_stack.set_visible_child_name("main")
+    
+    def save_session_details(self, *args):
+        fileURIs = []
+        for page in self.tab_view.get_pages():
+            fileURIs.append(page.get_child().file)
+        self.settings.set_strv("files", fileURIs)
 
     def update_projects_and_contexts_filters(self) -> None:
         for k in range(self.contexts_model.get_n_items()+1):
@@ -133,11 +152,40 @@ class KaarWindow(Adw.ApplicationWindow):
         # The model is single selection model
         item = tabchild.list_view.get_model().get_selected_item()
         
-        if tabchild.list_store.find(item):
-            #tabchild.list_store.remove()
-            pass
+        found, position = tabchild.list_store.find(item)
+        if found:
+            tabchild.list_store.remove(position)
 
         self.update_projects_and_contexts_filters()
+        tabchild.save_if_required()
+    
+    def edit_task(self, *args):
+        object = self.tab_view.get_selected_page().get_child().list_view.get_model().get_selected_item()
+        if object.mode == 'view':
+            object.mode = "edit"
+        else:
+            object.mode = 'view'
+    
+    def new_task(self, *args):
+        task = TodoTask()
+        tabchild = self.tab_view.get_selected_page().get_child()
+        tabchild.list_store.append(task)
+
+        # FIXME: Scroll and select newly added task
+        #self.props.active_window.list_view.scroll_to(, Gtk.ListScrollFlags.SELECT)
+        
+        # Auto set the mode to edit on blank task
+        task.mode = 'edit'
+    
+    def complete_task(self, *args):
+        tabchild = self.tab_view.get_selected_page().get_child()
+        object = tabchild.list_view.get_model().get_selected_item()
+        if not object.completed:
+            object.completed = True
+        else:
+            object.completed = False
+        object.line = str(object)
+
         tabchild.save_if_required()
     
     def create_action(self, name, callback, shortcuts=None):
@@ -154,4 +202,10 @@ class KaarWindow(Adw.ApplicationWindow):
         self.add_action(action)
         if shortcuts:
             self.get_application().set_accels_for_action(f"win.{name}", shortcuts)
+    
+    def save_meta(self, *args):
+        self.tab_view.get_selected_page().get_child().save_file()
+    
+    def reload_meta(self, *args):
+        self.tab_view.get_selected_page().get_child().reload_file()
 

@@ -24,8 +24,9 @@ template $KaarWindow: Adw.ApplicationWindow {
         Gtk.StackPage {
             name: "main";
 
-            child: Adw.TabOverview {
+            child: Adw.TabOverview tab_overview {
                 view: tab_view;
+                enable-new-tab: true;
 
                 child: Adw.OverlaySplitView split_view {
                     show-sidebar: bind sidebar_button.active;
@@ -224,7 +225,7 @@ template $KaarWindow: Adw.ApplicationWindow {
                             Gtk.Button {
                                 halign: center;
                                 icon-name: "document-edit-symbolic";
-                                action-name: "app.edit";
+                                action-name: "win.edit";
                                 tooltip-text: "Edit Task";
 
                                 styles [
@@ -234,7 +235,7 @@ template $KaarWindow: Adw.ApplicationWindow {
 
                             Gtk.Button {
                                 icon-name: "list-add-symbolic";
-                                action-name: "app.new";
+                                action-name: "win.new";
                                 tooltip-text: "Add New Task";
 
                                 styles [
@@ -277,10 +278,11 @@ template $KaarWindow: Adw.ApplicationWindow {
 
                     Adw.StatusPage {
                         icon-name: "emblem-documents-symbolic";
-                        title: "No Files Here";
+                        title: "No Files Open";
 
                         child: Gtk.Button status_open_button {
                             label: "Open a File";
+                            halign: center;
 
                             styles [
                                 "pill",

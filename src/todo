@@ -8,4 +8,10 @@ TODO: improve search functionality
 
 TODO: internationalisation
 
-TODO: save session
+TODO: add a reload button
+
+TODO: read from Gfile itself to have support for non-local files
+
+TODO: notify user that file changed on disk
+
+TODO: remember last selected page on session save

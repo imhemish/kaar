@@ -134,7 +134,7 @@ class TabChild(Gtk.Box):
         self.search_filter.changed(Gtk.FilterChange.DIFFERENT)
     
     def save_file(self, *args):
-        pb: Gtk.ProgressBar = self.parent_window.progress_bar
+        pb: Gtk.ProgressBar = self.progress_bar
         pb.set_fraction(0)
         pb.set_visible(True)
 

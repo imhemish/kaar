@@ -41,11 +41,7 @@ class KaarApplication(Adw.Application):
         self.create_action('quit', lambda *_: self.quit(), ['<primary>q'])
         self.create_action('about', self.on_about_action)
         self.create_action('preferences', self.on_preferences_action)
-        self.create_action('new', self.new_task, ['<primary>n'])
-        self.create_action('edit', self.edit_task, ['<primary>e', 'F2'])
-        self.create_action('complete', self.complete_task, ['<primary>x'])
-        #self.create_action('save', self.save_file, ['<primary>s'])
-        #self.create_action('reload', self.reload_file, ['<primary>r'])
+        
         self.create_action('hide', self.hide_tasks, ['<primary>h'])
 
         self.settings: Gio.Settings = Gio.Settings('net.hemish.kaar')
@@ -97,33 +93,8 @@ class KaarApplication(Adw.Application):
         preferences = KaarPreferencesWindow(transient_for=self.props.active_window)
         preferences.present()
     
-    def new_task(self, *args):
-        task = TodoTask()
-        self.list_store.append(task)
-        # FIXME: the below function doesnt work with sorting functionality, as the new task is not added at end
-        # self.props.active_window.list_view.scroll_to(len(self.single_selection), Gtk.ListScrollFlags.SELECT)
-        
-        # Auto set the mode to edit on blank task
-        task.mode = 'edit'
-    
-    def edit_task(self, *args):
-        object = self.props.active_window.list_view.get_model().get_selected_item()
-        if object.mode == 'view':
-            object.mode = "edit"
-        else:
-            object.mode = 'view'
     
     
-    
-    def complete_task(self, *args):
-        object = self.props.active_window.list_view.get_model().get_selected_item()
-        if not object.completed:
-            object.completed = True
-        else:
-            object.completed = False
-        object.line = str(object)
-
-        self.save_if_required()
     
     def hide_tasks(self, *args):
         self.settings.set_boolean("hidden-tasks", not self.settings.get_boolean("hidden-tasks"))
