@@ -24,6 +24,7 @@ from .tab import TabChild
 @Gtk.Template(resource_path='/net/hemish/kaar/blp/ui.ui')
 class KaarWindow(Adw.ApplicationWindow):
     __gtype_name__ = 'KaarWindow'
+    root_stack: Gtk.Stack = Gtk.Template.Child()
     search_entry: Gtk.SearchEntry = Gtk.Template.Child()
     search_bar: Gtk.SearchBar = Gtk.Template.Child()
     save_button: Gtk.Button = Gtk.Template.Child()
@@ -31,6 +32,8 @@ class KaarWindow(Adw.ApplicationWindow):
     projects_box: Gtk.ListBox = Gtk.Template.Child()
     contexts_box: Gtk.ListBox = Gtk.Template.Child()
     tab_view : Adw.TabView = Gtk.Template.Child()
+    open_button: Gtk.Button = Gtk.Template.Child()
+    status_open_button: Gtk.Button = Gtk.Template.Child()
 
     # Defining models for projects and contexts box which provide the filters
     projects_model: Gtk.StringList = Gtk.StringList()
@@ -42,16 +45,14 @@ class KaarWindow(Adw.ApplicationWindow):
         app = self.get_application()
         self.settings: Gio.Settings = app.settings
 
-        file = self.settings.get_string("uri")
+        for i in [self.open_button, self.status_open_button]:
+            i.connect("clicked", self.on_open_button)
 
-        self.tab_view.append(TabChild(file, self.settings, self)).set_title(file.split("/")[-1])
-        self.tab_view.append(TabChild(file, self.settings, self))
         self.settings.bind("autosave", self.save_button, "visible", Gio.SettingsBindFlags.INVERT_BOOLEAN)
 
         self.tab_view.connect("notify::selected-page", lambda *args: self.update_projects_and_contexts_filters())
         
-
-        self.search_entry.connect("search-changed", lambda entry: self.tab_view.get_selected_page().get_child().search_filter.changed(Gtk.FilterChange.DIFFERENT))
+        self.search_entry.connect("search-changed", self.on_search_changed)
 
         self.search_bar.set_key_capture_widget(self)
 
@@ -72,31 +73,85 @@ class KaarWindow(Adw.ApplicationWindow):
         self.update_projects_and_contexts_filters()
         ############################################################################
 
+        self.check_if_no_tabs_are_open()
+        self.tab_view.connect("notify::n-pages", self.check_if_no_tabs_are_open)
+
+        self.create_action("delete", self.delete_task, ['<primary>d', 'Delete'] )
+
     def create_flow_box_item(self, string_obj: Gtk.StringObject, *args) -> Adw.ActionRow:
         row: Adw.ActionRow = Adw.ActionRow()
         row.set_title(string_obj.get_string())
         return row
     
+    def check_if_no_tabs_are_open(self, *args):
+        if self.tab_view.get_n_pages() == 0:
+            self.root_stack.set_visible_child_name("status")
+        else:
+            self.root_stack.set_visible_child_name("main")
+
     def update_projects_and_contexts_filters(self) -> None:
         for k in range(self.contexts_model.get_n_items()+1):
             self.contexts_model.remove(0)
         
         for k in range(self.projects_model.get_n_items()+1):
             self.projects_model.remove(0)
-
-        store: Gio.ListStore = self.tab_view.get_selected_page().get_child().list_store
-
-        projects = set()
-        contexts = set()
-
-        for i in range(store.get_n_items()):
-            task: TodoTask = store.get_item(i)
-            projects = {*projects, *task.projects}
-            contexts = {*contexts, *task.contexts}
         
-        for j in projects:
-            self.projects_model.append(j)
-        for j in contexts:
-            self.contexts_model.append(j)
+        page = self.tab_view.get_selected_page()
+
+        if page != None:
+            store: Gio.ListStore = page.get_child().list_store
+
+            projects = set()
+            contexts = set()
+
+            for i in range(store.get_n_items()):
+                task: TodoTask = store.get_item(i)
+                projects = {*projects, *task.projects}
+                contexts = {*contexts, *task.contexts}
             
+            for j in projects:
+                self.projects_model.append(j)
+            for j in contexts:
+                self.contexts_model.append(j)
+    
+    def on_open_button(self, *args):
+        def callback(source, res):
+            res: Gio.File = self.file_dialog.open_finish(res)
+            self.get_application().open_file(res)
+        
+        self.file_dialog = Gtk.FileDialog()
+        res = self.file_dialog.open(parent=self, callback=callback)
+    
+    def on_search_changed(self, entry):
+        page = self.tab_view.get_selected_page()
+        if page != None:
+            page.get_child().search_filter.changed(Gtk.FilterChange.DIFFERENT)
+    
+    def delete_task(self, *args):
+        tabchild = self.tab_view.get_selected_page().get_child()
+
+        # The model is single selection model
+        item = tabchild.list_view.get_model().get_selected_item()
+        
+        if tabchild.list_store.find(item):
+            #tabchild.list_store.remove()
+            pass
+
+        self.update_projects_and_contexts_filters()
+        tabchild.save_if_required()
+    
+    def create_action(self, name, callback, shortcuts=None):
+        """Add an application action.
+
+        Args:
+            name: the name of the action
+            callback: the function to be called when the action is
+              activated
+            shortcuts: an optional list of accelerators
+        """
+        action = Gio.SimpleAction.new(name, None)
+        action.connect("activate", callback)
+        self.add_action(action)
+        if shortcuts:
+            self.get_application().set_accels_for_action(f"win.{name}", shortcuts)
 

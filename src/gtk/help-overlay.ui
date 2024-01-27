@@ -43,7 +43,7 @@
             <child>
               <object class="GtkShortcutsShortcut">
                 <property name="title">Delete selected task</property>
-                <property name="action-name">app.delete</property>
+                <property name="action-name">win.delete</property>
               </object>
             </child>
             <child>

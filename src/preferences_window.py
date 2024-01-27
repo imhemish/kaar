@@ -27,9 +27,8 @@ sorting_strings = {
 @Gtk.Template(resource_path='/net/hemish/kaar/blp/preferences.ui')
 class KaarPreferencesWindow(Adw.PreferencesWindow):
     __gtype_name__ = 'KaarPreferencesWindow'
-    location: Adw.ActionRow = Gtk.Template.Child()
     autosave: Adw.SwitchRow = Gtk.Template.Child()
-    open_button: Gtk.Button = Gtk.Template.Child()
+    restore_session: Adw.SwitchRow = Gtk.Template.Child()
     vertically_center_tasks: Adw.SwitchRow = Gtk.Template.Child()
     hidden_tasks: Adw.SwitchRow = Gtk.Template.Child()
     priority_up_button: Gtk.Button = Gtk.Template.Child()
@@ -46,6 +45,9 @@ class KaarPreferencesWindow(Adw.PreferencesWindow):
         self.autosave.set_active(self.settings.get_boolean("autosave"))
         self.settings.bind("autosave", self.autosave, "active", Gio.SettingsBindFlags.DEFAULT)
 
+        self.restore_session.set_active(self.settings.get_boolean("restore-session"))
+        self.settings.bind("restore-session", self.restore_session, "active", Gio.SettingsBindFlags.DEFAULT)
+
 
         self.vertically_center_tasks.set_active(self.settings.get_boolean("vertically-center-tasks"))
         self.settings.bind("vertically-center-tasks", self.vertically_center_tasks, "active", Gio.SettingsBindFlags.DEFAULT)
@@ -54,9 +56,6 @@ class KaarPreferencesWindow(Adw.PreferencesWindow):
         self.hidden_tasks.set_active(self.settings.get_boolean("hidden-tasks"))
         self.settings.bind("hidden-tasks", self.hidden_tasks, "active", Gio.SettingsBindFlags.DEFAULT)
 
-
-        self.settings.bind("uri", self.location, "subtitle", Gio.SettingsBindFlags.GET)
-        self.open_button.connect("clicked", self.on_open_button)
 
         self.priority_up_button.connect('clicked', self.on_priority_changer_button_up)
 
@@ -84,14 +83,3 @@ class KaarPreferencesWindow(Adw.PreferencesWindow):
             selected_row.set_title(sorting_strings.get(previous_row_name))
             previous_row.set_name(selected_row_name)
             previous_row.set_title(sorting_strings.get(selected_row_name))
-
-    def on_open_button(self, *args):
-        def callback(source, res):
-            res: Gio.File = self.file_dialog.open_finish(res)
-            self.settings.set_string("uri", res.get_uri())
-            app = self.get_transient_for().get_application()
-            app.file_uri = res.get_uri()
-            app.reload_file()
-        
-        self.file_dialog = Gtk.FileDialog()
-        res = self.file_dialog.open(parent=self, callback=callback)

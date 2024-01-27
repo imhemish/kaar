@@ -2,7 +2,10 @@ using Gtk 4.0;
 using Adw 1;
 
 template $TaskStack: Gtk.Stack {
-    styles ["task"]
+    styles [
+        "task"
+    ]
+
     Gtk.StackPage {
         name: "edit";
 
@@ -20,13 +23,12 @@ template $TaskStack: Gtk.Stack {
 
             Gtk.FlowBox tags_flow_box {
                 orientation: horizontal;
-                halign: fill;
                 selection-mode: none;
                 vexpand: true;
+                halign: center;
             }
 
             Gtk.Box {
-                
                 halign: fill;
                 orientation: horizontal;
                 margin-start: 5;
@@ -37,7 +39,6 @@ template $TaskStack: Gtk.Stack {
                     margin-start: 10;
                     wrap: true;
                     lines: 1;
-                    
                 }
 
                 Gtk.Separator {
@@ -58,7 +59,6 @@ template $TaskStack: Gtk.Stack {
                 halign: end;
                 orientation: vertical;
                 vexpand: true;
-
             }
         };
     }

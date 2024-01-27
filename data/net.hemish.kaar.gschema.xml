@@ -10,20 +10,24 @@
 				Whether to autosave the files or not, when the tasks are changed
 			</description>
 		</key>
+		
 		<key name="restore-session" type="b">
 			<default>true</default>
-			<summary>Restore Session</summary>
+			<summary>Restore session on startup</summary>
 			<description>
 				Whether to try to restore files opened in last session or not
 			</description>
 		</key>
-		<key name="uri" type="s">
-			<default>''</default>
-			<summary>File URI</summary>
+		
+		<!--Not visible in Preferences-->
+		<key name="files" type="as">
+			<default>[]</default>
+			<summary>File URIs</summary>
 			<description>
-				The URI of the file to which tasks are saved to
+				The URI's of files in last session
 			</description>
 		</key>
+
 		<key name="vertically-center-tasks" type="b">
 			<default>false</default>
 			<summary>Vertically Center Tasks</summary>

@@ -7,46 +7,67 @@ template $KaarPreferencesWindow: Adw.PreferencesWindow {
         icon-name: "applications-system-symbolic";
 
         Adw.PreferencesGroup {
-            title: "File";
-            Adw.ActionRow location {
-                title: "File Location";
-                
-                [suffix]
-                Gtk.Button open_button {
-                    vexpand: false;
-                    valign: center;
-                    styles ["flat"]
-                    icon-name: "document-open-symbolic";
-                }
+            title: "Files";
 
-                activatable-widget: open_button;
-            }
             Adw.SwitchRow autosave {
                 title: "Auto Save";
                 subtitle: "Whether to autosave the files or not, when the tasks are changed";
+            }
+
+            Adw.SwitchRow restore_session {
+                title: "Restore session on startup";
+                subtitle: "Whether to try to restore files opened in last session or not";
             }
         }
 
         Adw.PreferencesGroup {
             Adw.ExpanderRow {
-            title: "Sorting Priority";
-            [suffix]
-            Gtk.Box {
-                styles ["toolbar"]
-                orientation: horizontal;
-                Gtk.Button priority_up_button {icon-name: "go-up-symbolic";}
-                Gtk.Button priority_down_button {icon-name: "go-down-symbolic";}
-            }
-            Gtk.ListBox priority_list_box {
-                styles ["boxed-list"]
-            Adw.ActionRow {name: "DUE_DATE"; title: "DUE_DATE";}
-            Adw.ActionRow {name: "CREATION_DATE"; title: "CREATION_DATE";}
-            Adw.ActionRow {name: "DESCRIPTION"; title: "DESCRIPTION";}
-            Adw.ActionRow {name: "COMPLETION_DATE"; title: "COMPLETION_DATE";}
+                title: "Sorting Priority";
+
+                [suffix]
+                Gtk.Box {
+                    styles [
+                        "toolbar"
+                    ]
+
+                    orientation: horizontal;
+
+                    Gtk.Button priority_up_button {
+                        icon-name: "go-up-symbolic";
+                    }
+
+                    Gtk.Button priority_down_button {
+                        icon-name: "go-down-symbolic";
+                    }
+                }
+
+                Gtk.ListBox priority_list_box {
+                    styles [
+                        "boxed-list"
+                    ]
+
+                    Adw.ActionRow {
+                        name: "DUE_DATE";
+                        title: "DUE_DATE";
+                    }
+
+                    Adw.ActionRow {
+                        name: "CREATION_DATE";
+                        title: "CREATION_DATE";
+                    }
+
+                    Adw.ActionRow {
+                        name: "DESCRIPTION";
+                        title: "DESCRIPTION";
+                    }
+
+                    Adw.ActionRow {
+                        name: "COMPLETION_DATE";
+                        title: "COMPLETION_DATE";
+                    }
+                }
             }
         }
-        }
-        
 
         Adw.PreferencesGroup {
             title: "Appearance";
@@ -61,7 +82,7 @@ template $KaarPreferencesWindow: Adw.PreferencesWindow {
     Adw.PreferencesPage {
         title: "Extensions";
         icon-name: "preferences-other-symbolic";
-        
+
         Adw.PreferencesGroup {
             Adw.SwitchRow hidden_tasks {
                 title: "Hidden Tasks";

@@ -1,5 +1,5 @@
 import gi
-from gi.repository import Gtk, Adw, Gio
+from gi.repository import Gtk, Adw, Gio, GObject
 
 from .filtering import Filtering
 from .sorting import TaskSorting, TaskSorter
@@ -31,6 +31,15 @@ class TabChild(Gtk.Box):
     filtering: Filtering
     ####################################
 
+    _unsaved: bool = False
+
+    @GObject.Property(type=bool, default=False)
+    def unsaved(self):
+        return self._unsaved
+    
+    @unsaved.setter
+    def unsaved(self, value):
+        self._unsaved = value
 
 
     def __init__(self, file: str, settings: Gio.Settings, parent_window,*args):
@@ -145,7 +154,9 @@ class TabChild(Gtk.Box):
         self.todotxt.save()
 
         report_progress()
+        self.unsaved = False
     
     def save_if_required(self):
+        self.unsaved = True
         if self.settings.get_boolean("autosave"):
             self.save_file()

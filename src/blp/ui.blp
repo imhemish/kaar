@@ -20,203 +20,276 @@ template $KaarWindow: Adw.ApplicationWindow {
         }
     }
 
-    Adw.TabOverview { 
-        view: tab_view;
-        child: Adw.OverlaySplitView split_view {
-        show-sidebar: bind sidebar_button.active;
-        collapsed: false;
+    Gtk.Stack root_stack {
+        Gtk.StackPage {
+            name: "main";
 
-        sidebar: Gtk.WindowHandle {
-            Gtk.Box {
+            child: Adw.TabOverview {
+                view: tab_view;
+
+                child: Adw.OverlaySplitView split_view {
+                    show-sidebar: bind sidebar_button.active;
+                    collapsed: false;
+
+                    sidebar: Gtk.WindowHandle {
+                        Gtk.Box {
+                            orientation: vertical;
+
+                            Adw.HeaderBar {
+                                styles [
+                                    "flat"
+                                ]
+
+                                title-widget: Adw.WindowTitle {
+                                    title: "Filters";
+                                };
+
+                                [start]
+                                Gtk.ToggleButton {
+                                    icon-name: "view-dual-symbolic";
+                                    active: bind sidebar_button.active bidirectional;
+                                }
+                            }
+
+                            Gtk.ScrolledWindow {
+                                Gtk.Box {
+                                    vexpand: true;
+                                    orientation: vertical;
+                                    spacing: 15;
+
+                                    Gtk.ListBox filters_box {
+                                        valign: start;
+                                        selection-mode: browse;
+
+                                        styles [
+                                            "navigation-sidebar"
+                                        ]
+
+                                        margin-start: 1;
+                                        margin-end: 1;
+                                        margin-top: 1;
+                                        margin-bottom: 1;
+
+                                        Adw.ActionRow {
+                                            name: "all";
+                                            title: "All Tasks";
+                                            icon-name: "user-home-symbolic";
+                                        }
+
+                                        Adw.ActionRow {
+                                            name: "due";
+                                            title: "Due Tasks";
+                                            icon-name: "document-open-recent-symbolic";
+                                        }
+
+                                        Adw.ActionRow {
+                                            name: "complete";
+                                            title: "Complete";
+                                            icon-name: "object-select-symbolic";
+                                        }
+                                    }
+
+                                    Gtk.Label {
+                                        label: "Projects";
+                                        halign: start;
+                                        margin-start: 15;
+
+                                        styles [
+                                            "heading"
+                                        ]
+                                    }
+
+                                    Gtk.ListBox projects_box {
+                                        styles [
+                                            "navigation-sidebar"
+                                        ]
+
+                                        selection-mode: multiple;
+                                    }
+
+                                    Gtk.Label {
+                                        label: "Contexts";
+                                        halign: start;
+                                        margin-start: 15;
+
+                                        styles [
+                                            "heading"
+                                        ]
+                                    }
+
+                                    Gtk.ListBox contexts_box {
+                                        styles [
+                                            "navigation-sidebar"
+                                        ]
+
+                                        selection-mode: multiple;
+                                    }
+                                }
+                            }
+                        }
+                    };
+
+                    content: Adw.ToolbarView {
+                        vexpand: true;
+
+                        [top]
+                        Adw.HeaderBar headerbar {
+                            title-widget: Adw.WindowTitle {
+                                title: "Kaar";
+                            };
+
+                            styles [
+                                "flat"
+                            ]
+
+                            [start]
+                            Gtk.ToggleButton sidebar_button {
+                                icon-name: "view-dual-symbolic";
+                                active: bind split_view.show-sidebar;
+                                visible: bind split_view.show-sidebar inverted;
+                                tooltip-text: "Toggle Sidebar";
+                            }
+
+                            [start]
+                            Gtk.Button save_button {
+                                icon-name: "document-save-symbolic";
+                                action-name: "win.save";
+                                tooltip-text: "Save File";
+                            }
+
+                            [start]
+                            Gtk.Button open_button {
+                                styles [
+                                    "flat"
+                                ]
+
+                                icon-name: "document-open-symbolic";
+                                tooltip-text: "Open File";
+                            }
+
+                            [end]
+                            Gtk.MenuButton {
+                                icon-name: "open-menu-symbolic";
+                                menu-model: menu;
+                                tooltip-text: "Open Menu";
+                            }
+
+                            [end]
+                            Adw.TabButton {
+                                view: tab_view;
+                                action-name: "overview.open";
+                            }
+                        }
+
+                        [bottom]
+                        Gtk.SearchBar search_bar {
+                            show-close-button: true;
+
+                            Gtk.SearchEntry search_entry {
+                                valign: center;
+                            }
+                        }
+
+                        [top]
+                        Adw.TabBar {
+                            view: tab_view;
+                        }
+
+                        [bottom]
+                        Gtk.Box bottom_toolbar {
+                            hexpand: true;
+                            vexpand: true;
+                            halign: center;
+
+                            styles [
+                                "toolbar"
+                            ]
+
+                            Gtk.ToggleButton {
+                                icon-name: "system-search-symbolic";
+                                active: bind search_bar.search-mode-enabled bidirectional;
+                                tooltip-text: "Search Tasks";
+                            }
+
+                            Gtk.Button {
+                                icon-name: "user-trash-symbolic";
+                                action-name: "win.delete";
+                                tooltip-text: "Delete Task";
+
+                                styles [
+                                    "destructive-action"
+                                ]
+                            }
+
+                            Gtk.Button {
+                                halign: center;
+                                icon-name: "document-edit-symbolic";
+                                action-name: "app.edit";
+                                tooltip-text: "Edit Task";
+
+                                styles [
+                                    "suggested-action"
+                                ]
+                            }
+
+                            Gtk.Button {
+                                icon-name: "list-add-symbolic";
+                                action-name: "app.new";
+                                tooltip-text: "Add New Task";
+
+                                styles [
+                                    "suggested-action"
+                                ]
+                            }
+                        }
+
+                        content: Adw.TabView tab_view {};
+                    };
+                };
+            };
+        }
+
+        Gtk.StackPage {
+            name: "status";
+
+            child: Box {
                 orientation: vertical;
 
                 Adw.HeaderBar {
+                    title-widget: Adw.WindowTitle {
+                        title: "Kaar";
+                    };
+
                     styles [
                         "flat"
                     ]
 
-                    title-widget: Adw.WindowTitle {
-                        title: "Filters";
-                    };
-
-                    [start]
-                    Gtk.ToggleButton {
-                        icon-name: "view-dual-symbolic";
-                        active: bind sidebar_button.active bidirectional;
+                    [end]
+                    Gtk.MenuButton {
+                        icon-name: "open-menu-symbolic";
+                        menu-model: menu;
+                        tooltip-text: "Open Menu";
                     }
                 }
 
-                Gtk.ScrolledWindow {
-                    Gtk.Box {
+                Gtk.WindowHandle {
                     vexpand: true;
-                    orientation: vertical;
-                    spacing: 15;
 
-                    Gtk.ListBox filters_box {
-                        valign: start;
-                        selection-mode: browse;
+                    Adw.StatusPage {
+                        icon-name: "emblem-documents-symbolic";
+                        title: "No Files Here";
 
-                        styles [
-                            "navigation-sidebar"
-                        ]
+                        child: Gtk.Button status_open_button {
+                            label: "Open a File";
 
-                        margin-start: 1;
-                        margin-end: 1;
-                        margin-top: 1;
-                        margin-bottom: 1;
-
-                        Adw.ActionRow {
-                            name: "all";
-                            title: "All Tasks";
-                            icon-name: "user-home-symbolic";
-                        }
-
-                        Adw.ActionRow {
-                            name: "due";
-                            title: "Due Tasks";
-                            icon-name: "document-open-recent-symbolic";
-                        }
-
-                        Adw.ActionRow {
-                            name: "complete";
-                            title: "Complete";
-                            icon-name: "object-select-symbolic";
-                        }
-                    }
-
-                    Gtk.Label {
-                        label: "Projects";
-                        halign: start;
-                        margin-start: 15;
-                        styles ["heading"]
-                    }
-
-                    Gtk.ListBox projects_box {
-                        styles ["navigation-sidebar"]
-                        selection-mode: multiple;
-
-                    }
-
-                    Gtk.Label {
-                        label: "Contexts";
-                        halign: start;
-                        margin-start: 15;
-                        styles ["heading"]
-                    }
-
-                    Gtk.ListBox contexts_box {
-                        styles ["navigation-sidebar"]
-                        selection-mode: multiple;
+                            styles [
+                                "pill",
+                                "suggested-action"
+                            ]
+                        };
                     }
                 }
-                }
-            }
-        };
-
-        content: Adw.ToolbarView {
-            vexpand: true;
-
-            [top]
-            Adw.HeaderBar headerbar {
-
-                title-widget: Adw.WindowTitle {
-                    title: "Kaar";
-                };
-
-                styles [
-                    "flat"
-                ]
-
-
-                [start]
-                Gtk.ToggleButton sidebar_button {
-                    icon-name: "view-dual-symbolic";
-                    active: bind split_view.show-sidebar;
-                    visible: bind split_view.show-sidebar inverted;
-                }
-
-                [start]
-                Gtk.Button save_button {
-                    icon-name: "document-save-symbolic";
-                    action-name: "win.save";
-                }
-
-                [end]
-                Gtk.MenuButton {
-                    icon-name: "open-menu-symbolic";
-                    menu-model: menu;
-                }
-
-                [end]
-                Adw.TabButton {
-                    view: tab_view;
-                    action-name: "overview.open";
-                }
-
-                
-            }
-
-            [bottom]
-            Gtk.SearchBar search_bar {
-                show-close-button: true;
-
-                Gtk.SearchEntry search_entry {
-                    valign: center;
-                }
-            }
-
-            [top]
-            Adw.TabBar {
-                view: tab_view;
-            }
-
-            [bottom]
-            Gtk.Box bottom_toolbar {
-                hexpand: true;
-                vexpand: true;
-                halign: center;
-
-                styles [
-                    "toolbar"
-                ]
-
-                Gtk.ToggleButton {
-                    icon-name: "system-search-symbolic";
-                    active: bind search_bar.search-mode-enabled bidirectional;
-                }
-
-                Gtk.Button {
-                    halign: center;
-                    icon-name: "user-trash-symbolic";
-                    action-name: "app.delete";
-
-                    styles [
-                        "destructive-action"
-                    ]
-                }
-
-                Gtk.Button {
-                    halign: center;
-                    icon-name: "document-edit-symbolic";
-                    action-name: "app.edit";
-
-                    styles [
-                        "suggested-action"
-                    ]
-                }
-
-                Gtk.Button {
-                    icon-name: "list-add-symbolic";
-                    action-name: "app.new";
-
-                    styles [
-                        "suggested-action"
-                    ]
-                }
-
-            }
-
-            content: Adw.TabView tab_view {};
-        };
-    };}
+            };
+        }
+    }
 }

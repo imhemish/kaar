@@ -24,14 +24,12 @@ import time
 gi.require_version('Gtk', '4.0')
 gi.require_version('Adw', '1')
 
-from gi.repository import Gtk, Gio, Adw, Gdk
+from gi.repository import Gtk, Gio, Adw, GObject
 from .window import KaarWindow
+from .tab import TabChild
 from .preferences_window import KaarPreferencesWindow, converter
 from .model import TodoTask
-from pytodotxt import TodoTxt, TodoTxtParser
-from .filtering import Filtering
-from .sorting import TaskSorter, TaskSorting
-import threading
+from .sorting import TaskSorting
 
 class KaarApplication(Adw.Application):
     settings: Gio.Settings
@@ -39,21 +37,16 @@ class KaarApplication(Adw.Application):
     def __init__(self):
         print("application initiated")
         super().__init__(application_id='net.hemish.kaar',
-                         flags=Gio.ApplicationFlags.DEFAULT_FLAGS)
+                         flags=Gio.ApplicationFlags.HANDLES_OPEN)
         self.create_action('quit', lambda *_: self.quit(), ['<primary>q'])
         self.create_action('about', self.on_about_action)
         self.create_action('preferences', self.on_preferences_action)
         self.create_action('new', self.new_task, ['<primary>n'])
         self.create_action('edit', self.edit_task, ['<primary>e', 'F2'])
-        self.create_action('delete', self.delete_task, ['<primary>d', 'Delete'])
         self.create_action('complete', self.complete_task, ['<primary>x'])
         #self.create_action('save', self.save_file, ['<primary>s'])
         #self.create_action('reload', self.reload_file, ['<primary>r'])
         self.create_action('hide', self.hide_tasks, ['<primary>h'])
-
-        css_provider = Gtk.CssProvider()
-        css_provider.load_from_resource("/net/hemish/kaar/style.css")
-        Gtk.StyleContext.add_provider_for_display(Gdk.Display.get_default(), css_provider, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION)
 
         self.settings: Gio.Settings = Gio.Settings('net.hemish.kaar')
 
@@ -72,6 +65,21 @@ class KaarApplication(Adw.Application):
         if not win:
             win = KaarWindow(application=self)
             win.present()
+    
+    def do_open(self, files, n_files, hint):
+        for file in files:
+            self.open_file(file)
+
+    def open_file(self, file: Gio.File):
+        active_window = self.get_active_window()
+        if not active_window:
+            active_window = KaarWindow(application=self)
+            active_window.present()
+        tabchild = TabChild(file.get_uri(), self.settings, active_window)
+        tabpage: Adw.TabPage = active_window.tab_view.append(tabchild)
+        tabchild.bind_property("unsaved", tabpage, "needs-attention", GObject.BindingFlags.DEFAULT)
+        tabpage.set_title(file.get_basename())
+        active_window.tab_view.set_selected_page(tabpage)
 
     def on_about_action(self, widget, _):
         """Callback for the app.about action."""
@@ -105,11 +113,7 @@ class KaarApplication(Adw.Application):
         else:
             object.mode = 'view'
     
-    def delete_task(self, *args):
-        index = self.props.active_window.list_view.get_model().get_selected()
-        self.list_store.remove(index)
-        self.props.active_window.update_projects_and_contexts_filters()
-        self.save_if_required()
+    
     
     def complete_task(self, *args):
         object = self.props.active_window.list_view.get_model().get_selected_item()

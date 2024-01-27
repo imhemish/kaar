@@ -15,17 +15,13 @@ class TaskStack(Gtk.Stack):
     tags_flow_box: Gtk.FlowBox = Gtk.Template.Child()
     dates_flow_box: Gtk.FlowBox = Gtk.Template.Child()
 
-    def create_flow_box_item(self, object: str) -> Gtk.Box:
+    def create_flow_box_item(self, object: str) -> Gtk.Label:
         print("create function was called")
-        box = Gtk.Box()
-        box.set_hexpand(False)
-        box.add_css_class("tag")
-        box.add_css_class("osd")
         label = Gtk.Label.new(object)
         label.set_hexpand(False)
-        label.set_halign(Gtk.Align.CENTER)
-        box.append(label)
-        return box
+        label.add_css_class("tag")
+        label.add_css_class("osd")
+        return label
     
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
