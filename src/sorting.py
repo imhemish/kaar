@@ -22,7 +22,7 @@ class DueDateSorter(Gtk.Sorter):
         return Gtk.SorterOrder.PARTIAL
     
     def do_compare(self, item1: TodoTask, item2: TodoTask) -> Gtk.Ordering:
-        print("SDue Date Compare")
+        #print("SDue Date Compare")
         flag: Gtk.Ordering = Gtk.Ordering.EQUAL
 
         if item1.attributes.get('due') == None and item2.attributes.get('due') == None:
@@ -47,7 +47,7 @@ class CreationDateSorter(Gtk.Sorter):
     
     def do_compare(self, item1: TodoTask, item2: TodoTask) -> Gtk.Ordering:
         flag: Gtk.Ordering = Gtk.Ordering.EQUAL
-        print("Creation Date compare")
+        #print("Creation Date compare")
         if item1.creation_date == None and item2.creation_date == None:
             pass
         elif item1.creation_date == None and item2.creation_date != None:
@@ -71,7 +71,7 @@ class CompletionDateSorter(Gtk.Sorter):
         return Gtk.SorterOrder.PARTIAL
     
     def do_compare(self, item1: TodoTask, item2: TodoTask) -> Gtk.Ordering:
-        print("Completion Date compare")
+        #print("Completion Date compare")
         flag: Gtk.Ordering = Gtk.Ordering.EQUAL
         if item1.completion_date == None and item2.completion_date == None:
             pass
@@ -100,7 +100,7 @@ class DescriptionSorter(Gtk.Sorter):
         return Gtk.SorterOrder.PARTIAL
     
     def do_compare(self, item1: TodoTask, item2: TodoTask) -> Gtk.Ordering:
-        print("Description compare")
+        #print("Description compare")
         flag: Gtk.Ordering = Gtk.Ordering.EQUAL
         item1_description = item1.bare_description()
         item2_description = item2.bare_description()
@@ -144,7 +144,7 @@ class TaskSorter(Gtk.Sorter):
     
     def set_sorting_priority(self, new_sorting_priority) -> None:
         self.sorting_priority = new_sorting_priority
-        print("New sorting: {}".format(self.sorting_priority))
+        #print("New sorting: {}".format(self.sorting_priority))
         
         for i in range(self.multi_sorter.get_n_items()):
             self.multi_sorter.remove(i)
@@ -156,7 +156,7 @@ class TaskSorter(Gtk.Sorter):
     
     # Overriding Gtk.Sorter.compare method
     def do_compare(self, item1, item2) -> Gtk.Ordering:
-        print("Running compare function for {} and {}".format(item1, item2))
+        #print("Running compare function for {} and {}".format(item1, item2))
         return self.multi_sorter.compare(item1, item2)
 
     def do_get_order(self):

@@ -6,31 +6,46 @@ template $TabChild: Gtk.Box {
     hexpand: true;
     vexpand: true;
 
-    Gtk.Overlay {
-        Gtk.ScrolledWindow {
-            Adw.ClampScrollable {
-                Gtk.ListView list_view {
-                    margin-start: 4;
-                    margin-end: 4;
+    Gtk.Stack tab_stack {
+        Gtk.StackPage {
+            name: "main";
+
+            child: Gtk.Overlay {
+                Gtk.ScrolledWindow {
+                    Adw.ClampScrollable {
+                        Gtk.ListView list_view {
+                            margin-start: 4;
+                            margin-end: 4;
+
+                            styles [
+                                "background"
+                            ]
+
+                            vexpand: true;
+                        }
+                    }
+                }
+
+                [overlay]
+                Gtk.ProgressBar progress_bar {
+                    valign: start;
+                    hexpand: true;
+                    visible: false;
 
                     styles [
-                        "background"
+                        "osd"
                     ]
-
-                    vexpand: true;
                 }
-            }
+            };
         }
 
-        [overlay]
-        Gtk.ProgressBar progress_bar {
-            valign: start;
-            hexpand: true;
-            visible: false;
-
-            styles [
-                "osd"
-            ]
+        Gtk.StackPage {
+            name: "status";
+            child: Adw.StatusPage {
+                title: "No Tasks Here";
+                icon-name: "view-list-symbolic";
+                
+            };
         }
     }
 }

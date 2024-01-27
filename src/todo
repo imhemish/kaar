@@ -1,17 +1,13 @@
-TODO: improve sorting
+TODO: improve sorting and its UI for preferences
 
 TODO: improve projects and contexts filtering UI
 
-TODO: show a placeholder when single selection mode is empty, via stack
-
-TODO: improve search functionality
-
 TODO: internationalisation
-
-TODO: add a reload button
-
-TODO: read from Gfile itself to have support for non-local files
 
 TODO: notify user that file changed on disk
 
 TODO: remember last selected page on session save
+
+TODO: add content menu for each task for edit, delete
+
+TODO: increase, decrease priority buttons and preference

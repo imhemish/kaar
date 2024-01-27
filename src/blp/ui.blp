@@ -9,7 +9,7 @@ menu menu {
 }
 
 template $KaarWindow: Adw.ApplicationWindow {
-    height-request: 400;
+    height-request: 445;
     width-request: 285;
 
     Adw.Breakpoint {
@@ -241,6 +241,12 @@ template $KaarWindow: Adw.ApplicationWindow {
                                 styles [
                                     "suggested-action"
                                 ]
+                            }
+
+                            Gtk.Button {
+                                icon-name: "view-refresh-symbolic";
+                                action-name: "win.reload";
+                                tooltip-text: "Reload File";
                             }
                         }
 

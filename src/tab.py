@@ -17,6 +17,7 @@ class TabChild(Gtk.Box):
     __gtype_name__ = "TabChild"
     list_view: Gtk.ListView = Gtk.Template.Child()
     progress_bar: Gtk.ProgressBar = Gtk.Template.Child()
+    tab_stack: Gtk.Stack = Gtk.Template.Child()
     ##############################################
 
     file: str
@@ -66,7 +67,8 @@ class TabChild(Gtk.Box):
         search_model = Gtk.FilterListModel()
         search_model.set_filter(self.search_filter)
         search_model.set_model(self.list_store)
-        # Maybe branch out searching into a seprate file
+
+        # TODO: improve search functionality, maybe branch out in separate file
         self.search_filter.set_filter_func(lambda object: self.parent_window.search_entry.get_text().lower() in str(object).lower())
 
         self.tasks_filter = Gtk.CustomFilter()
@@ -107,6 +109,15 @@ class TabChild(Gtk.Box):
         #Initially loading file
         self.reload_file()
 
+        self.check_empty_and_act_accordingly()
+        self.single_selection.connect("items-changed", self.check_empty_and_act_accordingly)
+
+    def check_empty_and_act_accordingly(self, *args):
+        if self.single_selection.get_n_items() == 0:
+            self.tab_stack.set_visible_child_name("status")
+        else:
+            self.tab_stack.set_visible_child_name("main")
+
     def on_sorting_change(self, *args):
         sorting_priority = []
         for i in range(4):
@@ -118,6 +129,7 @@ class TabChild(Gtk.Box):
         file_path = Gio.File.new_for_uri(self.file).get_parse_name()
         print(file_path)
 
+        # FIXME: read from Gfile itself to have support for non-local files
         self.todotxt = TodoTxt(file_path, parser=TodoTxtParser(task_type=TodoTask))
         try:
             print("trying")
