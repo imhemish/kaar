@@ -34,6 +34,7 @@ class KaarPreferencesWindow(Adw.PreferencesWindow):
     priority_up_button: Gtk.Button = Gtk.Template.Child()
     priority_down_button: Gtk.Button = Gtk.Template.Child()
     priority_list_box: Gtk.ListBox = Gtk.Template.Child()
+    pango_markup: Adw.SwitchRow = Gtk.Template.Child()
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
@@ -55,6 +56,9 @@ class KaarPreferencesWindow(Adw.PreferencesWindow):
 
         self.hidden_tasks.set_active(self.settings.get_boolean("hidden-tasks"))
         self.settings.bind("hidden-tasks", self.hidden_tasks, "active", Gio.SettingsBindFlags.DEFAULT)
+
+        self.hidden_tasks.set_active(self.settings.get_boolean("render-pango-markup"))
+        self.settings.bind("render-pango-markup", self.pango_markup, "active", Gio.SettingsBindFlags.DEFAULT)
 
 
         self.priority_up_button.connect('clicked', self.on_priority_changer_button_up)

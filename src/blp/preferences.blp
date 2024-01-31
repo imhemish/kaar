@@ -76,9 +76,23 @@ template $KaarPreferencesWindow: Adw.PreferencesWindow {
                 title: "Vertically Center Tasks";
                 subtitle: "Whether to vertically center tasks or not in the tasks view";
             }
+
         }
     }
 
+    Adw.PreferencesPage {
+        title: "Advanced";
+        icon-name: "security-low-symbolic";
+
+        Adw.PreferencesGroup {
+            
+            Adw.SwitchRow pango_markup {
+                title: "Render Pango Markup";
+                subtitle: "Whether to render pango markup in task descriptions (requires Restart)";
+
+            }
+        }
+    }
     Adw.PreferencesPage {
         title: "Extensions";
         icon-name: "preferences-other-symbolic";

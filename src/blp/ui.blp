@@ -3,6 +3,7 @@ using Adw 1;
 using Gio 2.0;
 
 menu menu {
+    item (_("Close Tab"), "win.close_tab")
     item ("Preferences", "app.preferences")
     item ("Keyboard Shortcuts", "win.show-help-overlay")
     item ("About Kaar", "app.about")
@@ -192,7 +193,7 @@ template $KaarWindow: Adw.ApplicationWindow {
                         }
 
                         [top]
-                        Adw.TabBar {
+                        Adw.TabBar tab_bar{
                             view: tab_view;
                         }
 

@@ -1,6 +1,6 @@
 import gi
 from pytodotxt import Task
-from gi.repository import GObject, Gtk, Adw
+from gi.repository import GObject, Gtk, Adw, Gio
 import datetime
 
 # This represents a single task row, which is actually made up of stack
@@ -69,13 +69,19 @@ class TaskStack(Gtk.Stack):
 
 # factory which would be used by list view for displaying tasks
 class TaskFactory(Gtk.SignalListItemFactory):
-    def __init__(self, **kwargs):
+    render_pango_markup: bool
+
+    def __init__(self, render_pango_markup: bool, **kwargs):
         super().__init__(**kwargs)
         self.connect("setup", self.create_task_item)
         self.connect("bind", self.bind_task_item)
+        self.render_pango_markup = render_pango_markup
     
     def create_task_item(self, fact, list_item):
-        list_item.set_child(TaskStack())
+        stack = TaskStack()
+        if self.render_pango_markup:
+            stack.task_label.set_use_markup(True)
+        list_item.set_child(stack)
     
     def bind_task_item(self, fact, list_item):
         task_stack = list_item.get_child()
@@ -93,6 +99,9 @@ class TaskFactory(Gtk.SignalListItemFactory):
         if task_object.completed:
             task_stack.check_button.set_active(True)
         task_object.bind_property("completed", task_stack.check_button, "active", GObject.BindingFlags.BIDIRECTIONAL)
+
+        # FIXME: completing tasks via check button does not autosave
+        #task_object.connect("notify::completed", lambda *args: )
 
         if task_object.duplicatepriority != None: 
             task_stack.priority_label.set_label(task_object.duplicatepriority)

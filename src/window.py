@@ -18,8 +18,7 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 
 from gi.repository import Adw, Gtk, Gio
-from .model import TaskFactory, TodoTask
-from .tab import TabChild
+from .model import TodoTask
 
 @Gtk.Template(resource_path='/net/hemish/kaar/blp/ui.ui')
 class KaarWindow(Adw.ApplicationWindow):
@@ -74,22 +73,26 @@ class KaarWindow(Adw.ApplicationWindow):
         self.update_projects_and_contexts_filters()
         ############################################################################
 
-        self.check_if_no_tabs_are_open()
-        self.tab_view.connect("notify::n-pages", self.check_if_no_tabs_are_open)
-        self.tab_view.connect("notify::n-pages", self.save_session_details)
-
-        self.tab_overview.connect("create-tab", self.on_open_button)
-
+        ######## Registering the actions ########
         self.create_action("delete", self.delete_task, ['<primary>d', 'Delete'] )
         self.create_action('new', self.new_task, ['<primary>n'])
         self.create_action('edit', self.edit_task, ['<primary>e', 'F2'])
         self.create_action('complete', self.complete_task, ['<primary>x'])
         self.create_action('save', self.save_meta, ['<primary>s'])
         self.create_action('reload', self.reload_meta, ['<primary>r'])
+        self.create_action("close_tab", self.close_tab, ['<primary>w'])
+        ##########################################
+
+        self.check_if_no_tabs_are_open()
+        self.tab_view.connect("notify::n-pages", self.check_if_no_tabs_are_open)
+        self.tab_view.connect("notify::n-pages", self.save_session_details)
+
+        self.tab_overview.connect("create-tab", self.on_open_button)
+
 
         if self.settings.get_boolean("restore-session"):
-            for file_uri in self.settings.get_strv("files"):
-                self.get_application().open_file(Gio.File.new_for_uri(file_uri))
+            for file in self.settings.get_strv("files"):
+                self.get_application().open_file(Gio.File.new_for_uri(file))
 
     def create_flow_box_item(self, string_obj: Gtk.StringObject, *args) -> Adw.ActionRow:
         row: Adw.ActionRow = Adw.ActionRow()
@@ -99,8 +102,10 @@ class KaarWindow(Adw.ApplicationWindow):
     def check_if_no_tabs_are_open(self, *args):
         if self.tab_view.get_n_pages() == 0:
             self.root_stack.set_visible_child_name("status")
+            self.lookup_action("close_tab").set_enabled(False)
         else:
             self.root_stack.set_visible_child_name("main")
+            self.lookup_action("close_tab").set_enabled(True)
     
     def save_session_details(self, *args):
         fileURIs = []
@@ -109,10 +114,13 @@ class KaarWindow(Adw.ApplicationWindow):
         self.settings.set_strv("files", fileURIs)
 
     def update_projects_and_contexts_filters(self) -> None:
-        for k in range(self.contexts_model.get_n_items()+1):
+        self.projects_box.unselect_all()
+        self.contexts_box.unselect_all()
+
+        for k in range(self.contexts_model.get_n_items()):
             self.contexts_model.remove(0)
         
-        for k in range(self.projects_model.get_n_items()+1):
+        for k in range(self.projects_model.get_n_items()):
             self.projects_model.remove(0)
         
         page = self.tab_view.get_selected_page()
@@ -132,6 +140,9 @@ class KaarWindow(Adw.ApplicationWindow):
                 self.projects_model.append(j)
             for j in contexts:
                 self.contexts_model.append(j)
+        
+        self.projects_box.unselect_all()
+        self.contexts_box.unselect_all()
     
     def on_open_button(self, *args):
         def callback(source, res):
@@ -139,7 +150,7 @@ class KaarWindow(Adw.ApplicationWindow):
             self.get_application().open_file(res)
         
         self.file_dialog = Gtk.FileDialog()
-        res = self.file_dialog.open(parent=self, callback=callback)
+        self.file_dialog.open(parent=self, callback=callback)
     
     def on_search_changed(self, entry):
         page = self.tab_view.get_selected_page()
@@ -208,4 +219,7 @@ class KaarWindow(Adw.ApplicationWindow):
     
     def reload_meta(self, *args):
         self.tab_view.get_selected_page().get_child().reload_file()
+    
+    def close_tab(self, *args):
+        self.tab_view.close_page(self.tab_view.get_selected_page())
 

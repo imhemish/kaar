@@ -85,8 +85,6 @@ class TabChild(Gtk.Box):
         for i in range(4):
             sorting_priority.append(TaskSorting[self.settings.get_string(converter(i))])
 
-        print(sorting_priority)
-
         self.sorter = TaskSorter(sorting_priority=sorting_priority)
         tasks_sorting_model.set_sorter(self.sorter)
         tasks_sorting_model.set_model(tasks_filter_model)
@@ -100,8 +98,11 @@ class TabChild(Gtk.Box):
 
         ######## Configuring the ListView of tasks ########
         self.list_view.set_model(self.single_selection)
-        self.list_view.set_factory(TaskFactory())
+        self.list_view.set_factory(TaskFactory(self.settings.get_boolean("render-pango-markup")))
         ###################################################
+
+        self.file_obj = Gio.File.new_for_uri(self.file)
+        self.file_monitor = self.file_obj.monitor(flags=Gio.FileMonitorFlags.NONE, cancellable=None)
 
         for i in range(4):
             self.settings.connect(f"changed::{converter(i)}", self.on_sorting_change)
@@ -126,20 +127,26 @@ class TabChild(Gtk.Box):
 
     def reload_file(self, *args):
         self.list_store.remove_all()
-        file_path = Gio.File.new_for_uri(self.file).get_parse_name()
-        print(file_path)
+
+
+        # Disconnect and dispose previous file monitor
+        try:
+            self.file_monitor.disconnect(self.file_monitor_signal)
+            
+        except: pass
+        
+    
+        file_path = self.file_obj.get_parse_name()
 
         # FIXME: read from Gfile itself to have support for non-local files
         self.todotxt = TodoTxt(file_path, parser=TodoTxtParser(task_type=TodoTask))
         try:
-            print("trying")
             self.todotxt.parse()
-            print("success")
         except Exception as e:
             print(e)
-        print(self.todotxt)
+        finally:
+            self.file_monitor_signal = self.file_monitor.connect("changed", lambda *args: print("File Changed"))
         for task in self.todotxt.tasks:
-            print(task)
             self.list_store.append(task)
         # Reload filters
         self.tasks_filter.changed(Gtk.FilterChange.DIFFERENT)
@@ -162,8 +169,10 @@ class TabChild(Gtk.Box):
 
         for item in self.list_store:
             self.todotxt.tasks.append(item)
-
+        
+        self.file_monitor.disconnect(self.file_monitor_signal)
         self.todotxt.save()
+        self.file_monitor_signal = self.file_monitor.connect('changed', lambda *args: print("file Changed"))
 
         report_progress()
         self.unsaved = False

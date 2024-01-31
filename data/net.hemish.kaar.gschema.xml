@@ -42,6 +42,14 @@
 				Whether to hide tasks if h:1 is set
 			</description>
 		</key>
+
+		<key name="render-pango-markup" type="b">
+			<default>true</default>
+			<summary>Render Pango Markup</summary>
+			<description>
+				Whether to render pango markup in task descriptions
+			</description>
+		</key>
 		<key name="sorting-priority-first" type="s">
 			<default>"DUE_DATE"</default>
 		</key>
