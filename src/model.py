@@ -75,6 +75,7 @@ class TaskFactory(Gtk.SignalListItemFactory):
         super().__init__(**kwargs)
         self.connect("setup", self.create_task_item)
         self.connect("bind", self.bind_task_item)
+        self.connect("unbind", self.unbind_task_item)
         self.render_pango_markup = render_pango_markup
     
     def create_task_item(self, fact, list_item):
@@ -85,7 +86,7 @@ class TaskFactory(Gtk.SignalListItemFactory):
     
     def bind_task_item(self, fact, list_item):
         task_stack = list_item.get_child()
-        task_object: GObject.Object = list_item.get_item()
+        task_object: TodoTask = list_item.get_item()
         task_stack.object = task_object
 
         task_stack.task_label.set_label(task_object.duplicatedescription)
@@ -96,12 +97,9 @@ class TaskFactory(Gtk.SignalListItemFactory):
 
         task_stack.entry_row.set_text(task_object.line)
 
-        if task_object.completed:
-            task_stack.check_button.set_active(True)
-        task_object.bind_property("completed", task_stack.check_button, "active", GObject.BindingFlags.BIDIRECTIONAL)
+        task_stack.check_button.set_active(task_object.completed)
+        task_stack.completed_binding = task_object.bind_property("completed", task_stack.check_button, "active", GObject.BindingFlags.BIDIRECTIONAL)
 
-        # FIXME: completing tasks via check button does not autosave
-        #task_object.connect("notify::completed", lambda *args: )
 
         if task_object.duplicatepriority != None: 
             task_stack.priority_label.set_label(task_object.duplicatepriority)
@@ -115,10 +113,18 @@ class TaskFactory(Gtk.SignalListItemFactory):
         for date in task_object._dates:
             task_stack.dates_flow_box.append(task_stack.create_flow_box_item(date))
 
+        task_object.completed_signal = task_object.connect("notify::completed", lambda *args: task_stack.activate_action("win.save"))
 
+    def unbind_task_item(self, fact, list_item):
+        task_object: TodoTask = list_item.get_item()
+        task_stack = list_item.get_child()
+
+        task_object.disconnect(task_object.completed_signal)
+
+        task_stack.completed_binding.unbind()
         
 
-# a subclass of pytodotxt.Task to be consumed by Gtk Widgets and GObjects
+# a subclass of pytodotxt.Task to be consumed by Gtk Widgets and GListModels
 class TodoTask(Task, GObject.Object):
     mode = GObject.Property(type=str, default="view")
     __gtype_name__ = "TodoTask"
@@ -130,6 +136,7 @@ class TodoTask(Task, GObject.Object):
         self._line = str(self)
         self._dates = self.calculate_date_strings()
         self.tags = [*map(lambda x: "+"+x, self.projects), *map(lambda x: "@"+x, self.contexts)]
+        self.notify("completed")
         
 
     
@@ -143,7 +150,7 @@ class TodoTask(Task, GObject.Object):
         self.parse(value)
         self._line = str(self)
         self.notify("duplicatedescription")
-        self.completed = self.is_completed
+        self.notify("completed")
         self._dates = self.calculate_date_strings() # Doesnt matter what value you pass here
         self.duplicatepriority = self.priority
         self.tags = [*map(lambda x: "+"+x, self.projects), *map(lambda x: "@"+x, self.contexts)]
@@ -155,10 +162,6 @@ class TodoTask(Task, GObject.Object):
     @GObject.Property(type=bool, default=False)
     def completed(self):
         return self.is_completed
-    
-    @completed.setter
-    def completed(self, value):
-        self.is_completed = value
 
     @GObject.Property(type=str)
     def duplicatepriority(self):

@@ -33,7 +33,10 @@ class KaarWindow(Adw.ApplicationWindow):
     tab_view : Adw.TabView = Gtk.Template.Child()
     tab_overview : Adw.TabOverview = Gtk.Template.Child()
     open_button: Gtk.Button = Gtk.Template.Child()
+    trailing_open_button: Gtk.Button = Gtk.Template.Child()
     status_open_button: Gtk.Button = Gtk.Template.Child()
+    projects_clear: Gtk.Button = Gtk.Template.Child()
+    contexts_clear: Gtk.Button = Gtk.Template.Child()
 
     # Defining models for projects and contexts box which provide the filters
     projects_model: Gtk.StringList = Gtk.StringList()
@@ -45,7 +48,7 @@ class KaarWindow(Adw.ApplicationWindow):
         app = self.get_application()
         self.settings: Gio.Settings = app.settings
 
-        for i in [self.open_button, self.status_open_button]:
+        for i in [self.open_button, self.status_open_button, self.trailing_open_button]:
             i.connect("clicked", self.on_open_button)
 
         self.settings.bind("autosave", self.save_button, "visible", Gio.SettingsBindFlags.INVERT_BOOLEAN)
@@ -88,6 +91,9 @@ class KaarWindow(Adw.ApplicationWindow):
         self.tab_view.connect("notify::n-pages", self.save_session_details)
 
         self.tab_overview.connect("create-tab", self.on_open_button)
+
+        self.projects_clear.connect('clicked', lambda *args: self.projects_box.unselect_all())
+        self.contexts_clear.connect('clicked', lambda *args: self.contexts_box.unselect_all())
 
 
         if self.settings.get_boolean("restore-session"):
@@ -218,6 +224,7 @@ class KaarWindow(Adw.ApplicationWindow):
         self.tab_view.get_selected_page().get_child().save_file()
     
     def reload_meta(self, *args):
+        print("reload called action")
         self.tab_view.get_selected_page().get_child().reload_file()
     
     def close_tab(self, *args):

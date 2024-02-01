@@ -76,6 +76,12 @@
               <property name="action-name">win.reload</property>
               </object>
             </child>
+            <child>
+              <object class="GtkShortcutsShortcut">
+              <property name="title">Close Tab</property>
+              <property name="action-name">win.close_tab</property>
+              </object>
+            </child>
           </object>
         </child>
       </object>

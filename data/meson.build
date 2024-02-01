@@ -12,18 +12,6 @@ if desktop_utils.found()
   test('Validate desktop file', desktop_utils, args: [desktop_file])
 endif
 
-appstream_file = i18n.merge_file(
-        input: 'net.hemish.kaar.metainfo.xml.in',
-       output: 'net.hemish.kaar.metainfo.xml',
-       po_dir: '../po',
-      install: true,
-  install_dir: get_option('datadir') / 'metainfo'
-)
-
-appstreamcli = find_program('appstreamcli', required: false, disabler: true)
-test('Validate appstream file', appstreamcli,
-     args: ['validate', '--no-net', '--explain', appstream_file])
-
 install_data('net.hemish.kaar.gschema.xml',
   install_dir: get_option('datadir') / 'glib-2.0' / 'schemas'
 )

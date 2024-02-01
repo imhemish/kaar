@@ -1,13 +1,11 @@
-TODO: improve sorting and its UI for preferences
-
-TODO: improve projects and contexts filtering UI
+TODO: improve sorting and its UI for preferences (high)
 
 TODO: internationalisation
 
-TODO: notify user that file changed on disk
+TODO: notify user that file changed on disk (high)
 
-TODO: remember last selected page on session save
+TODO: remember last selected page on session save (low priority)
 
-TODO: add content menu for each task for edit, delete
+TODO: add content menu for each task for edit, delete (low priority)
 
-TODO: increase, decrease priority buttons and preference
+TODO: increase, decrease priority buttons and preference (low priority)

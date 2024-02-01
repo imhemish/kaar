@@ -57,7 +57,7 @@ template $KaarWindow: Adw.ApplicationWindow {
                                 Gtk.Box {
                                     vexpand: true;
                                     orientation: vertical;
-                                    spacing: 15;
+                                    spacing: 10;
 
                                     Gtk.ListBox filters_box {
                                         valign: start;
@@ -91,14 +91,32 @@ template $KaarWindow: Adw.ApplicationWindow {
                                         }
                                     }
 
-                                    Gtk.Label {
-                                        label: "Projects";
-                                        halign: start;
-                                        margin-start: 15;
+                                    Gtk.Box {
+                                        orientation: horizontal;
 
-                                        styles [
-                                            "heading"
-                                        ]
+                                        Gtk.Label {
+                                            label: "Projects";
+                                            halign: start;
+                                            margin-start: 15;
+
+                                            styles [
+                                                "heading"
+                                            ]
+                                        }
+
+                                        Separator {
+                                            hexpand: true;
+
+                                            styles [
+                                                "spacer"
+                                            ]
+                                        }
+
+                                        Gtk.Button projects_clear {
+                                            icon-name: "edit-clear-symbolic";
+                                            tooltip-text: "Clear Selection";
+                                            margin-end: 8;
+                                        }
                                     }
 
                                     Gtk.ListBox projects_box {
@@ -109,14 +127,32 @@ template $KaarWindow: Adw.ApplicationWindow {
                                         selection-mode: multiple;
                                     }
 
-                                    Gtk.Label {
-                                        label: "Contexts";
-                                        halign: start;
-                                        margin-start: 15;
+                                    Gtk.Box {
+                                        orientation: horizontal;
 
-                                        styles [
-                                            "heading"
-                                        ]
+                                        Gtk.Label {
+                                            label: "Contexts";
+                                            halign: start;
+                                            margin-start: 15;
+
+                                            styles [
+                                                "heading"
+                                            ]
+                                        }
+
+                                        Separator {
+                                            hexpand: true;
+
+                                            styles [
+                                                "spacer"
+                                            ]
+                                        }
+
+                                        Gtk.Button contexts_clear {
+                                            icon-name: "edit-clear-symbolic";
+                                            tooltip-text: "Clear Selection";
+                                            margin-end: 8;
+                                        }
                                     }
 
                                     Gtk.ListBox contexts_box {
@@ -165,7 +201,8 @@ template $KaarWindow: Adw.ApplicationWindow {
                                     "flat"
                                 ]
 
-                                icon-name: "document-open-symbolic";
+                                visible: bind tab_bar.tabs-revealed inverted;
+                                icon-name: "tab-new-symbolic";
                                 tooltip-text: "Open File";
                             }
 
@@ -193,8 +230,17 @@ template $KaarWindow: Adw.ApplicationWindow {
                         }
 
                         [top]
-                        Adw.TabBar tab_bar{
+                        Adw.TabBar tab_bar {
                             view: tab_view;
+
+                            end-action-widget: Gtk.Button trailing_open_button {
+                                icon-name: "tab-new-symbolic";
+                                tooltip-text: "Open File";
+
+                                styles [
+                                    "flat"
+                                ]
+                            };
                         }
 
                         [bottom]

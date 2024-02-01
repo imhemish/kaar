@@ -79,13 +79,8 @@ class KaarApplication(Adw.Application):
 
     def on_about_action(self, widget, _):
         """Callback for the app.about action."""
-        about = Adw.AboutWindow(transient_for=self.props.active_window,
-                                application_name='Kaar',
-                                application_icon='net.hemish.kaar',
-                                developer_name='Hemish',
-                                version='0.1.0',
-                                developers=['Hemish'],
-                                copyright='© 2023 Hemish')
+        about = Adw.AboutWindow.new_from_appdata("/net/hemish/kaar/net.hemish.kaar.metainfo.xml")
+        about.set_transient_for(self.props.active_window)
         about.present()
 
     def on_preferences_action(self, widget, _):

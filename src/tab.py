@@ -134,20 +134,19 @@ class TabChild(Gtk.Box):
             self.file_monitor.disconnect(self.file_monitor_signal)
             
         except: pass
-        
-    
-        file_path = self.file_obj.get_parse_name()
 
-        # FIXME: read from Gfile itself to have support for non-local files
-        self.todotxt = TodoTxt(file_path, parser=TodoTxtParser(task_type=TodoTask))
+        done, contents, tag = self.file_obj.load_contents(cancellable=None)
+
         try:
-            self.todotxt.parse()
+            if done:
+                for task in TodoTxtParser(task_type=TodoTask).parse(contents):
+                    self.list_store.append(task)
+                    print(task)
         except Exception as e:
             print(e)
         finally:
             self.file_monitor_signal = self.file_monitor.connect("changed", lambda *args: print("File Changed"))
-        for task in self.todotxt.tasks:
-            self.list_store.append(task)
+            
         # Reload filters
         self.tasks_filter.changed(Gtk.FilterChange.DIFFERENT)
         self.search_filter.changed(Gtk.FilterChange.DIFFERENT)
@@ -157,8 +156,6 @@ class TabChild(Gtk.Box):
         pb.set_fraction(0)
         pb.set_visible(True)
 
-        self.todotxt.tasks = []
-
         @_async
         def report_progress():
             for i in range(10):
@@ -167,11 +164,19 @@ class TabChild(Gtk.Box):
             sleep(0.15)
             pb.set_visible(False)
 
+        tasks = []
+
         for item in self.list_store:
-            self.todotxt.tasks.append(item)
+            tasks.append(str(item))
         
         self.file_monitor.disconnect(self.file_monitor_signal)
-        self.todotxt.save()
+
+        readwrite = self.file_obj.open_readwrite()
+
+        readwrite.get_output_stream().write_all(buffer=bytes("\n".join(tasks), 'utf-8'), cancellable=None)
+
+        readwrite.close(cancellable=None)
+
         self.file_monitor_signal = self.file_monitor.connect('changed', lambda *args: print("file Changed"))
 
         report_progress()

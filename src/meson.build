@@ -13,12 +13,24 @@ blueprints = custom_target('blueprints',
   command: [find_program('blueprint-compiler'), 'batch-compile', '@OUTPUT@', '@CURRENT_SOURCE_DIR@', '@INPUT@'],
 )
 
+appstream_file = i18n.merge_file(
+        input: 'net.hemish.kaar.metainfo.xml.in',
+       output: 'net.hemish.kaar.metainfo.xml',
+       po_dir: '../po',
+      install: true,
+  install_dir: get_option('datadir') / 'metainfo'
+)
+
+appstreamcli = find_program('appstreamcli', required: false, disabler: true)
+test('Validate appstream file', appstreamcli,
+     args: ['validate', '--no-net', '--explain', appstream_file])
+
 gnome.compile_resources('kaar',
   'kaar.gresource.xml',
   gresource_bundle: true,
   install: true,
   install_dir: pkgdatadir,
-  dependencies: blueprints,
+  dependencies: [blueprints, appstream_file],
 )
 
 python = import('python')
