@@ -33,7 +33,6 @@ class KaarWindow(Adw.ApplicationWindow):
     tab_view : Adw.TabView = Gtk.Template.Child()
     tab_overview : Adw.TabOverview = Gtk.Template.Child()
     open_button: Gtk.Button = Gtk.Template.Child()
-    trailing_open_button: Gtk.Button = Gtk.Template.Child()
     status_open_button: Gtk.Button = Gtk.Template.Child()
     projects_clear: Gtk.Button = Gtk.Template.Child()
     contexts_clear: Gtk.Button = Gtk.Template.Child()
@@ -48,8 +47,7 @@ class KaarWindow(Adw.ApplicationWindow):
         app = self.get_application()
         self.settings: Gio.Settings = app.settings
 
-        for i in [self.open_button, self.status_open_button, self.trailing_open_button]:
-            i.connect("clicked", self.on_open_button)
+        self.open_button.connect("clicked", self.on_open_button)
 
         self.settings.bind("autosave", self.save_button, "visible", Gio.SettingsBindFlags.INVERT_BOOLEAN)
 
@@ -98,7 +96,9 @@ class KaarWindow(Adw.ApplicationWindow):
 
         if self.settings.get_boolean("restore-session"):
             for file in self.settings.get_strv("files"):
-                self.get_application().open_file(Gio.File.new_for_uri(file))
+                try:
+                    self.get_application().open_file(Gio.File.new_for_uri(file))
+                except: pass
 
     def create_flow_box_item(self, string_obj: Gtk.StringObject, *args) -> Adw.ActionRow:
         row: Adw.ActionRow = Adw.ActionRow()

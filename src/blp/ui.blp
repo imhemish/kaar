@@ -201,7 +201,6 @@ template $KaarWindow: Adw.ApplicationWindow {
                                     "flat"
                                 ]
 
-                                visible: bind tab_bar.tabs-revealed inverted;
                                 icon-name: "tab-new-symbolic";
                                 tooltip-text: "Open File";
                             }
@@ -232,15 +231,6 @@ template $KaarWindow: Adw.ApplicationWindow {
                         [top]
                         Adw.TabBar tab_bar {
                             view: tab_view;
-
-                            end-action-widget: Gtk.Button trailing_open_button {
-                                icon-name: "tab-new-symbolic";
-                                tooltip-text: "Open File";
-
-                                styles [
-                                    "flat"
-                                ]
-                            };
                         }
 
                         [bottom]
