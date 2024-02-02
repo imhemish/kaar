@@ -47,9 +47,14 @@ class KaarWindow(Adw.ApplicationWindow):
         app = self.get_application()
         self.settings: Gio.Settings = app.settings
 
+        self.open_button.connect("clicked", self.on_open_button)
+        self.status_open_button.connect("clicked", self.on_open_button)
+
         self.settings.bind("autosave", self.save_button, "visible", Gio.SettingsBindFlags.INVERT_BOOLEAN)
 
-        self.tab_view.connect("notify::selected-page", self.update_projects_and_contexts_filters)
+        self.tab_view.connect("notify::selected-page", lambda *args: self.update_projects_and_contexts_filters())
+        
+        self.search_entry.connect("search-changed", self.on_search_changed)
 
         self.search_bar.set_key_capture_widget(self)
 
@@ -84,6 +89,7 @@ class KaarWindow(Adw.ApplicationWindow):
         self.tab_view.connect("notify::n-pages", self.check_if_no_tabs_are_open)
         self.tab_view.connect("notify::n-pages", self.save_session_details)
 
+        self.tab_overview.connect("create-tab", self.on_open_button)
 
         self.projects_clear.connect('clicked', lambda *args: self.projects_box.unselect_all())
         self.contexts_clear.connect('clicked', lambda *args: self.contexts_box.unselect_all())
@@ -114,7 +120,7 @@ class KaarWindow(Adw.ApplicationWindow):
             fileURIs.append(page.get_child().file)
         self.settings.set_strv("files", fileURIs)
 
-    def update_projects_and_contexts_filters(self, *args) -> None:
+    def update_projects_and_contexts_filters(self) -> None:
         self.projects_box.unselect_all()
         self.contexts_box.unselect_all()
 
