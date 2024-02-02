@@ -7,14 +7,6 @@ template $TaskStack: Gtk.Stack {
     ]
 
     Gtk.StackPage {
-        name: "edit";
-
-        child: Adw.EntryRow entry_row {
-            show-apply-button: true;
-        };
-    }
-
-    Gtk.StackPage {
         name: "view";
 
         child: Gtk.Box {
@@ -62,6 +54,14 @@ template $TaskStack: Gtk.Stack {
                 orientation: vertical;
                 vexpand: true;
             }
+        };
+    }
+
+    Gtk.StackPage {
+        name: "edit";
+
+        child: Adw.EntryRow entry_row {
+            show-apply-button: true;
         };
     }
 }

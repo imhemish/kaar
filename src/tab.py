@@ -141,7 +141,6 @@ class TabChild(Gtk.Box):
             if done:
                 for task in TodoTxtParser(task_type=TodoTask).parse(contents):
                     self.list_store.append(task)
-                    print(task)
         except Exception as e:
             print(e)
         finally:
@@ -171,11 +170,9 @@ class TabChild(Gtk.Box):
         
         self.file_monitor.disconnect(self.file_monitor_signal)
 
-        readwrite = self.file_obj.open_readwrite()
+        bt = bytes("\n".join(tasks), 'utf-8')
 
-        readwrite.get_output_stream().write_all(buffer=bytes("\n".join(tasks), 'utf-8'), cancellable=None)
-
-        readwrite.close(cancellable=None)
+        self.file_obj.replace_contents(contents=bt, etag=None, make_backup=False, flags=Gio.FileCreateFlags.NONE)
 
         self.file_monitor_signal = self.file_monitor.connect('changed', lambda *args: print("file Changed"))
 

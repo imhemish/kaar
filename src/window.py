@@ -48,6 +48,7 @@ class KaarWindow(Adw.ApplicationWindow):
         self.settings: Gio.Settings = app.settings
 
         self.open_button.connect("clicked", self.on_open_button)
+        self.status_open_button.connect("clicked", self.on_open_button)
 
         self.settings.bind("autosave", self.save_button, "visible", Gio.SettingsBindFlags.INVERT_BOOLEAN)
 
@@ -224,7 +225,6 @@ class KaarWindow(Adw.ApplicationWindow):
         self.tab_view.get_selected_page().get_child().save_file()
     
     def reload_meta(self, *args):
-        print("reload called action")
         self.tab_view.get_selected_page().get_child().reload_file()
     
     def close_tab(self, *args):

@@ -3,20 +3,20 @@ using Adw 1;
 
 template $KaarPreferencesWindow: Adw.PreferencesWindow {
     Adw.PreferencesPage {
-        title: "General";
+        title: _("General");
         icon-name: "applications-system-symbolic";
 
         Adw.PreferencesGroup {
-            title: "Files";
+            title: _("Files");
 
             Adw.SwitchRow autosave {
-                title: "Auto Save";
-                subtitle: "Whether to autosave the files or not, when the tasks are changed";
+                title: _("Auto Save");
+                subtitle: _("Whether to autosave the files or not, when the tasks are changed");
             }
 
             Adw.SwitchRow restore_session {
-                title: "Restore session on startup";
-                subtitle: "Whether to try to restore files opened in last session or not";
+                title: _("Restore session on startup");
+                subtitle: _("Whether to try to restore files opened in last session or not");
             }
         }
 
@@ -70,37 +70,37 @@ template $KaarPreferencesWindow: Adw.PreferencesWindow {
         }
 
         Adw.PreferencesGroup {
-            title: "Appearance";
+            title: _("Appearance");
 
             Adw.SwitchRow vertically_center_tasks {
-                title: "Vertically Center Tasks";
-                subtitle: "Whether to vertically center tasks or not in the tasks view";
+                title: _("Vertically Center Tasks");
+                subtitle: _("Whether to vertically center tasks or not in the tasks view");
             }
 
         }
     }
 
     Adw.PreferencesPage {
-        title: "Advanced";
+        title: _("Advanced");
         icon-name: "security-low-symbolic";
 
         Adw.PreferencesGroup {
             
             Adw.SwitchRow pango_markup {
-                title: "Render Pango Markup";
-                subtitle: "Whether to render pango markup in task descriptions (requires Restart)";
+                title: _("Render Pango Markup");
+                subtitle: _("Whether to render pango markup in task descriptions (requires Restart)");
 
             }
         }
     }
     Adw.PreferencesPage {
-        title: "Extensions";
+        title: _("Extensions");
         icon-name: "preferences-other-symbolic";
 
         Adw.PreferencesGroup {
             Adw.SwitchRow hidden_tasks {
-                title: "Hidden Tasks";
-                subtitle: 'Whether to hide tasks if h:1 is set';
+                title: _("Hidden Tasks");
+                subtitle: _("Whether to hide tasks if h:1 is set");
             }
         }
     }

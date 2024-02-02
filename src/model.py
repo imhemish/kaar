@@ -1,6 +1,6 @@
 import gi
 from pytodotxt import Task
-from gi.repository import GObject, Gtk, Adw, Gio
+from gi.repository import GObject, Gtk, Adw
 import datetime
 
 # This represents a single task row, which is actually made up of stack
@@ -97,8 +97,8 @@ class TaskFactory(Gtk.SignalListItemFactory):
 
         task_stack.entry_row.set_text(task_object.line)
 
-        task_stack.check_button.set_active(task_object.completed)
-        task_stack.completed_binding = task_object.bind_property("completed", task_stack.check_button, "active", GObject.BindingFlags.BIDIRECTIONAL)
+        task_stack.check_button.set_active(task_object.is_completed)
+        task_stack.completed_binding = task_stack.check_button.bind_property("active", task_object, "completed", GObject.BindingFlags.BIDIRECTIONAL)
 
 
         if task_object.duplicatepriority != None: 
@@ -132,11 +132,12 @@ class TodoTask(Task, GObject.Object):
     def __init__(self, *args):
         super().__init__(*args)
         GObject.Object.__init__(self)
+        self.notify("completed")
         self.mode = 'view'
         self._line = str(self)
         self._dates = self.calculate_date_strings()
         self.tags = [*map(lambda x: "+"+x, self.projects), *map(lambda x: "@"+x, self.contexts)]
-        self.notify("completed")
+        
         
 
     
@@ -162,6 +163,10 @@ class TodoTask(Task, GObject.Object):
     @GObject.Property(type=bool, default=False)
     def completed(self):
         return self.is_completed
+    
+    @completed.setter
+    def completed(self, value):
+        self.is_completed = value
 
     @GObject.Property(type=str)
     def duplicatepriority(self):

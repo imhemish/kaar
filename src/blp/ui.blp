@@ -4,9 +4,9 @@ using Gio 2.0;
 
 menu menu {
     item (_("Close Tab"), "win.close_tab")
-    item ("Preferences", "app.preferences")
-    item ("Keyboard Shortcuts", "win.show-help-overlay")
-    item ("About Kaar", "app.about")
+    item (_("Preferences"), "app.preferences")
+    item (_("Keyboard Shortcuts"), "win.show-help-overlay")
+    item (_("About Kaar"), "app.about")
 }
 
 template $KaarWindow: Adw.ApplicationWindow {
@@ -43,7 +43,7 @@ template $KaarWindow: Adw.ApplicationWindow {
                                 ]
 
                                 title-widget: Adw.WindowTitle {
-                                    title: "Filters";
+                                    title: _("Filters");
                                 };
 
                                 [start]
@@ -74,19 +74,19 @@ template $KaarWindow: Adw.ApplicationWindow {
 
                                         Adw.ActionRow {
                                             name: "all";
-                                            title: "All Tasks";
+                                            title: _("All Tasks");
                                             icon-name: "user-home-symbolic";
                                         }
 
                                         Adw.ActionRow {
                                             name: "due";
-                                            title: "Due Tasks";
+                                            title: _("Due Tasks");
                                             icon-name: "document-open-recent-symbolic";
                                         }
 
                                         Adw.ActionRow {
                                             name: "complete";
-                                            title: "Complete";
+                                            title: _("Completed Tasks");
                                             icon-name: "object-select-symbolic";
                                         }
                                     }
@@ -95,7 +95,7 @@ template $KaarWindow: Adw.ApplicationWindow {
                                         orientation: horizontal;
 
                                         Gtk.Label {
-                                            label: "Projects";
+                                            label: _("Projects");
                                             halign: start;
                                             margin-start: 15;
 
@@ -114,7 +114,7 @@ template $KaarWindow: Adw.ApplicationWindow {
 
                                         Gtk.Button projects_clear {
                                             icon-name: "edit-clear-symbolic";
-                                            tooltip-text: "Clear Selection";
+                                            tooltip-text: _("Clear Selection");
                                             margin-end: 8;
                                         }
                                     }
@@ -131,7 +131,7 @@ template $KaarWindow: Adw.ApplicationWindow {
                                         orientation: horizontal;
 
                                         Gtk.Label {
-                                            label: "Contexts";
+                                            label: _("Contexts");
                                             halign: start;
                                             margin-start: 15;
 
@@ -150,7 +150,7 @@ template $KaarWindow: Adw.ApplicationWindow {
 
                                         Gtk.Button contexts_clear {
                                             icon-name: "edit-clear-symbolic";
-                                            tooltip-text: "Clear Selection";
+                                            tooltip-text: _("Clear Selection");
                                             margin-end: 8;
                                         }
                                     }
@@ -173,7 +173,7 @@ template $KaarWindow: Adw.ApplicationWindow {
                         [top]
                         Adw.HeaderBar headerbar {
                             title-widget: Adw.WindowTitle {
-                                title: "Kaar";
+                                title: _("Kaar");
                             };
 
                             styles [
@@ -185,14 +185,14 @@ template $KaarWindow: Adw.ApplicationWindow {
                                 icon-name: "view-dual-symbolic";
                                 active: bind split_view.show-sidebar;
                                 visible: bind split_view.show-sidebar inverted;
-                                tooltip-text: "Toggle Sidebar";
+                                tooltip-text: _("Toggle Sidebar");
                             }
 
                             [start]
                             Gtk.Button save_button {
                                 icon-name: "document-save-symbolic";
                                 action-name: "win.save";
-                                tooltip-text: "Save File";
+                                tooltip-text: _("Save File");
                             }
 
                             [start]
@@ -202,14 +202,14 @@ template $KaarWindow: Adw.ApplicationWindow {
                                 ]
 
                                 icon-name: "tab-new-symbolic";
-                                tooltip-text: "Open File";
+                                tooltip-text: _("Open a File");
                             }
 
                             [end]
                             Gtk.MenuButton {
                                 icon-name: "open-menu-symbolic";
                                 menu-model: menu;
-                                tooltip-text: "Open Menu";
+                                tooltip-text: _("Open Menu");
                             }
 
                             [end]
@@ -246,13 +246,13 @@ template $KaarWindow: Adw.ApplicationWindow {
                             Gtk.ToggleButton {
                                 icon-name: "system-search-symbolic";
                                 active: bind search_bar.search-mode-enabled bidirectional;
-                                tooltip-text: "Search Tasks";
+                                tooltip-text: _("Search Tasks");
                             }
 
                             Gtk.Button {
                                 icon-name: "user-trash-symbolic";
                                 action-name: "win.delete";
-                                tooltip-text: "Delete Task";
+                                tooltip-text: _("Delete Task");
 
                                 styles [
                                     "destructive-action"
@@ -263,7 +263,7 @@ template $KaarWindow: Adw.ApplicationWindow {
                                 halign: center;
                                 icon-name: "document-edit-symbolic";
                                 action-name: "win.edit";
-                                tooltip-text: "Edit Task";
+                                tooltip-text: _("Edit Task");
 
                                 styles [
                                     "suggested-action"
@@ -273,7 +273,7 @@ template $KaarWindow: Adw.ApplicationWindow {
                             Gtk.Button {
                                 icon-name: "list-add-symbolic";
                                 action-name: "win.new";
-                                tooltip-text: "Add New Task";
+                                tooltip-text: _("Add New Task");
 
                                 styles [
                                     "suggested-action"
@@ -283,7 +283,7 @@ template $KaarWindow: Adw.ApplicationWindow {
                             Gtk.Button {
                                 icon-name: "view-refresh-symbolic";
                                 action-name: "win.reload";
-                                tooltip-text: "Reload File";
+                                tooltip-text: _("Reload File");
                             }
                         }
 
@@ -301,7 +301,7 @@ template $KaarWindow: Adw.ApplicationWindow {
 
                 Adw.HeaderBar {
                     title-widget: Adw.WindowTitle {
-                        title: "Kaar";
+                        title: _("Kaar");
                     };
 
                     styles [
@@ -312,7 +312,7 @@ template $KaarWindow: Adw.ApplicationWindow {
                     Gtk.MenuButton {
                         icon-name: "open-menu-symbolic";
                         menu-model: menu;
-                        tooltip-text: "Open Menu";
+                        tooltip-text: _("Open Menu");
                     }
                 }
 
@@ -321,10 +321,10 @@ template $KaarWindow: Adw.ApplicationWindow {
 
                     Adw.StatusPage {
                         icon-name: "emblem-documents-symbolic";
-                        title: "No Files Open";
+                        title: _("No Files Open");
 
                         child: Gtk.Button status_open_button {
-                            label: "Open a File";
+                            label: _("Open a File");
                             halign: center;
 
                             styles [
