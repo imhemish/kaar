@@ -25,8 +25,8 @@ sorting_strings = {
 }
 
 @Gtk.Template(resource_path='/net/hemish/kaar/blp/preferences.ui')
-class KaarPreferencesWindow(Adw.PreferencesWindow):
-    __gtype_name__ = 'KaarPreferencesWindow'
+class KaarPreferencesDialog(Adw.PreferencesDialog):
+    __gtype_name__ = 'KaarPreferencesDialog'
     autosave: Adw.SwitchRow = Gtk.Template.Child()
     restore_session: Adw.SwitchRow = Gtk.Template.Child()
     vertically_center_tasks: Adw.SwitchRow = Gtk.Template.Child()

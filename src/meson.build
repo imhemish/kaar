@@ -54,7 +54,7 @@ kaar_sources = [
   '__init__.py',
   'main.py',
   'window.py',
-  'preferences_window.py',
+  'preferences.py',
   'model.py',
   'filtering.py',
   'sorting.py',

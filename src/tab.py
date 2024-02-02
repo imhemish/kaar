@@ -3,7 +3,7 @@ from gi.repository import Gtk, Adw, Gio, GObject
 
 from .filtering import Filtering
 from .sorting import TaskSorting, TaskSorter
-from .preferences_window import converter
+from .preferences import converter
 from .model import TaskFactory, TodoTask
 from .pseudo_async import _async
 
@@ -104,6 +104,7 @@ class TabChild(Gtk.Box):
         self.file_obj = Gio.File.new_for_uri(self.file)
         self.file_monitor = self.file_obj.monitor(flags=Gio.FileMonitorFlags.NONE, cancellable=None)
 
+
         for i in range(4):
             self.settings.connect(f"changed::{converter(i)}", self.on_sorting_change)
 
@@ -128,13 +129,6 @@ class TabChild(Gtk.Box):
     def reload_file(self, *args):
         self.list_store.remove_all()
 
-
-        # Disconnect and dispose previous file monitor
-        try:
-            self.file_monitor.disconnect(self.file_monitor_signal)
-            
-        except: pass
-
         done, contents, tag = self.file_obj.load_contents(cancellable=None)
 
         try:
@@ -143,9 +137,7 @@ class TabChild(Gtk.Box):
                     self.list_store.append(task)
         except Exception as e:
             print(e)
-        finally:
-            self.file_monitor_signal = self.file_monitor.connect("changed", lambda *args: print("File Changed"))
-            
+        
         # Reload filters
         self.tasks_filter.changed(Gtk.FilterChange.DIFFERENT)
         self.search_filter.changed(Gtk.FilterChange.DIFFERENT)
@@ -168,13 +160,13 @@ class TabChild(Gtk.Box):
         for item in self.list_store:
             tasks.append(str(item))
         
-        self.file_monitor.disconnect(self.file_monitor_signal)
+        self.unmonitor()
 
         bt = bytes("\n".join(tasks), 'utf-8')
 
         self.file_obj.replace_contents(contents=bt, etag=None, make_backup=False, flags=Gio.FileCreateFlags.NONE)
 
-        self.file_monitor_signal = self.file_monitor.connect('changed', lambda *args: print("file Changed"))
+        self.monitor()
 
         report_progress()
         self.unsaved = False
@@ -183,3 +175,15 @@ class TabChild(Gtk.Box):
         self.unsaved = True
         if self.settings.get_boolean("autosave"):
             self.save_file()
+    
+    def monitor(self):
+        self.file_monitor = self.file_obj.monitor(flags=Gio.FileMonitorFlags.NONE, cancellable=None)
+        self.file_monitor.set_rate_limit(80)
+        self.file_monitor.connect("changed", lambda *args: print("changed"))
+    
+    def unmonitor(self):
+        try:
+            self.file_monitor.dispose()
+            self.file_monitor = self.file_obj.monitor()
+        except: pass
+        self.file_monitor.connect("changed", lambda *args: print("changed"))

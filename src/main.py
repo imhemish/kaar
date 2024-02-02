@@ -27,7 +27,7 @@ gi.require_version('Adw', '1')
 from gi.repository import Gtk, Gio, Adw, GObject
 from .window import KaarWindow
 from .tab import TabChild
-from .preferences_window import KaarPreferencesWindow, converter
+from .preferences import KaarPreferencesDialog, converter
 from .model import TodoTask
 from .sorting import TaskSorting
 
@@ -79,14 +79,13 @@ class KaarApplication(Adw.Application):
 
     def on_about_action(self, widget, _):
         """Callback for the app.about action."""
-        about = Adw.AboutWindow.new_from_appdata("/net/hemish/kaar/net.hemish.kaar.metainfo.xml")
-        about.set_transient_for(self.props.active_window)
-        about.present()
+        about = Adw.AboutDialog.new_from_appdata("/net/hemish/kaar/net.hemish.kaar.metainfo.xml")
+        about.present(self.props.active_window)
 
     def on_preferences_action(self, widget, _):
         """Callback for the app.preferences action."""
-        preferences = KaarPreferencesWindow(transient_for=self.props.active_window)
-        preferences.present()
+        preferences = KaarPreferencesDialog()
+        preferences.present(self.props.active_window)
     
     
     
