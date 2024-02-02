@@ -28,6 +28,8 @@ template $KaarWindow: Adw.ApplicationWindow {
             child: Adw.TabOverview tab_overview {
                 view: tab_view;
                 enable-new-tab: true;
+                
+                create-tab => $on_open_button();
 
                 child: Adw.OverlaySplitView split_view {
                     show-sidebar: bind sidebar_button.active;
@@ -74,19 +76,19 @@ template $KaarWindow: Adw.ApplicationWindow {
 
                                         Adw.ActionRow {
                                             name: "all";
-                                            title: _("All Tasks");
+                                            title: _("All");
                                             icon-name: "user-home-symbolic";
                                         }
 
                                         Adw.ActionRow {
                                             name: "due";
-                                            title: _("Due Tasks");
+                                            title: _("Due");
                                             icon-name: "document-open-recent-symbolic";
                                         }
 
                                         Adw.ActionRow {
                                             name: "complete";
-                                            title: _("Completed Tasks");
+                                            title: _("Completed");
                                             icon-name: "object-select-symbolic";
                                         }
                                     }
@@ -203,6 +205,7 @@ template $KaarWindow: Adw.ApplicationWindow {
 
                                 icon-name: "tab-new-symbolic";
                                 tooltip-text: _("Open a File");
+                                clicked => $on_open_button();
                             }
 
                             [end]
@@ -225,6 +228,7 @@ template $KaarWindow: Adw.ApplicationWindow {
 
                             Gtk.SearchEntry search_entry {
                                 valign: center;
+                                search-changed => $on_search_changed();
                             }
                         }
 
@@ -331,6 +335,8 @@ template $KaarWindow: Adw.ApplicationWindow {
                                 "pill",
                                 "suggested-action"
                             ]
+
+                            clicked => $on_open_button();
                         };
                     }
                 }
