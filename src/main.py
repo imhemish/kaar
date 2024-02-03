@@ -84,7 +84,7 @@ class KaarApplication(Adw.Application):
 
     def on_preferences_action(self, widget, _):
         """Callback for the app.preferences action."""
-        preferences = KaarPreferencesDialog()
+        preferences = KaarPreferencesDialog(self.settings)
         preferences.present(self.props.active_window)
     
     

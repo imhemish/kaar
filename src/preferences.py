@@ -36,11 +36,11 @@ class KaarPreferencesDialog(Adw.PreferencesDialog):
     priority_list_box: Gtk.ListBox = Gtk.Template.Child()
     pango_markup: Adw.SwitchRow = Gtk.Template.Child()
 
-    def __init__(self, **kwargs):
+    def __init__(self, settings: Gio.Settings, **kwargs):
         super().__init__(**kwargs)
 
         # Use same Gio.Settings instance for entire app
-        self.settings: Gio.Settings = self.get_transient_for().settings
+        self.settings: Gio.Settings = settings
 
 
         self.autosave.set_active(self.settings.get_boolean("autosave"))
