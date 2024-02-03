@@ -28,6 +28,7 @@ sorting_strings = {
 class KaarPreferencesDialog(Adw.PreferencesDialog):
     __gtype_name__ = 'KaarPreferencesDialog'
     autosave: Adw.SwitchRow = Gtk.Template.Child()
+    autoreload: Adw.SwitchRow = Gtk.Template.Child()
     restore_session: Adw.SwitchRow = Gtk.Template.Child()
     vertically_center_tasks: Adw.SwitchRow = Gtk.Template.Child()
     hidden_tasks: Adw.SwitchRow = Gtk.Template.Child()
@@ -45,6 +46,9 @@ class KaarPreferencesDialog(Adw.PreferencesDialog):
 
         self.autosave.set_active(self.settings.get_boolean("autosave"))
         self.settings.bind("autosave", self.autosave, "active", Gio.SettingsBindFlags.DEFAULT)
+
+        self.autoreload.set_active(self.settings.get_boolean("autoreload"))
+        self.settings.bind("autoreload", self.autoreload, "active", Gio.SettingsBindFlags.DEFAULT)
 
         self.restore_session.set_active(self.settings.get_boolean("restore-session"))
         self.settings.bind("restore-session", self.restore_session, "active", Gio.SettingsBindFlags.DEFAULT)

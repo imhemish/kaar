@@ -10,6 +10,8 @@ from .pseudo_async import _async
 from time import sleep
 from pytodotxt import TodoTxt, TodoTxtParser
 
+from gettext import gettext as _
+
 @Gtk.Template(resource_path="/net/hemish/kaar/blp/tab.ui")
 class TabChild(Gtk.Box):
 
@@ -34,6 +36,8 @@ class TabChild(Gtk.Box):
 
     _unsaved: bool = False
 
+    changed_dialog_shown: bool = False
+
     @GObject.Property(type=bool, default=False)
     def unsaved(self):
         return self._unsaved
@@ -41,6 +45,16 @@ class TabChild(Gtk.Box):
     @unsaved.setter
     def unsaved(self, value):
         self._unsaved = value
+    
+    _autoreload = False
+
+    @GObject.Property(type=bool, default=False)
+    def autoreload(self):
+        return self._autoreload
+    
+    @autoreload.setter
+    def autoreload(self, value):
+        self._autoreload = value
 
 
     def __init__(self, file: str, settings: Gio.Settings, parent_window,*args):
@@ -102,11 +116,15 @@ class TabChild(Gtk.Box):
         ###################################################
 
         self.file_obj = Gio.File.new_for_uri(self.file)
-        self.file_monitor = self.file_obj.monitor(flags=Gio.FileMonitorFlags.NONE, cancellable=None)
+
+        self.monitor()
 
 
         for i in range(4):
             self.settings.connect(f"changed::{converter(i)}", self.on_sorting_change)
+
+        self.autoreload = self.settings.get_boolean("autoreload")
+        self.settings.bind("autoreload", self, "autoreload", Gio.SettingsBindFlags.DEFAULT)
 
         #Initially loading file
         self.reload_file()
@@ -175,15 +193,36 @@ class TabChild(Gtk.Box):
         self.unsaved = True
         if self.settings.get_boolean("autosave"):
             self.save_file()
-    
+
     def monitor(self):
         self.file_monitor = self.file_obj.monitor(flags=Gio.FileMonitorFlags.NONE, cancellable=None)
-        self.file_monitor.set_rate_limit(80)
-        self.file_monitor.connect("changed", lambda *args: print("changed"))
+        self.file_monitor.connect("changed", self.on_file_changed_externally)
     
     def unmonitor(self):
         try:
+            self.file_monitor.cancel()
             self.file_monitor.dispose()
             self.file_monitor = self.file_obj.monitor()
         except: pass
-        self.file_monitor.connect("changed", lambda *args: print("changed"))
+    
+    def on_file_changed_externally(self, *args):
+        if not self.autoreload:
+            dialog: Adw.AlertDialog = Adw.AlertDialog.new(_("File Changed"), _("The file seems to have changed by an external program. Do you want to reload it?"))
+            dialog.add_response("reload", "Reload")
+            dialog.set_response_appearance("reload", Adw.ResponseAppearance.SUGGESTED)
+            dialog.add_response("no", "No")
+            dialog.set_close_response("no")
+            dialog.set_default_response("reload")
+
+            # TODO: add a toast to notify user that file was auto reloaded
+            def on_response(*args):
+                if args[1] == "reload":
+                    self.reload_file()
+                self.changed_dialog_shown = False
+            dialog.connect("response",  on_response)
+
+            if not self.changed_dialog_shown:
+                dialog.present(self.parent_window)
+                self.changed_dialog_shown = True
+        else:
+            self.reload_file()

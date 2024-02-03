@@ -11,6 +11,14 @@
 			</description>
 		</key>
 		
+		<key name="autoreload" type="b">
+			<default>false</default>
+			<summary>Auto Reload</summary>
+			<description>
+				Whether to auto reload the file when it is changed externally or not
+			</description>
+		</key>
+
 		<key name="restore-session" type="b">
 			<default>true</default>
 			<summary>Restore session on startup</summary>

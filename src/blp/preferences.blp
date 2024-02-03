@@ -14,6 +14,11 @@ template $KaarPreferencesDialog: Adw.PreferencesDialog {
                 subtitle: _("Whether to autosave the files or not, when the tasks are changed");
             }
 
+            Adw.SwitchRow autoreload {
+                title: _("Auto Reload");
+                subtitle: _("Whether to auto reload the file when it is changed externally or not");
+            }
+
             Adw.SwitchRow restore_session {
                 title: _("Restore session on startup");
                 subtitle: _("Whether to try to restore files opened in last session or not");

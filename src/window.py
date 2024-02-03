@@ -56,7 +56,7 @@ class KaarWindow(Adw.ApplicationWindow):
         
         self.search_entry.connect("search-changed", self.on_search_changed)
 
-        self.search_bar.set_key_capture_widget(self)
+        self.search_bar.set_key_capture_widget(self.tab_view)
 
         ######## List of contexts and projects in sidebar for filtering ########
         self.filters_box.connect("row-selected", lambda *args: self.tab_view.get_selected_page().get_child().filtering.set_current_filtering(args[1].get_name()))
