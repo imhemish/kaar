@@ -36,6 +36,12 @@
 			</description>
 		</key>
 
+	  <key name="last-file" type="s">
+	    <default>""</default>
+	    <summary>Last Active File</summary>
+	    <description> URI of last active file</description>
+	  </key>
+
 		<key name="vertically-center-tasks" type="b">
 			<default>false</default>
 			<summary>Vertically Center Tasks</summary>

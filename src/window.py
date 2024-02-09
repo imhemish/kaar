@@ -100,6 +100,12 @@ class KaarWindow(Adw.ApplicationWindow):
                 try:
                     self.get_application().open_file(Gio.File.new_for_uri(file))
                 except: pass
+            try:
+                fileuri = self.settings.get_string("last-file")
+                for page in self.tab_view.get_pages():
+                    if page.get_child().file == fileuri:
+                        self.tab_view.set_selected_page(page)
+            except: pass
 
     def create_flow_box_item(self, string_obj: Gtk.StringObject, *args) -> Adw.ActionRow:
         row: Adw.ActionRow = Adw.ActionRow()
@@ -187,6 +193,15 @@ class KaarWindow(Adw.ApplicationWindow):
     def new_task(self, *args):
         task = TodoTask()
         tabchild = self.tab_view.get_selected_page().get_child()
+
+        if tabchild.filtering.current_filtering == "complete":
+            task.is_completed = True
+
+        for string_object in self.projects_model:
+            task.add_project(string_object.get_string())
+        for string_object in self.contexts_model:
+            task.add_context(string_object.get_string())
+
         tabchild.list_store.append(task)
 
         # FIXME: Scroll and select newly added task
@@ -229,4 +244,11 @@ class KaarWindow(Adw.ApplicationWindow):
     
     def close_tab(self, *args):
         self.tab_view.close_page(self.tab_view.get_selected_page())
+    
+    def do_close_request(self, *args):
+        print("close request")
+        if self.tab_view.get_n_pages() != 0:
+            self.settings.set_string("last-file", self.tab_view.get_selected_page().get_child().file)
+        self.destroy()
+        return True
 

@@ -36,6 +36,7 @@ class KaarPreferencesDialog(Adw.PreferencesDialog):
     priority_down_button: Gtk.Button = Gtk.Template.Child()
     priority_list_box: Gtk.ListBox = Gtk.Template.Child()
     pango_markup: Adw.SwitchRow = Gtk.Template.Child()
+    autoreload_info_button: Gtk.Button = Gtk.Template.Child()
 
     def __init__(self, settings: Gio.Settings, **kwargs):
         super().__init__(**kwargs)
@@ -72,6 +73,8 @@ class KaarPreferencesDialog(Adw.PreferencesDialog):
             row.set_name(self.settings.get_string(converter(i)))
             row.set_title(self.settings.get_string(converter(i)))
         
+        self.autoreload_info_button.connect("clicked", self.show_info_file_monitor)
+        
     
     def on_priority_changer_button_up(self, *args):
 
@@ -91,3 +94,12 @@ class KaarPreferencesDialog(Adw.PreferencesDialog):
             selected_row.set_title(sorting_strings.get(previous_row_name))
             previous_row.set_name(selected_row_name)
             previous_row.set_title(sorting_strings.get(selected_row_name))
+    
+    def show_info_file_monitor(self, *args):
+        dialog: Adw.AlertDialog = Adw.AlertDialog()
+        dialog.set_heading(_("Information about File Monitor"))
+        dialog.set_body(_("File Monitor does not work if the app does not have enough permissions to file, for example in a flatpak sandobx. To make the File Monitor work, the file should be natively accessed. Consider giving permissions to the directory containing file through Flatseal, if running on Flatpak"))
+        dialog.add_response("ok", _("Ok"))
+        dialog.set_close_response("ok")
+        dialog.set_default_response("ok")
+        dialog.present(self)

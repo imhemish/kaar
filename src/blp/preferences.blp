@@ -14,6 +14,7 @@ template $KaarPreferencesDialog: Adw.PreferencesDialog {
                 subtitle: _("Whether to autosave the files or not, when the tasks are changed");
             }
 
+            // TODO: Inform users that file monitoring functionality doesnt work in Flatpak unless you have given full file permissions to the file where it is actually stored
             Adw.SwitchRow autoreload {
                 title: _("Auto Reload");
                 subtitle: _("Whether to auto reload the file when it is changed externally or not");

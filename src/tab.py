@@ -208,9 +208,9 @@ class TabChild(Gtk.Box):
     def on_file_changed_externally(self, *args):
         if not self.autoreload:
             dialog: Adw.AlertDialog = Adw.AlertDialog.new(_("File Changed"), _("The file seems to have changed by an external program. Do you want to reload it?"))
-            dialog.add_response("reload", "Reload")
+            dialog.add_response("reload", _("Reload"))
             dialog.set_response_appearance("reload", Adw.ResponseAppearance.SUGGESTED)
-            dialog.add_response("no", "No")
+            dialog.add_response("no", _("No"))
             dialog.set_close_response("no")
             dialog.set_default_response("reload")
 
