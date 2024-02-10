@@ -205,7 +205,7 @@ class KaarWindow(Adw.ApplicationWindow):
         tabchild.list_store.append(task)
 
         # FIXME: Scroll and select newly added task
-        #self.props.active_window.list_view.scroll_to(, Gtk.ListScrollFlags.SELECT)
+        #self.props.active_window.list_viewscroll_to(, Gtk.ListScrollFlags.SELECT)
         
         # Auto set the mode to edit on blank task
         task.mode = 'edit'

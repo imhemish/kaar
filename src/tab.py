@@ -20,6 +20,7 @@ class TabChild(Gtk.Box):
     list_view: Gtk.ListView = Gtk.Template.Child()
     progress_bar: Gtk.ProgressBar = Gtk.Template.Child()
     tab_stack: Gtk.Stack = Gtk.Template.Child()
+    toast_overlay: Adw.ToastOverlay = Gtk.Template.Child()
     ##############################################
 
     file: str
@@ -153,6 +154,9 @@ class TabChild(Gtk.Box):
             if done:
                 for task in TodoTxtParser(task_type=TodoTask).parse(contents):
                     self.list_store.append(task)
+                toast = Adw.Toast.new(_("File Loaded"))
+                toast.set_timeout(1)
+                self.toast_overlay.add_toast(toast)
         except Exception as e:
             print(e)
         
@@ -196,6 +200,7 @@ class TabChild(Gtk.Box):
 
     def monitor(self):
         self.file_monitor = self.file_obj.monitor(flags=Gio.FileMonitorFlags.NONE, cancellable=None)
+        self.file_monitor.set_rate_limit(2000)
         self.file_monitor.connect("changed", self.on_file_changed_externally)
     
     def unmonitor(self):
@@ -214,7 +219,6 @@ class TabChild(Gtk.Box):
             dialog.set_close_response("no")
             dialog.set_default_response("reload")
 
-            # TODO: add a toast to notify user that file was auto reloaded
             def on_response(*args):
                 if args[1] == "reload":
                     self.reload_file()

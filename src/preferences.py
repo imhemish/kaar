@@ -36,7 +36,9 @@ class KaarPreferencesDialog(Adw.PreferencesDialog):
     priority_down_button: Gtk.Button = Gtk.Template.Child()
     priority_list_box: Gtk.ListBox = Gtk.Template.Child()
     pango_markup: Adw.SwitchRow = Gtk.Template.Child()
-    autoreload_info_button: Gtk.Button = Gtk.Template.Child()
+
+    # TODO: figure out a way to show information about file monitor
+    #autoreload_info_button: Gtk.Button = Gtk.Template.Child()
 
     def __init__(self, settings: Gio.Settings, **kwargs):
         super().__init__(**kwargs)
@@ -73,7 +75,7 @@ class KaarPreferencesDialog(Adw.PreferencesDialog):
             row.set_name(self.settings.get_string(converter(i)))
             row.set_title(self.settings.get_string(converter(i)))
         
-        self.autoreload_info_button.connect("clicked", self.show_info_file_monitor)
+        #self.autoreload_info_button.connect("clicked", self.show_info_file_monitor)
         
     
     def on_priority_changer_button_up(self, *args):

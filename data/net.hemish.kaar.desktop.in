@@ -1,7 +1,7 @@
 [Desktop Entry]
 Name=Kaar
 Comment=todo.txt based To-Do app
-Exec=kaar
+Exec=kaar %F
 Icon=net.hemish.kaar
 Terminal=false
 Type=Application

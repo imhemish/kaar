@@ -11,19 +11,21 @@ template $TabChild: Gtk.Box {
             name: "main";
 
             child: Gtk.Overlay {
-                Gtk.ScrolledWindow {
-                    Adw.ClampScrollable {
-                        Gtk.ListView list_view {
-                            margin-start: 4;
-                            margin-end: 4;
+                Adw.ToastOverlay toast_overlay{
+                    child: Gtk.ScrolledWindow {
+                        Adw.ClampScrollable {
+                            Gtk.ListView list_view {
+                                margin-start: 4;
+                                margin-end: 4;
 
-                            styles [
-                                "background"
-                            ]
+                                styles [
+                                    "background"
+                                ]
 
-                            vexpand: true;
+                                vexpand: true;
+                            }
                         }
-                    }
+                    };
                 }
 
                 [overlay]
@@ -41,10 +43,10 @@ template $TabChild: Gtk.Box {
 
         Gtk.StackPage {
             name: "status";
+
             child: Adw.StatusPage {
                 title: _("No Tasks Here");
                 icon-name: "view-list-symbolic";
-                
             };
         }
     }
