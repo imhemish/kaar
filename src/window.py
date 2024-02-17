@@ -260,7 +260,7 @@ class KaarWindow(Adw.ApplicationWindow):
 
             dialog: Adw.AlertDialog = Adw.AlertDialog.new(_("Unsaved File(s)"), _("One or more files are unsaved"))
             dialog.add_response("cancel", _("Cancel"))
-            dialog.add_response("save", _("Save"))
+            dialog.add_response("save", _("Save and Exit"))
             dialog.set_response_appearance("save", Adw.ResponseAppearance.SUGGESTED)
             dialog.add_response("exit", _("Exit without saving"))
             dialog.set_close_response("cancel")
@@ -272,6 +272,7 @@ class KaarWindow(Adw.ApplicationWindow):
                 if args[1] == "save":
                     for page in self.tab_view.get_pages():
                         page.get_child().save_file()
+                    self.destroy()
                 elif args[1] == "cancel":
                     return False # Do not exit
                 elif args[1] == "exit":
@@ -282,7 +283,7 @@ class KaarWindow(Adw.ApplicationWindow):
             print("dialog bound to response signal")
             dialog.present(self)
             print("dialog presented")
-            return False
+            return True
         else:
             print("not unsaved")
             # Exit finally
