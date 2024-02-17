@@ -1,6 +1,6 @@
 import gi
 from pytodotxt import Task
-from gi.repository import GObject, Gtk, Adw
+from gi.repository import GObject, Gtk, Adw, Gdk
 import datetime
 
 # This represents a single task row, which is actually made up of stack
@@ -14,6 +14,8 @@ class TaskStack(Gtk.Stack):
     priority_label = Gtk.Template.Child()
     tags_flow_box: Gtk.FlowBox = Gtk.Template.Child()
     dates_flow_box: Gtk.FlowBox = Gtk.Template.Child()
+    gesture_click: Gtk.GestureClick = Gtk.Template.Child()
+    popover_menu: Gtk.PopoverMenu = Gtk.Template.Child()
 
     def create_flow_box_item(self, object: str) -> Gtk.Label:
         print("create function was called")
@@ -28,6 +30,8 @@ class TaskStack(Gtk.Stack):
         super().__init__(**kwargs)
         self.entry_row.connect("apply", self.on_entry_apply)
         self.connect("notify::visible-child-name", self.on_view_change)
+        self.gesture_click.connect("pressed", self.on_right_click)
+        self.popover_menu.set_parent(self)
     
     def on_entry_apply(self, *args):
         self.set_visible_child_name("view")
@@ -66,6 +70,32 @@ class TaskStack(Gtk.Stack):
                 window.tab_view.get_selected_page().get_child().save_if_required()
             except:
                 pass
+    
+    def on_right_click(self, *args):
+        
+            # Sometimes get_ancestor causes error because the widget sometimes
+            # are disowned, that's why a try
+            window: Adw.ApplicationWindow = self.get_ancestor(Adw.ApplicationWindow)
+            tabchild = window.tab_view.get_selected_page().get_child()
+
+            # We need to select the item on right click
+            # as actions win.edit, win.delete work on selected item
+            # so thats why all this code
+
+            # A single selection model
+            # self.object is set while binding todotask through list view factory
+
+            # You can't pass a reference to object to be selected in Gtk.SingleSelection
+            # you can only set selected by position, so here traversing through model to find position
+            for i, object in enumerate(tabchild.list_view.get_model()):
+                if self.object == object:
+                    tabchild.list_view.get_model().set_selected(i)
+                    break
+
+
+            # now show the popover menu
+            #self.popover_menu.set_pointing_to(Gdk.Rectangle())
+            self.popover_menu.popup()
 
 # factory which would be used by list view for displaying tasks
 class TaskFactory(Gtk.SignalListItemFactory):
@@ -152,7 +182,7 @@ class TodoTask(Task, GObject.Object):
         self._line = str(self)
         self.notify("duplicatedescription")
         self.notify("completed")
-        self._dates = self.calculate_date_strings() # Doesnt matter what value you pass here
+        self._dates = self.calculate_date_strings()
         self.duplicatepriority = self.priority
         self.tags = [*map(lambda x: "+"+x, self.projects), *map(lambda x: "@"+x, self.contexts)]
     

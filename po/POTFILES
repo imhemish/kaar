@@ -6,3 +6,4 @@ src/blp/preferences.blp
 src/blp/task.blp
 src/blp/ui.blp
 src/tab.py
+src/window.py

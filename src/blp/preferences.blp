@@ -14,12 +14,6 @@ template $KaarPreferencesDialog: Adw.PreferencesDialog {
                 subtitle: _("Whether to autosave the files or not, when the tasks are changed");
             }
 
-            // TODO: Inform users that file monitoring functionality doesnt work in Flatpak unless you have given full file permissions to the file where it is actually stored
-            Adw.SwitchRow autoreload {
-                title: _("Auto Reload");
-                subtitle: _("Whether to auto reload the file when it is changed externally or not");
-            }
-
             Adw.SwitchRow restore_session {
                 title: _("Restore session on startup");
                 subtitle: _("Whether to try to restore files opened in last session or not");
@@ -82,7 +76,6 @@ template $KaarPreferencesDialog: Adw.PreferencesDialog {
                 title: _("Vertically Center Tasks");
                 subtitle: _("Whether to vertically center tasks or not in the tasks view");
             }
-
         }
     }
 
@@ -91,14 +84,19 @@ template $KaarPreferencesDialog: Adw.PreferencesDialog {
         icon-name: "security-low-symbolic";
 
         Adw.PreferencesGroup {
-            
             Adw.SwitchRow pango_markup {
                 title: _("Render Pango Markup");
                 subtitle: _("Whether to render pango markup in task descriptions (requires Restart)");
+            }
 
+            // TODO: Inform users that file monitoring functionality doesnt work in Flatpak unless you have given full file permissions to the file where it is actually stored
+            Adw.SwitchRow autoreload {
+                title: _("Auto Reload");
+                subtitle: _("Whether to auto reload the file when it is changed externally or not");
             }
         }
     }
+
     Adw.PreferencesPage {
         title: _("Extensions");
         icon-name: "preferences-other-symbolic";

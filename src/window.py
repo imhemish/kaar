@@ -19,6 +19,7 @@
 
 from gi.repository import Adw, Gtk, Gio
 from .model import TodoTask
+from gettext import gettext as _
 
 @Gtk.Template(resource_path='/net/hemish/kaar/blp/ui.ui')
 class KaarWindow(Adw.ApplicationWindow):
@@ -246,9 +247,45 @@ class KaarWindow(Adw.ApplicationWindow):
         self.tab_view.close_page(self.tab_view.get_selected_page())
     
     def do_close_request(self, *args):
-        print("close request")
         if self.tab_view.get_n_pages() != 0:
             self.settings.set_string("last-file", self.tab_view.get_selected_page().get_child().file)
-        self.destroy()
-        return True
+
+        unsaved = False
+        for page in self.tab_view.get_pages():
+            if page.get_needs_attention():
+                unsaved = True
+                break # Optimising
+        if unsaved:
+            print("trying a dialog")
+
+            dialog: Adw.AlertDialog = Adw.AlertDialog.new(_("Unsaved File(s)"), _("One or more files are unsaved"))
+            dialog.add_response("cancel", _("Cancel"))
+            dialog.add_response("save", _("Save"))
+            dialog.set_response_appearance("save", Adw.ResponseAppearance.SUGGESTED)
+            dialog.add_response("exit", _("Exit without saving"))
+            dialog.set_close_response("cancel")
+            dialog.set_default_response("cancel")
+
+            print("dialog constructed")
+
+            def on_response(*args):
+                if args[1] == "save":
+                    for page in self.tab_view.get_pages():
+                        page.get_child().save_file()
+                elif args[1] == "cancel":
+                    return False # Do not exit
+                elif args[1] == "exit":
+                    self.destroy()
+                    return True
+            
+            dialog.connect("response",  on_response)
+            print("dialog bound to response signal")
+            dialog.present(self)
+            print("dialog presented")
+            return False
+        else:
+            print("not unsaved")
+            # Exit finally
+            self.destroy()
+            return True
 
