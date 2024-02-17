@@ -47,8 +47,8 @@ class KaarPreferencesDialog(Adw.PreferencesDialog):
         self.autosave.set_active(self.settings.get_boolean("autosave"))
         self.settings.bind("autosave", self.autosave, "active", Gio.SettingsBindFlags.DEFAULT)
 
-        self.autoreload.set_expanded(self.settings.get_boolean("autoreload"))
-        self.settings.bind("autoreload", self.autoreload, "expanded", Gio.SettingsBindFlags.DEFAULT)
+        self.autoreload.set_enable_expansion(self.settings.get_boolean("autoreload"))
+        self.settings.bind("autoreload", self.autoreload, "enable-expansion", Gio.SettingsBindFlags.DEFAULT)
 
         self.restore_session.set_active(self.settings.get_boolean("restore-session"))
         self.settings.bind("restore-session", self.restore_session, "active", Gio.SettingsBindFlags.DEFAULT)

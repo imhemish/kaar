@@ -46,6 +46,8 @@ class TabChild(Gtk.Box):
     @unsaved.setter
     def unsaved(self, value):
         self._unsaved = value
+        # Update window title as soon as unsaved status is changed
+        self.parent_window.update_window_title()
     
     _autoreload = False
 
@@ -146,6 +148,7 @@ class TabChild(Gtk.Box):
         self.sorter.set_sorting_priority(sorting_priority)
 
     def reload_file(self, *args):
+        print("reload file called")
         self.list_store.remove_all()
 
         done, contents, tag = self.file_obj.load_contents(cancellable=None)
@@ -169,6 +172,7 @@ class TabChild(Gtk.Box):
         self.search_filter.changed(Gtk.FilterChange.DIFFERENT)
     
     def save_file(self, *args):
+        print("save file called")
         pb: Gtk.ProgressBar = self.progress_bar
         pb.set_fraction(0)
         pb.set_visible(True)
@@ -198,8 +202,10 @@ class TabChild(Gtk.Box):
         self.unsaved = False
     
     def save_if_required(self):
+        print("save if required called")
         self.unsaved = True
         if self.settings.get_boolean("autosave"):
+            print("saving as it is required")
             self.save_file()
 
     def monitor(self):

@@ -48,6 +48,8 @@ class KaarWindow(Adw.ApplicationWindow):
         app = self.get_application()
         self.settings: Gio.Settings = app.settings
 
+        self.set_title(_("Kaar"))
+        
         self.open_button.connect("clicked", self.on_open_button)
         self.status_open_button.connect("clicked", self.on_open_button)
 
@@ -82,6 +84,7 @@ class KaarWindow(Adw.ApplicationWindow):
         self.create_action('edit', self.edit_task, ['<primary>e', 'F2'])
         self.create_action('complete', self.complete_task, ['<primary>x'])
         self.create_action('save', self.save_meta, ['<primary>s'])
+        self.create_action('save_if_required', self.save_if_required_meta)
         self.create_action('reload', self.reload_meta, ['<primary>r'])
         self.create_action("close_tab", self.close_tab, ['<primary>w'])
         ##########################################
@@ -192,24 +195,28 @@ class KaarWindow(Adw.ApplicationWindow):
             object.mode = 'view'
     
     def new_task(self, *args):
+        print("new task called")
         task = TodoTask()
         tabchild = self.tab_view.get_selected_page().get_child()
 
         if tabchild.filtering.current_filtering == "complete":
             task.is_completed = True
 
+        # if you are in a filtered view, append those
         for string_object in self.projects_model:
             task.add_project(string_object.get_string())
         for string_object in self.contexts_model:
             task.add_context(string_object.get_string())
 
         tabchild.list_store.append(task)
+        print("new task appended")
 
         # FIXME: Scroll and select newly added task
         #self.props.active_window.list_viewscroll_to(, Gtk.ListScrollFlags.SELECT)
         
         # Auto set the mode to edit on blank task
         task.mode = 'edit'
+        print("changed to edit mode")
     
     def complete_task(self, *args):
         tabchild = self.tab_view.get_selected_page().get_child()
@@ -237,8 +244,24 @@ class KaarWindow(Adw.ApplicationWindow):
         if shortcuts:
             self.get_application().set_accels_for_action(f"win.{name}", shortcuts)
     
+    def update_window_title(self, *args):
+        unsaved = False
+        for page in self.tab_view.get_pages():
+            if page.get_needs_attention():
+                unsaved = True
+                break # Optimising
+        if unsaved:
+
+            # Translators: This meant to be used in window title. The · here symbolises unsaved files.
+            self.set_title(_("Kaar ·"))
+        else:
+            self.set_title(_("Kaar"))
+
     def save_meta(self, *args):
         self.tab_view.get_selected_page().get_child().save_file()
+    
+    def save_if_required_meta(self, *args):
+        self.tab_view.get_selected_page().get_child().save_if_required()
     
     def reload_meta(self, *args):
         self.tab_view.get_selected_page().get_child().reload_file()
@@ -256,8 +279,8 @@ class KaarWindow(Adw.ApplicationWindow):
                 unsaved = True
                 break # Optimising
         if unsaved:
-            print("trying a dialog")
 
+            # Unsaved dialog
             dialog: Adw.AlertDialog = Adw.AlertDialog.new(_("Unsaved File(s)"), _("One or more files are unsaved"))
             dialog.add_response("cancel", _("Cancel"))
             dialog.add_response("save", _("Save and Exit"))
@@ -266,24 +289,22 @@ class KaarWindow(Adw.ApplicationWindow):
             dialog.set_close_response("cancel")
             dialog.set_default_response("cancel")
 
-            print("dialog constructed")
-
             def on_response(*args):
                 if args[1] == "save":
                     for page in self.tab_view.get_pages():
                         page.get_child().save_file()
                     self.destroy()
                 elif args[1] == "cancel":
-                    return False # Do not exit
+                    return True # Do not exit
                 elif args[1] == "exit":
                     self.destroy()
-                    return True
             
             dialog.connect("response",  on_response)
             print("dialog bound to response signal")
             dialog.present(self)
             print("dialog presented")
-            return True
+            return True # True needs to be returned to implementation of vfunc close_request
+            # to ignore close
         else:
             # Exit finally
             self.destroy()

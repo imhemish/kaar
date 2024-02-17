@@ -40,10 +40,13 @@ class TaskStack(Gtk.Stack):
     # task_object.line and entry_row.text it causes circular dependencies due 
     # to the nature of line property
     def on_view_change(self, *args):
+        print("view changed")
         if self.get_visible_child_name() == 'edit':
+            print("view changed to edit mode")
             self.entry_row.set_text(str(self.object))
             self.entry_row.grab_focus()
         else:
+            print("view changed to view mode")
             try:
                 # Sometimes get_ancestor causes error because the widget sometimes
                 # are disowned, that's why a try
@@ -51,6 +54,7 @@ class TaskStack(Gtk.Stack):
             except:
                 pass
 
+            print("line resetted")
             self.object.line = self.entry_row.get_text()
 
             self.tags_flow_box.remove_all()
@@ -143,7 +147,7 @@ class TaskFactory(Gtk.SignalListItemFactory):
         for date in task_object._dates:
             task_stack.dates_flow_box.append(task_stack.create_flow_box_item(date))
 
-        task_object.completed_signal = task_object.connect("notify::completed", lambda *args: task_stack.activate_action("win.save"))
+        task_object.completed_signal = task_object.connect("notify::completed", lambda *args: task_stack.activate_action("win.save_if_required"))
 
     def unbind_task_item(self, fact, list_item):
         task_object: TodoTask = list_item.get_item()
