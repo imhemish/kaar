@@ -48,7 +48,7 @@
             </child>
             <child>
               <object class="GtkShortcutsShortcut">
-                <property name="title">Mark selected task as complete</property>
+                <property name="title">Toggle completion of selected task</property>
                 <property name="action-name">win.complete</property>
               </object>
             </child>

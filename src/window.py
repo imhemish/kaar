@@ -285,7 +285,6 @@ class KaarWindow(Adw.ApplicationWindow):
             print("dialog presented")
             return True
         else:
-            print("not unsaved")
             # Exit finally
             self.destroy()
             return True

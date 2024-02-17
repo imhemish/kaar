@@ -154,9 +154,13 @@ class TabChild(Gtk.Box):
             if done:
                 for task in TodoTxtParser(task_type=TodoTask).parse(contents):
                     self.list_store.append(task)
-                toast = Adw.Toast.new(_("File Loaded"))
-                toast.set_timeout(1)
-                self.toast_overlay.add_toast(toast)
+
+                # Show file loaded toast only when autoreload functionality is on
+                # (design choice)
+                if self.autoreload:
+                    toast = Adw.Toast.new(_("File Loaded"))
+                    toast.set_timeout(1)
+                    self.toast_overlay.add_toast(toast)
         except Exception as e:
             print(e)
         

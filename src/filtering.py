@@ -2,7 +2,7 @@ from gi.repository import Gio, GObject
 from .model import TodoTask
 
 class Filtering(GObject.Object):
-    filtering_types = ['all', 'due', 'complete',]
+    filtering_types = ['all', 'due', 'complete', 'incomplete']
 
     #Default
     current_filtering: str = 'all'
@@ -51,6 +51,9 @@ class Filtering(GObject.Object):
 
         elif self.current_filtering == 'complete':
             flag = bool(object.completed)
+        
+        elif self.current_filtering == 'incomplete':
+            flag = bool(not object.completed)
 
         for project in self.projects:
             if project in object.projects:

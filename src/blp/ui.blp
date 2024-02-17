@@ -89,6 +89,12 @@ template $KaarWindow: Adw.ApplicationWindow {
                                             title: _("Completed");
                                             icon-name: "object-select-symbolic";
                                         }
+
+                                        Adw.ActionRow {
+                                            name: "incomplete";
+                                            title: _("Incomplete");
+                                            icon-name: "process-stop-symbolic";
+                                        }
                                     }
 
                                     Gtk.Box {
