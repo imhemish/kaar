@@ -88,11 +88,21 @@ template $KaarPreferencesDialog: Adw.PreferencesDialog {
                 title: _("Render Pango Markup");
                 subtitle: _("Whether to render pango markup in task descriptions (requires Restart)");
             }
-
-            // TODO: Inform users that file monitoring functionality doesnt work in Flatpak unless you have given full file permissions to the file where it is actually stored
-            Adw.SwitchRow autoreload {
+            
+            Adw.ExpanderRow autoreload {
+                show-enable-switch: true;
                 title: _("Auto Reload");
                 subtitle: _("Whether to auto reload the file when it is changed externally or not");
+
+                Gtk.Label {
+                    margin-start: 5;
+                    margin-end: 5;
+                    margin-top: 2;
+                    margin-bottom: 2;
+                    use-markup: true;
+                    label: "<b>Note:</b> File Monitor does not work if the app does not have enough permissions to file, for example in a flatpak sandobx. To make the File Monitor work, the file should be natively accessed. Consider giving permissions to the directory containing file through Flatseal, if running on Flatpak";
+                    wrap: true;
+                }
             }
         }
     }
