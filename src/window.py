@@ -17,7 +17,7 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-from gi.repository import Adw, Gtk, Gio
+from gi.repository import Adw, Gtk, Gio, Gdk
 from .model import TodoTask
 from gettext import gettext as _
 
@@ -92,6 +92,8 @@ class KaarWindow(Adw.ApplicationWindow):
         self.check_if_no_tabs_are_open()
         self.tab_view.connect("notify::n-pages", self.check_if_no_tabs_are_open)
         self.tab_view.connect("notify::n-pages", self.save_session_details)
+
+        self.tab_view.connect("close-page", self.handle_close_tab)
 
         self.tab_overview.connect("create-tab", self.on_open_button)
 
@@ -295,7 +297,7 @@ class KaarWindow(Adw.ApplicationWindow):
                         page.get_child().save_file()
                     self.destroy()
                 elif args[1] == "cancel":
-                    return True # Do not exit
+                    pass # Do not exit
                 elif args[1] == "exit":
                     self.destroy()
             
@@ -303,10 +305,34 @@ class KaarWindow(Adw.ApplicationWindow):
             print("dialog bound to response signal")
             dialog.present(self)
             print("dialog presented")
-            return True # True needs to be returned to implementation of vfunc close_request
+            return Gdk.EVENT_STOP # True (or const EVENT_STOP) needs to be returned to implementation of vfunc close_request
             # to ignore close
         else:
             # Exit finally
             self.destroy()
-            return True
+            return Gdk.EVENT_PROPAGATE
+    
+    def handle_close_tab(self, tab_view: Adw.TabView, tab_page: Adw.TabPage, *args):
+        if tab_page.get_needs_attention():
+            dialog: Adw.AlertDialog = Adw.AlertDialog.new(_("Unsaved File"), _("The file in the tab is unsaved"))
+            dialog.add_response("cancel", _("Cancel"))
+            dialog.add_response("save", _("Save and Close"))
+            dialog.set_response_appearance("save", Adw.ResponseAppearance.SUGGESTED)
+            dialog.add_response("close", _("Close without saving"))
+            dialog.set_close_response("cancel")
+            dialog.set_default_response("cancel")
 
+            def on_response(*args):
+                if args[1] == "save":
+                    tab_page.get_child().save_file()
+                    tab_view.close_page_finish(tab_page, True)
+                elif args[1] == "close":
+                    tab_view.close_page_finish(tab_page, True)
+                elif args[1] == "cancel":
+                    tab_view.close_page_finish(tab_page, False)
+        
+            dialog.connect("response",  on_response)
+            dialog.present(self)
+            return Gdk.EVENT_STOP
+        else:
+            return Gdk.EVENT_PROPAGATE
