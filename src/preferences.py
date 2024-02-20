@@ -48,6 +48,8 @@ class KaarPreferencesDialog(Adw.PreferencesDialog):
         self.settings.bind("autosave", self.autosave, "active", Gio.SettingsBindFlags.DEFAULT)
 
         self.autoreload.set_enable_expansion(self.settings.get_boolean("autoreload"))
+        # Instead of a switch row, autoreload is expander row, so conencting to enable-expansion
+        # as expansion is controlled by the switch adjacent to expander arrow
         self.settings.bind("autoreload", self.autoreload, "enable-expansion", Gio.SettingsBindFlags.DEFAULT)
 
         self.restore_session.set_active(self.settings.get_boolean("restore-session"))

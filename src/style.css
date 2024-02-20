@@ -1,3 +1,7 @@
+/* This stylesheet need not be manually loaded into
+Gtk.Application because Adw.Application automatically loads
+style.css present in application's root Gresource*/
+
 .tag {
     border-radius: 12px;
     font-size: small;

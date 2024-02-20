@@ -2,9 +2,12 @@ from gi.repository import Gio, GObject
 from .model import TodoTask
 
 class Filtering(GObject.Object):
-    filtering_types = ['all', 'due', 'complete', 'incomplete']
 
-    #Default
+    # This does not hold any purpose, its just here to remind me of all
+    # filters that i have put
+    #filtering_types = ['all', 'due', 'complete', 'incomplete']
+
+    #Default filtering is all
     current_filtering: str = 'all'
     contexts: list = []
     projects: list = []
@@ -20,6 +23,8 @@ class Filtering(GObject.Object):
 
     def __init__(self, application, changed_callback):
         super().__init__()
+        # As soon as hidden-taks are displayed either through preferences of keyboard shortcut
+        # change the filtering by changing should_hide_hidden_tasks
         self.should_hide_hidden_tasks = application.settings.get_boolean("hidden-tasks")
         application.settings.bind("hidden-tasks", self, "should_hide_hidden_tasks", Gio.SettingsBindFlags.GET)
 

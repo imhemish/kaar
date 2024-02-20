@@ -17,6 +17,7 @@ class TaskStack(Gtk.Stack):
     gesture_click: Gtk.GestureClick = Gtk.Template.Child()
     popover_menu: Gtk.PopoverMenu = Gtk.Template.Child()
 
+    # Creates a label which holds name of projects, contexts, and due, completion dates
     def create_flow_box_item(self, object: str) -> Gtk.Label:
         print("create function was called")
         label = Gtk.Label.new(object)
@@ -30,6 +31,8 @@ class TaskStack(Gtk.Stack):
         super().__init__(**kwargs)
         self.entry_row.connect("apply", self.on_entry_apply)
         self.connect("notify::visible-child-name", self.on_view_change)
+
+        # Shows right click actions like delete, toggle editing
         self.gesture_click.connect("pressed", self.on_right_click)
         self.popover_menu.set_parent(self)
     
@@ -57,6 +60,7 @@ class TaskStack(Gtk.Stack):
             print("line resetted")
             self.object.line = self.entry_row.get_text()
 
+            # Reset tags and dates each time
             self.tags_flow_box.remove_all()
             for tag in self.object.tags:
                 self.tags_flow_box.append(self.create_flow_box_item(tag))
@@ -66,6 +70,7 @@ class TaskStack(Gtk.Stack):
                 self.dates_flow_box.append(self.create_flow_box_item(date))
             
             try:
+                # sidebar projects and contexts
                 window.update_projects_and_contexts_filters()
 
                 # Save the file if 'autosave' gsetting is True
@@ -86,9 +91,6 @@ class TaskStack(Gtk.Stack):
             # as actions win.edit, win.delete work on selected item
             # so thats why all this code
 
-            # A single selection model
-            # self.object is set while binding todotask through list view factory
-
             # You can't pass a reference to object to be selected in Gtk.SingleSelection
             # you can only set selected by position, so here traversing through model to find position
             for i, object in enumerate(tabchild.list_view.get_model()):
@@ -98,7 +100,6 @@ class TaskStack(Gtk.Stack):
 
 
             # now show the popover menu
-            #self.popover_menu.set_pointing_to(Gdk.Rectangle())
             self.popover_menu.popup()
 
 # factory which would be used by list view for displaying tasks
@@ -107,6 +108,7 @@ class TaskFactory(Gtk.SignalListItemFactory):
 
     def __init__(self, render_pango_markup: bool, **kwargs):
         super().__init__(**kwargs)
+        # Setting up factory
         self.connect("setup", self.create_task_item)
         self.connect("bind", self.bind_task_item)
         self.connect("unbind", self.unbind_task_item)
@@ -139,6 +141,7 @@ class TaskFactory(Gtk.SignalListItemFactory):
             task_stack.priority_label.set_label(task_object.duplicatepriority)
         task_object.bind_property("duplicatepriority", task_stack.priority_label, "label")
 
+        # Calculate tags and dates and put them appropriately
         task_stack.tags_flow_box.remove_all()
         for tag in task_object.tags:
             task_stack.tags_flow_box.append(task_stack.create_flow_box_item(tag))
@@ -147,6 +150,7 @@ class TaskFactory(Gtk.SignalListItemFactory):
         for date in task_object._dates:
             task_stack.dates_flow_box.append(task_stack.create_flow_box_item(date))
 
+        # Holding a reference to signal to later disconnect it in unbind_task_item
         task_object.completed_signal = task_object.connect("notify::completed", lambda *args: task_stack.activate_action("win.save_if_required"))
 
     def unbind_task_item(self, fact, list_item):
@@ -158,23 +162,22 @@ class TaskFactory(Gtk.SignalListItemFactory):
         task_stack.completed_binding.unbind()
         
 
-# a subclass of pytodotxt.Task to be consumed by Gtk Widgets and GListModels
+# a subclass of pytodotxt.Task and GObject.Object to be consumed by Gtk Widgets and GListModels
 class TodoTask(Task, GObject.Object):
     mode = GObject.Property(type=str, default="view")
     __gtype_name__ = "TodoTask"
 
     def __init__(self, *args):
-        super().__init__(*args)
-        GObject.Object.__init__(self)
+        super().__init__(*args) # Initialised pytodotxt.Task
+        GObject.Object.__init__(self) # Initialises GObject
         self.notify("completed")
-        self.mode = 'view'
+        self.mode = 'view' # Initial mode is view task
         self._line = str(self)
         self._dates = self.calculate_date_strings()
+
+        # Calculate tags initially
         self.tags = [*map(lambda x: "+"+x, self.projects), *map(lambda x: "@"+x, self.contexts)]
         
-        
-
-    
     @GObject.Property(type=str)
     def line(self):
         self._line = str(self)
@@ -184,6 +187,8 @@ class TodoTask(Task, GObject.Object):
     def line(self, value):
         self.parse(value)
         self._line = str(self)
+        # When task line is set, notify that description, completed might have changed
+        # and also update dates and tags
         self.notify("duplicatedescription")
         self.notify("completed")
         self._dates = self.calculate_date_strings()
@@ -219,6 +224,6 @@ class TodoTask(Task, GObject.Object):
             dates.append(f'Created: {datetime.date.fromisoformat(str(self.creation_date)).strftime("%x")}')
         if self.completion_date:
             dates.append(f'Completed: {datetime.date.fromisoformat(str(self.completion_date)).strftime("%x")}')
-
+        # %x formats the date according to current locale
         return dates
 

@@ -21,7 +21,7 @@ template $KaarPreferencesDialog: Adw.PreferencesDialog {
         }
 
         Adw.PreferencesGroup {
-            Adw.ExpanderRow {
+            Adw.ExpanderRow sorting_expander_row {
                 title: "Sorting Priority";
 
                 [suffix]
@@ -34,10 +34,12 @@ template $KaarPreferencesDialog: Adw.PreferencesDialog {
 
                     Gtk.Button priority_up_button {
                         icon-name: "go-up-symbolic";
+                        visible: bind sorting_expander_row.expanded;
                     }
 
                     Gtk.Button priority_down_button {
                         icon-name: "go-down-symbolic";
+                        visible: bind sorting_expander_row.expanded;
                     }
                 }
 

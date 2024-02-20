@@ -1,10 +1,9 @@
 import gi
 
-from gi.repository import Gtk, GObject
+from gi.repository import Gtk
 from enum import Enum
 from .model import TodoTask
 from datetime import date
-from pytodotxt import Task
 
 # should be same order as in gschema
 TaskSorting = Enum('TaskSorting', [
@@ -14,7 +13,10 @@ TaskSorting = Enum('TaskSorting', [
     "COMPLETION_DATE"
     ])
 
+# the task with most near approaching date is shown first
+# doesnt have a descending order (design choice)
 class DueDateSorter(Gtk.Sorter):
+    """a custom Gtk.Sorter which sorts tasks according to Due Date"""
     def __init__(self, *args):
         super().__init__(*args)
     
@@ -22,15 +24,19 @@ class DueDateSorter(Gtk.Sorter):
         return Gtk.SorterOrder.PARTIAL
     
     def do_compare(self, item1: TodoTask, item2: TodoTask) -> Gtk.Ordering:
-        #print("SDue Date Compare")
         flag: Gtk.Ordering = Gtk.Ordering.EQUAL
 
+        # Both don't have a due date
         if item1.attributes.get('due') == None and item2.attributes.get('due') == None:
             pass # By default, EQUAL
+
+        # One task has due date, other doesnt
         elif item1.attributes.get('due') == None and item2.attributes.get('due') != None:
             flag = Gtk.Ordering.LARGER
         elif item1.attributes.get('due') != None and item2.attributes.get('due') == None:
             flag = Gtk.Ordering.SMALLER
+        
+        # Both have due dates, ad one is earlier than other
         elif date.fromisoformat(item1.attributes.get('due')[0]) > date.fromisoformat(item2.attributes.get('due')[0]):
             flag = Gtk.Ordering.LARGER
         elif date.fromisoformat(item1.attributes.get('due')[0]) < date.fromisoformat(item2.attributes.get('due')[0]):
@@ -38,7 +44,10 @@ class DueDateSorter(Gtk.Sorter):
         
         return flag
 
+# The task which has earlier creation date, ie. was created a long time ago
+# ought to be completed first, its a little opinionated, but ok
 class CreationDateSorter(Gtk.Sorter):
+    """a custom Gtk.Sorter which sorts tasks on basis of Creation Date"""
     def __init__(self, *args):
         super().__init__(*args)
     
@@ -55,15 +64,16 @@ class CreationDateSorter(Gtk.Sorter):
         elif item1.creation_date != None and item2.creation_date == None:
             flag = Gtk.Ordering.LARGER
         elif date.fromisoformat(item1.creation_date) > date.fromisoformat(item2.creation_date):
-            # The task which has earlier creation date, ie. was created a long time ago
-            # ought to be completed first, its a little opinionated, but ok
             flag = Gtk.Ordering.SMALLER
         elif date.fromisoformat(item1.creation_date) < date.fromisoformat(item2.creation_date):
             flag = Gtk.Ordering.LARGER
         
         return flag
 
+# The task which has later completion date, ie. was just completed
+# would be shown first (opiniondates, design choice)
 class CompletionDateSorter(Gtk.Sorter):
+    """a custom Gtk.Sorter which sorts tasks on basis of completion date"""
     def __init__(self, *args):
         super().__init__(*args)
     
@@ -89,7 +99,7 @@ class CompletionDateSorter(Gtk.Sorter):
         return flag
 
 # Ideally we should be using a Gtk.StringSorter for sorting description because
-# it efficiently and correctly sortes string including non-latin unicode characters
+# it efficiently and correctly sorts strings including non-latin unicode characters
 # But it requires use of Gtk.Expression which is broken in PyGObject
 # See https://gitlab.gnome.org/GNOME/pygobject/-/issues/457
 # (I think its fixed? but i dont know how to implement it)
@@ -116,6 +126,8 @@ class DescriptionSorter(Gtk.Sorter):
             flag = flag = Gtk.Ordering.SMALLER
         return flag
 
+# a sorter which uses multi sorter internally to encompass
+# due date, description, creation date, etc sorters
 class TaskSorter(Gtk.Sorter):
 
     def __init__(self, sorting_priority):

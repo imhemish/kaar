@@ -120,6 +120,7 @@ class TabChild(Gtk.Box):
 
         self.file_obj = Gio.File.new_for_uri(self.file)
 
+        # Start monitoring the file for external changes
         self.monitor()
 
 
@@ -132,11 +133,14 @@ class TabChild(Gtk.Box):
         #Initially loading file
         self.reload_file()
 
+        # Initially check if there are no files, then show the status page
+        # saying no files open
         self.check_empty_and_act_accordingly()
         self.single_selection.connect("items-changed", self.check_empty_and_act_accordingly)
 
     def check_empty_and_act_accordingly(self, *args):
         if self.single_selection.get_n_items() == 0:
+            # show status page saying no files open
             self.tab_stack.set_visible_child_name("status")
         else:
             self.tab_stack.set_visible_child_name("main")
@@ -174,11 +178,15 @@ class TabChild(Gtk.Box):
     def save_file(self, *args):
         print("save file called")
         pb: Gtk.ProgressBar = self.progress_bar
+
+        # Show progress bar, and set it to 0
         pb.set_fraction(0)
         pb.set_visible(True)
 
         @_async
         def report_progress():
+            # Update progress bar after some small time
+            # in background
             for i in range(10):
                 pb.set_fraction((i+1)/10)
                 sleep(0.03)
@@ -191,6 +199,8 @@ class TabChild(Gtk.Box):
             tasks.append(str(item))
         
         self.unmonitor()
+        # Unmonitor the file for changes as we are changing the file
+        # and it would count as change
 
         bt = bytes("\n".join(tasks), 'utf-8')
 
@@ -202,6 +212,7 @@ class TabChild(Gtk.Box):
         self.unsaved = False
     
     def save_if_required(self):
+        # Only save if the user has set 'autosave' preference to True
         print("save if required called")
         self.unsaved = True
         if self.settings.get_boolean("autosave"):
