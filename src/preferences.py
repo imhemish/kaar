@@ -31,6 +31,7 @@ class KaarPreferencesDialog(Adw.PreferencesDialog):
     autoreload: Adw.SwitchRow = Gtk.Template.Child()
     restore_session: Adw.SwitchRow = Gtk.Template.Child()
     vertically_center_tasks: Adw.SwitchRow = Gtk.Template.Child()
+    hide_check_buttons: Adw.SwitchRow = Gtk.Template.Child()
     hidden_tasks: Adw.SwitchRow = Gtk.Template.Child()
     priority_up_button: Gtk.Button = Gtk.Template.Child()
     priority_down_button: Gtk.Button = Gtk.Template.Child()
@@ -58,6 +59,9 @@ class KaarPreferencesDialog(Adw.PreferencesDialog):
 
         self.vertically_center_tasks.set_active(self.settings.get_boolean("vertically-center-tasks"))
         self.settings.bind("vertically-center-tasks", self.vertically_center_tasks, "active", Gio.SettingsBindFlags.DEFAULT)
+
+        self.hide_check_buttons.set_active(self.settings.get_boolean("hide-check-buttons"))
+        self.settings.bind("hide-check-buttons", self.hide_check_buttons, "active", Gio.SettingsBindFlags.DEFAULT)
         
 
         self.hidden_tasks.set_active(self.settings.get_boolean("hidden-tasks"))

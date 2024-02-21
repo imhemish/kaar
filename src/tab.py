@@ -115,7 +115,7 @@ class TabChild(Gtk.Box):
 
         ######## Configuring the ListView of tasks ########
         self.list_view.set_model(self.single_selection)
-        self.list_view.set_factory(TaskFactory(self.settings.get_boolean("render-pango-markup")))
+        self.list_view.set_factory(TaskFactory(self.settings.get_boolean("render-pango-markup"), self.settings.get_boolean("hide-check-buttons")))
         ###################################################
 
         self.file_obj = Gio.File.new_for_uri(self.file)

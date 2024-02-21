@@ -105,19 +105,22 @@ class TaskStack(Gtk.Stack):
 # factory which would be used by list view for displaying tasks
 class TaskFactory(Gtk.SignalListItemFactory):
     render_pango_markup: bool
+    hide_check_buttons: bool
 
-    def __init__(self, render_pango_markup: bool, **kwargs):
+    def __init__(self, render_pango_markup: bool, hide_check_buttons: bool, **kwargs):
         super().__init__(**kwargs)
         # Setting up factory
         self.connect("setup", self.create_task_item)
         self.connect("bind", self.bind_task_item)
         self.connect("unbind", self.unbind_task_item)
         self.render_pango_markup = render_pango_markup
+        self.hide_check_buttons = hide_check_buttons
     
     def create_task_item(self, fact, list_item):
         stack = TaskStack()
         if self.render_pango_markup:
             stack.task_label.set_use_markup(True)
+        stack.check_button.set_visible(not self.hide_check_buttons)
         list_item.set_child(stack)
     
     def bind_task_item(self, fact, list_item):

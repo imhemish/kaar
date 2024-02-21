@@ -49,6 +49,13 @@
 				Whether to vertically center tasks or not in the tasks view
 			</description>
 		</key>
+		<key name="hide-check-buttons" type="b">
+			<default>false</default>
+			<summary>Hide Check Buttons</summary>
+			<description>
+				Hide check buttons in tasks
+			</description>
+		</key>
 		<key name="hidden-tasks" type="b">
 			<default>false</default>
 			<summary>Hidden Tasks</summary>
