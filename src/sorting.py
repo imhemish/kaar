@@ -60,13 +60,13 @@ class CreationDateSorter(Gtk.Sorter):
         if item1.creation_date == None and item2.creation_date == None:
             pass
         elif item1.creation_date == None and item2.creation_date != None:
-            flag = Gtk.Ordering.SMALLER
+            flag = Gtk.Ordering.LARGER
         elif item1.creation_date != None and item2.creation_date == None:
-            flag = Gtk.Ordering.LARGER
-        elif date.fromisoformat(item1.creation_date) > date.fromisoformat(item2.creation_date):
             flag = Gtk.Ordering.SMALLER
-        elif date.fromisoformat(item1.creation_date) < date.fromisoformat(item2.creation_date):
+        elif item1.creation_date > item2.creation_date:
             flag = Gtk.Ordering.LARGER
+        elif item1.creation_date < item2.creation_date:
+            flag = Gtk.Ordering.SMALLER
         
         return flag
 
@@ -89,11 +89,11 @@ class CompletionDateSorter(Gtk.Sorter):
             flag = Gtk.Ordering.SMALLER
         elif item1.completion_date != None and item2.completion_date == None:
             flag = Gtk.Ordering.LARGER
-        elif date.fromisoformat(item1.completion_date) > date.fromisoformat(item2.completion_date):
+        elif item1.completion_date > item2.completion_date:
             # The task which has later completion date, ie. was just completed
             # would be shown first
             flag = Gtk.Ordering.LARGER
-        elif date.fromisoformat(item1.completion_date) < date.fromisoformat(item2.completion_date):
+        elif item1.completion_date < item2.completion_date:
             flag = Gtk.Ordering.SMALLER
         
         return flag

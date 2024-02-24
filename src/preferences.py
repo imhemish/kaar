@@ -21,7 +21,7 @@ sorting_strings = {
     "DUE_DATE": _("Due Date"),
     "CREATION_DATE": _("Creation Date"),
     "DESCRIPTION": _("Description"),
-    "COMPLETION_DATE": _("Competion Date")
+    "COMPLETION_DATE": _("Completion Date")
 }
 
 @Gtk.Template(resource_path='/net/hemish/kaar/blp/preferences.ui')
@@ -76,7 +76,7 @@ class KaarPreferencesDialog(Adw.PreferencesDialog):
         for i in range(4):
             row = self.priority_list_box.get_row_at_index(i)
             row.set_name(self.settings.get_string(converter(i)))
-            row.set_title(self.settings.get_string(converter(i)))
+            row.set_title(sorting_strings[self.settings.get_string(converter(i))])
         
         
     
@@ -88,6 +88,8 @@ class KaarPreferencesDialog(Adw.PreferencesDialog):
             previous_row = self.priority_list_box.get_row_at_index(index-1)
             selected_row_name = selected_row.get_name()
             previous_row_name = previous_row.get_name()
+
+            self.priority_list_box.select_row(previous_row)
 
             print(converter(index), previous_row_name)
             self.settings.set_string(converter(index), previous_row_name)

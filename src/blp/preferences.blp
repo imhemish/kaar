@@ -21,57 +21,6 @@ template $KaarPreferencesDialog: Adw.PreferencesDialog {
         }
 
         Adw.PreferencesGroup {
-            Adw.ExpanderRow sorting_expander_row {
-                title: "Sorting Priority";
-
-                [suffix]
-                Gtk.Box {
-                    styles [
-                        "toolbar"
-                    ]
-
-                    orientation: horizontal;
-
-                    Gtk.Button priority_up_button {
-                        icon-name: "go-up-symbolic";
-                        visible: bind sorting_expander_row.expanded;
-                    }
-
-                    Gtk.Button priority_down_button {
-                        icon-name: "go-down-symbolic";
-                        visible: bind sorting_expander_row.expanded;
-                    }
-                }
-
-                Gtk.ListBox priority_list_box {
-                    styles [
-                        "boxed-list"
-                    ]
-
-                    Adw.ActionRow {
-                        name: "DUE_DATE";
-                        title: "DUE_DATE";
-                    }
-
-                    Adw.ActionRow {
-                        name: "CREATION_DATE";
-                        title: "CREATION_DATE";
-                    }
-
-                    Adw.ActionRow {
-                        name: "DESCRIPTION";
-                        title: "DESCRIPTION";
-                    }
-
-                    Adw.ActionRow {
-                        name: "COMPLETION_DATE";
-                        title: "COMPLETION_DATE";
-                    }
-                }
-            }
-        }
-
-        Adw.PreferencesGroup {
             title: _("Appearance");
 
             Adw.SwitchRow vertically_center_tasks {
@@ -84,6 +33,45 @@ template $KaarPreferencesDialog: Adw.PreferencesDialog {
                 subtitle: _("Hide check buttons in tasks (Requires restart)");
             }
         }
+
+        Adw.PreferencesGroup {
+            title: _("Sorting Priority");
+            description: _("The order in which tasks are compared");
+
+            
+            header-suffix: Gtk.Box {
+                styles [
+                    "toolbar"
+                ]
+
+                orientation: horizontal;
+
+                Gtk.Button priority_up_button {
+                    icon-name: "go-up-symbolic";
+                    tooltip-text: _("Move Up");
+                }
+
+                Gtk.Button priority_down_button {
+                    icon-name: "go-down-symbolic";
+                    tooltip-text: _("Move Down");
+                }
+            };
+
+            Gtk.ListBox priority_list_box {
+                styles [
+                    "boxed-list"
+                ]
+
+                Adw.ActionRow {}
+
+                Adw.ActionRow {}
+
+                Adw.ActionRow {}
+
+                Adw.ActionRow {}
+            }
+        }
+
     }
 
     Adw.PreferencesPage {
@@ -95,7 +83,7 @@ template $KaarPreferencesDialog: Adw.PreferencesDialog {
                 title: _("Render Pango Markup");
                 subtitle: _("Whether to render pango markup in task descriptions (requires Restart)");
             }
-            
+
             Adw.ExpanderRow autoreload {
                 show-enable-switch: true;
                 title: _("Auto Reload");

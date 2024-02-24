@@ -114,9 +114,7 @@ class KaarWindow(Adw.ApplicationWindow):
             except: pass
 
     def create_flow_box_item(self, string_obj: Gtk.StringObject, *args) -> Adw.ActionRow:
-        row: Adw.ActionRow = Adw.ActionRow()
-        row.set_title(string_obj.get_string())
-        return row
+        return Adw.ActionRow(title=string_obj.get_string())
     
     def check_if_no_tabs_are_open(self, *args):
         if self.tab_view.get_n_pages() == 0:

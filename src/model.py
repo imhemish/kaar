@@ -2,6 +2,7 @@ import gi
 from pytodotxt import Task
 from gi.repository import GObject, Gtk, Adw, Gdk
 import datetime
+from typing import List
 
 # This represents a single task row, which is actually made up of stack
 # containing two views: edit and view as defined in task.blp
@@ -20,11 +21,9 @@ class TaskStack(Gtk.Stack):
     # Creates a label which holds name of projects, contexts, and due, completion dates
     def create_flow_box_item(self, object: str) -> Gtk.Label:
         print("create function was called")
-        label = Gtk.Label.new(object)
-        label.set_hexpand(False)
+        label = Gtk.Label(label=object, hexpand=False, halign=Gtk.Align.START)
         label.add_css_class("tag")
         label.add_css_class("osd")
-        label.set_halign(Gtk.Align.START)
         return label
     
     def __init__(self, **kwargs):
@@ -116,14 +115,14 @@ class TaskFactory(Gtk.SignalListItemFactory):
         self.render_pango_markup = render_pango_markup
         self.hide_check_buttons = hide_check_buttons
     
-    def create_task_item(self, fact, list_item):
+    def create_task_item(self, fact, list_item) -> None:
         stack = TaskStack()
         if self.render_pango_markup:
             stack.task_label.set_use_markup(True)
         stack.check_button.set_visible(not self.hide_check_buttons)
         list_item.set_child(stack)
     
-    def bind_task_item(self, fact, list_item):
+    def bind_task_item(self, fact, list_item) -> None:
         task_stack = list_item.get_child()
         task_object: TodoTask = list_item.get_item()
         task_stack.object = task_object
@@ -156,7 +155,7 @@ class TaskFactory(Gtk.SignalListItemFactory):
         # Holding a reference to signal to later disconnect it in unbind_task_item
         task_object.completed_signal = task_object.connect("notify::completed", lambda *args: task_stack.activate_action("win.save_if_required"))
 
-    def unbind_task_item(self, fact, list_item):
+    def unbind_task_item(self, fact, list_item) -> None:
         task_object: TodoTask = list_item.get_item()
         task_stack = list_item.get_child()
 
@@ -218,7 +217,7 @@ class TodoTask(Task, GObject.Object):
     def duplicatepriority(self, value):
         self.priority = value
 
-    def calculate_date_strings(self):
+    def calculate_date_strings(self) -> List[str]:
         dates = []
         due = self.attributes.get("due")
         if due:
