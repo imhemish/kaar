@@ -1,22 +1,17 @@
 from gi.repository import Adw
 from gi.repository import Gtk, Gio
 from gettext import gettext as _
+from typing import List
 
 from .sorting import TaskSorting
 
+def get_priority_list(settings: Gio.Settings) -> List[str]:
+    return settings.get_strv("sorting-priority")
 
-def converter(index):
-    returned = "sorting-priority-"
-    if index == 0:
-        returned+='first'
-    elif index == 1:
-        returned+='second'
-    elif index == 2:
-        returned+='third'
-    elif index == 3:
-        returned+='fourth'
-    return returned
-        
+def set_priority_list(settings: Gio.Settings, priority_list: List[str]):
+    settings.set_strv("sorting-priority", priority_list)
+
+# Defining translated strings
 sorting_strings = {
     "DUE_DATE": _("Due Date"),
     "CREATION_DATE": _("Creation Date"),
@@ -37,6 +32,8 @@ class KaarPreferencesDialog(Adw.PreferencesDialog):
     priority_down_button: Gtk.Button = Gtk.Template.Child()
     priority_list_box: Gtk.ListBox = Gtk.Template.Child()
     pango_markup: Adw.SwitchRow = Gtk.Template.Child()
+
+    priority_list: List[str]
 
     def __init__(self, settings: Gio.Settings, **kwargs):
         super().__init__(**kwargs)
@@ -73,10 +70,12 @@ class KaarPreferencesDialog(Adw.PreferencesDialog):
 
         self.priority_up_button.connect('clicked', self.on_priority_changer_button_up)
 
-        for i in range(4):
+        self.priority_list = get_priority_list(self.settings)
+
+        for i, val in enumerate(self.priority_list):
             row = self.priority_list_box.get_row_at_index(i)
-            row.set_name(self.settings.get_string(converter(i)))
-            row.set_title(sorting_strings[self.settings.get_string(converter(i))])
+            row.set_name(val)
+            row.set_title(sorting_strings[val])
         
         
     
@@ -91,10 +90,8 @@ class KaarPreferencesDialog(Adw.PreferencesDialog):
 
             self.priority_list_box.select_row(previous_row)
 
-            print(converter(index), previous_row_name)
-            self.settings.set_string(converter(index), previous_row_name)
-            print(converter(index-1), selected_row_name)
-            self.settings.set_string(converter(index-1), selected_row_name)
+            self.priority_list[index], self.priority_list[index-1] = self.priority_list[index-1], self.priority_list[index]
+            set_priority_list(self.settings, self.priority_list)
             
             selected_row.set_name(previous_row_name)
             selected_row.set_title(sorting_strings.get(previous_row_name))

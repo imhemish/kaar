@@ -3,7 +3,7 @@ from gi.repository import Gtk, Adw, Gio, GObject
 
 from .filtering import Filtering
 from .sorting import TaskSorting, TaskSorter
-from .preferences import converter
+from .preferences import get_priority_list
 from .model import TaskFactory, TodoTask
 from .pseudo_async import _async
 
@@ -100,7 +100,7 @@ class TabChild(Gtk.Box):
 
         sorting_priority = []
         for i in range(4):
-            sorting_priority.append(TaskSorting[self.settings.get_string(converter(i))])
+            sorting_priority.append(TaskSorting[get_priority_list(self.settings)[0]])
 
         self.sorter = TaskSorter(sorting_priority=sorting_priority)
         tasks_sorting_model.set_sorter(self.sorter)
@@ -124,8 +124,7 @@ class TabChild(Gtk.Box):
         self.monitor()
 
 
-        for i in range(4):
-            self.settings.connect(f"changed::{converter(i)}", self.on_sorting_change)
+        self.settings.connect("changed::sorting-priority", self.on_sorting_change)
 
         self.autoreload = self.settings.get_boolean("autoreload")
         self.settings.bind("autoreload", self, "autoreload", Gio.SettingsBindFlags.DEFAULT)
@@ -148,7 +147,7 @@ class TabChild(Gtk.Box):
     def on_sorting_change(self, *args):
         sorting_priority = []
         for i in range(4):
-            sorting_priority.append(TaskSorting[self.settings.get_string(converter(i))])
+            sorting_priority.append(TaskSorting[get_priority_list(self.settings)[i]])
         self.sorter.set_sorting_priority(sorting_priority)
 
     def reload_file(self, *args):

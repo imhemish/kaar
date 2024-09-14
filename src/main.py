@@ -27,7 +27,7 @@ gi.require_version('Adw', '1')
 from gi.repository import Gtk, Gio, Adw, GObject
 from .window import KaarWindow
 from .tab import TabChild
-from .preferences import KaarPreferencesDialog, converter
+from .preferences import KaarPreferencesDialog
 from .model import TodoTask
 from .sorting import TaskSorting
 
