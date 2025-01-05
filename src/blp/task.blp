@@ -14,11 +14,15 @@ PopoverMenu popover_menu {
 
 template $TaskStack: Gtk.Stack {
 
+    // Right click actions with right click and touch long press
+
     GestureClick gesture_click {
         button: 3;
     }
 
-    
+    GestureLongPress gesture_long_press {}
+
+
 
     styles [
         "task"

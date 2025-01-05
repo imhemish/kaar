@@ -16,6 +16,7 @@ class TaskStack(Gtk.Stack):
     tags_flow_box: Gtk.FlowBox = Gtk.Template.Child()
     dates_flow_box: Gtk.FlowBox = Gtk.Template.Child()
     gesture_click: Gtk.GestureClick = Gtk.Template.Child()
+    gesture_long_press: Gtk.GestureLongPress = Gtk.Template.Child()
     popover_menu: Gtk.PopoverMenu = Gtk.Template.Child()
 
     # Creates a label which holds name of projects, contexts, and due, completion dates
@@ -33,6 +34,8 @@ class TaskStack(Gtk.Stack):
 
         # Shows right click actions like delete, toggle editing
         self.gesture_click.connect("pressed", self.on_right_click)
+        # same for touch devices
+        self.gesture_long_press.connect("pressed", self.on_right_click)
         self.popover_menu.set_parent(self)
     
     def on_entry_apply(self, *args):
