@@ -37,6 +37,13 @@ class KaarWindow(Adw.ApplicationWindow):
     status_open_button: Gtk.Button = Gtk.Template.Child()
     projects_clear: Gtk.Button = Gtk.Template.Child()
     contexts_clear: Gtk.Button = Gtk.Template.Child()
+    headerbar: Adw.HeaderBar = Gtk.Template.Child()
+
+    @property
+    def adjusted_title(self):
+        # whether to autosave is already binded to visibility to save button
+        if self.save_button.get_visible():
+            return _("Kaar")
 
     # Defining models for projects and contexts box which provide the filters
     projects_model: Gtk.StringList = Gtk.StringList()
@@ -248,12 +255,7 @@ class KaarWindow(Adw.ApplicationWindow):
         if shortcuts:
             self.get_application().set_accels_for_action(f"win.{name}", shortcuts)
     
-    def update_window_title(self, *args):
-        unsaved = False
-        for page in self.tab_view.get_pages():
-            if page.get_needs_attention():
-                unsaved = True
-                break # Optimising
+    def update_window_title(self, unsaved: bool):
         if unsaved:
 
             # Translators: This meant to be used in window title. The · here symbolises unsaved files.

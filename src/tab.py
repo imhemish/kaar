@@ -47,7 +47,7 @@ class TabChild(Gtk.Box):
     def unsaved(self, value):
         self._unsaved = value
         # Update window title as soon as unsaved status is changed
-        self.parent_window.update_window_title()
+        self.parent_window.update_window_title(unsaved=self.unsaved)
     
     _autoreload = False
 
@@ -58,6 +58,9 @@ class TabChild(Gtk.Box):
     @autoreload.setter
     def autoreload(self, value):
         self._autoreload = value
+
+        # one may change the autoreload setting in between
+        self.parent_window.update_window_title()
 
 
     def __init__(self, file: str, settings: Gio.Settings, parent_window,*args):
@@ -216,6 +219,7 @@ class TabChild(Gtk.Box):
         self.unsaved = True
         if self.settings.get_boolean("autosave"):
             print("saving as it is required")
+            self.unsaved = False
             self.save_file()
 
     def monitor(self):
