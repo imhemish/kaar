@@ -3,11 +3,27 @@
 
 <schemalist gettext-domain="kaar">
 	<schema id="net.hemish.kaar" path="/net/hemish/kaar/">
-		<key name="autosave" type="b">
-			<default>true</default>
-			<summary>Auto Save</summary>
+	<key name="autosave" type="b">
+		<default>true</default>
+		<summary>Auto Save</summary>
 			<description>
 				Whether to autosave the files or not, when the tasks are changed
+			</description>
+	</key>
+
+		<!-- type i is int32 -->
+		<key name="last-window-width" type="i">
+			<default>650</default>
+			<summary>Last Window Width</summary>
+			<description>
+				Window width when the application was closed last time
+			</description>
+		</key>
+		<key name="last-window-height" type="i">
+			<default>320</default>
+			<summary>Last Window Height</summary>
+			<description>
+				Window height when the application was closed last time
 			</description>
 		</key>
 		

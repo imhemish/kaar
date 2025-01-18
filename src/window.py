@@ -48,6 +48,10 @@ class KaarWindow(Adw.ApplicationWindow):
         app = self.get_application()
         self.settings: Gio.Settings = app.settings
 
+        w = self.settings.get_int("last-window-width")
+        h = self.settings.get_int("last-window-height")
+        self.set_default_size(w, h)
+
         self.set_title(_("Kaar"))
         
         self.open_button.connect("clicked", self.on_open_button)
@@ -307,6 +311,8 @@ class KaarWindow(Adw.ApplicationWindow):
             # to ignore close
         else:
             # Exit finally
+            self.settings.set_int("last-window-width", self.get_width())
+            self.settings.set_int("last-window-height", self.get_height())
             self.destroy()
             return Gdk.EVENT_PROPAGATE
     
