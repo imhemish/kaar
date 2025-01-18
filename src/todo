@@ -1,7 +1,6 @@
-TODO: improve sorting and its UI for preferences (high)
-
-TODO: increase, decrease priority buttons and preference (low priority)
-
+TODO: test sorting and implement down arrow in preferences
 TODO: about todo.txt in menu
 
 TODO: fix new task contexts and projects
+
+TODO: If autosave is disabled, when the user reloads, confirm if to read from disk as there are changes that need to be saved
