@@ -5,3 +5,4 @@
 _build
 build
 __pycache__
+*.flatpak
