@@ -98,6 +98,27 @@ class CompletionDateSorter(Gtk.Sorter):
         
         return flag
 
+class AlphabetPrioritySorter(Gtk.Sorter):
+    def __init__(self, *args):
+        super().__init__(*args)
+    
+    def do_get_order(self):
+        return Gtk.SorterOrder.PARTIAL
+    
+    def do_compare(self, item1: TodoTask, item2: TodoTask) -> Gtk.Ordering:
+        flag: Gtk.Ordering = Gtk.Ordering.EQUAL
+        if item1.priority == None and item2.priority == None:
+            pass
+        elif item1.priority == None and item2.priority != None:
+            flag = Gtk.Ordering.LARGER
+        elif item1.priority != None and item2.priority == None:
+            flag = Gtk.Ordering.SMALLER
+        elif item1.priority > item2.priority:
+            flag = flag = Gtk.Ordering.SMALLER
+        elif item1.priority < item2.priority:
+            flag = flag = Gtk.Ordering.LARGER
+        return flag
+
 # Ideally we should be using a Gtk.StringSorter for sorting description because
 # it efficiently and correctly sorts strings including non-latin unicode characters
 # But it requires use of Gtk.Expression which is broken in PyGObject
@@ -134,8 +155,15 @@ class TaskSorter(Gtk.Sorter):
         super().__init__()
         self.multi_sorter = Gtk.MultiSorter()
         self.sorting_priority = sorting_priority
+
+        #Alphabetical priority ranks tasks and should ignore any due dates or anything else
+        # So, it is inserted at first
+        self.multi_sorter.append(AlphabetPrioritySorter())
+
+        # Other sorting objects according to preference
         for i in self.sorting_objects_from_sorting_priority(self.sorting_priority):
             self.multi_sorter.append(i)
+        
         self.changed(Gtk.SorterChange.DIFFERENT)
         
 
