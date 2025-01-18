@@ -3,7 +3,7 @@
   <!--Created with jdAppStreamEdit 8.0-->
   <id>net.hemish.kaar</id>
   <name>Kaar</name>
-  <summary>todo.txt based To-Do app</summary>
+  <summary>Maintain tasks in todo.txt format</summary>
   <developer_name>Hemish</developer_name>
   <launchable type="desktop-id">net.hemish.kaar.desktop</launchable>
   <metadata_license>CC0-1.0</metadata_license>
