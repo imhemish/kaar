@@ -60,7 +60,7 @@ class TabChild(Gtk.Box):
         self._autoreload = value
 
         # one may change the autoreload setting in between
-        self.parent_window.update_window_title()
+        self.parent_window.update_window_title(self.unsaved)
 
 
     def __init__(self, file: str, settings: Gio.Settings, parent_window,*args):
@@ -221,6 +221,12 @@ class TabChild(Gtk.Box):
             print("saving as it is required")
             self.unsaved = False
             self.save_file()
+
+        # save_if_required is called, when any task is edited, deleted.
+        # So, we invalidate the sort, as the edited task may have a due date
+        # or a priority and might need to be ranked higher
+        print("sorter changed will be called now")
+        self.sorter.changed(Gtk.SorterChange.DIFFERENT)
 
     def monitor(self):
         self.file_monitor = self.file_obj.monitor(flags=Gio.FileMonitorFlags.NONE, cancellable=None)

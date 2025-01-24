@@ -238,7 +238,8 @@ class KaarWindow(Adw.ApplicationWindow):
             object.completed = False
         object.line = str(object)
 
-        tabchild.save_if_required()
+        # object.completed already calls save_if_required in model.py when changed
+        # tabchild.save_if_required()
     
     def create_action(self, name, callback, shortcuts=None):
         """Add an application action.

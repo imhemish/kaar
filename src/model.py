@@ -21,7 +21,7 @@ class TaskStack(Gtk.Stack):
 
     # Creates a label which holds name of projects, contexts, and due, completion dates
     def create_flow_box_item(self, object: str) -> Gtk.Label:
-        print("create function was called")
+        #print("create function was called")
         label = Gtk.Label(label=object, hexpand=False, halign=Gtk.Align.START)
         label.add_css_class("tag")
         label.add_css_class("osd")
@@ -39,6 +39,7 @@ class TaskStack(Gtk.Stack):
         self.popover_menu.set_parent(self)
     
     def on_entry_apply(self, *args):
+        print("entry apply")
         self.set_visible_child_name("view")
     
     # this is required because i can not create a bidirectional binding between
@@ -52,6 +53,7 @@ class TaskStack(Gtk.Stack):
             self.entry_row.grab_focus()
         else:
             print("view changed to view mode")
+
             try:
                 # Sometimes get_ancestor causes error because the widget sometimes
                 # are disowned, that's why a try
@@ -78,6 +80,10 @@ class TaskStack(Gtk.Stack):
                 # Save the file if 'autosave' gsetting is True
                 # this should necessarily be after setting self.object.line
                 # so that we save the new value, otherwise older values will be saved
+
+                # this somehow fixes a bug, do not touch
+                self.object.mode = "view"
+
                 window.tab_view.get_selected_page().get_child().save_if_required()
             except:
                 pass
