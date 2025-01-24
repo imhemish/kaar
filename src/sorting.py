@@ -113,9 +113,9 @@ class AlphabetPrioritySorter(Gtk.Sorter):
             flag = Gtk.Ordering.LARGER
         elif item1.priority != None and item2.priority == None:
             flag = Gtk.Ordering.SMALLER
-        elif item1.priority > item2.priority:
-            flag = flag = Gtk.Ordering.SMALLER
         elif item1.priority < item2.priority:
+            flag = flag = Gtk.Ordering.SMALLER
+        elif item1.priority > item2.priority:
             flag = flag = Gtk.Ordering.LARGER
         return flag
 
