@@ -231,7 +231,7 @@ class TabChild(Gtk.Box):
         try:
             self.file_monitor.cancel()
             self.file_monitor.dispose()
-            self.file_monitor = self.file_obj.monitor()
+            #self.file_monitor = self.file_obj.monitor()
         except: pass
     
     def on_file_changed_externally(self, *args):
