@@ -2,6 +2,7 @@ from gi.repository import Adw
 from gi.repository import Gtk, Gio
 from gettext import gettext as _
 from typing import List
+from .enums import FilterOption
 
 from .sorting import TaskSorting
 
@@ -19,6 +20,13 @@ sorting_strings = {
     "COMPLETION_DATE": _("Completion Date")
 }
 
+filter_options_strings = {
+    "ALL": _("All"),
+    "DUE": _("Due"),
+    "COMPLETE": _("Completed"),
+    "INCOMPLETE": _("Incomplete")
+}
+
 @Gtk.Template(resource_path='/net/hemish/kaar/blp/preferences.ui')
 class KaarPreferencesDialog(Adw.PreferencesDialog):
     __gtype_name__ = 'KaarPreferencesDialog'
@@ -32,6 +40,7 @@ class KaarPreferencesDialog(Adw.PreferencesDialog):
     priority_down_button: Gtk.Button = Gtk.Template.Child()
     priority_list_box: Gtk.ListBox = Gtk.Template.Child()
     pango_markup: Adw.SwitchRow = Gtk.Template.Child()
+    default_filter_option: Adw.ComboRow = Gtk.Template.Child()
 
     priority_list: List[str]
 
@@ -40,7 +49,6 @@ class KaarPreferencesDialog(Adw.PreferencesDialog):
 
         # Use same Gio.Settings instance for entire app
         self.settings: Gio.Settings = settings
-
 
         self.autosave.set_active(self.settings.get_boolean("autosave"))
         self.settings.bind("autosave", self.autosave, "active", Gio.SettingsBindFlags.DEFAULT)
@@ -53,13 +61,11 @@ class KaarPreferencesDialog(Adw.PreferencesDialog):
         self.restore_session.set_active(self.settings.get_boolean("restore-session"))
         self.settings.bind("restore-session", self.restore_session, "active", Gio.SettingsBindFlags.DEFAULT)
 
-
         self.vertically_center_tasks.set_active(self.settings.get_boolean("vertically-center-tasks"))
         self.settings.bind("vertically-center-tasks", self.vertically_center_tasks, "active", Gio.SettingsBindFlags.DEFAULT)
 
         self.hide_check_buttons.set_active(self.settings.get_boolean("hide-check-buttons"))
         self.settings.bind("hide-check-buttons", self.hide_check_buttons, "active", Gio.SettingsBindFlags.DEFAULT)
-        
 
         self.hidden_tasks.set_active(self.settings.get_boolean("hidden-tasks"))
         self.settings.bind("hidden-tasks", self.hidden_tasks, "active", Gio.SettingsBindFlags.DEFAULT)
@@ -67,6 +73,10 @@ class KaarPreferencesDialog(Adw.PreferencesDialog):
         self.hidden_tasks.set_active(self.settings.get_boolean("render-pango-markup"))
         self.settings.bind("render-pango-markup", self.pango_markup, "active", Gio.SettingsBindFlags.DEFAULT)
 
+        string_list = [filter_options_strings.get(option.name) for option in FilterOption]
+        self.default_filter_option.set_model(Gtk.StringList(strings=string_list))
+        self.default_filter_option.set_selected(self.settings.get_enum("default-filter-option"))
+        self.default_filter_option.connect("notify::selected", lambda *_: self.settings.set_enum("default-filter-option", self.default_filter_option.get_selected()))
 
         self.priority_up_button.connect('clicked', self.on_priority_changer_button_up)
 

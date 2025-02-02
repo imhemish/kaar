@@ -6,6 +6,7 @@ from .sorting import TaskSorting, TaskSorter
 from .preferences import get_priority_list
 from .model import TaskFactory, TodoTask
 from .pseudo_async import _async
+from .enums import FilterOption
 
 from time import sleep
 from pytodotxt import TodoTxt, TodoTxtParser
@@ -97,6 +98,7 @@ class TabChild(Gtk.Box):
         tasks_filter_model.set_filter(self.tasks_filter)
 
         self.filtering = Filtering(self, lambda: self.tasks_filter.changed(Gtk.FilterChange.DIFFERENT))
+        self.filtering.set_current_filtering(FilterOption[parent_window.filters_box.get_selected_row().get_name()])
         self.tasks_filter.set_filter_func(self.filtering.filter)
 
         tasks_sorting_model = Gtk.SortListModel()

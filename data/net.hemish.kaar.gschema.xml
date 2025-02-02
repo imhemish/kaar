@@ -2,14 +2,22 @@
 
 
 <schemalist gettext-domain="kaar">
+
+	<enum id="net.hemish.kaar.FilterOption">
+			<value nick="ALL" value="0" />
+			<value nick="DUE" value="1" />
+			<value nick="COMPLETE" value="2" />
+			<value nick="INCOMPLETE" value="3" />
+		</enum>
 	<schema id="net.hemish.kaar" path="/net/hemish/kaar/">
-	<key name="autosave" type="b">
-		<default>true</default>
-		<summary>Auto Save</summary>
+
+		<key name="autosave" type="b">
+			<default>true</default>
+			<summary>Auto Save</summary>
 			<description>
 				Whether to autosave the files or not, when the tasks are changed
 			</description>
-	</key>
+		</key>
 
 		<!-- type i is int32 -->
 		<key name="last-window-width" type="i">
@@ -26,7 +34,7 @@
 				Window height when the application was closed last time
 			</description>
 		</key>
-		
+
 		<key name="autoreload" type="b">
 			<default>false</default>
 			<summary>Auto Reload</summary>
@@ -42,8 +50,9 @@
 				Whether to try to restore files opened in last session or not
 			</description>
 		</key>
-		
-		<!--Not visible in Preferences-->
+
+		<!--Not
+		visible in Preferences-->
 		<key name="files" type="as">
 			<default>[]</default>
 			<summary>File URIs</summary>
@@ -52,11 +61,11 @@
 			</description>
 		</key>
 
-	  <key name="last-file" type="s">
-	    <default>""</default>
-	    <summary>Last Active File</summary>
-	    <description> URI of last active file</description>
-	  </key>
+		<key name="last-file" type="s">
+			<default>""</default>
+			<summary>Last Active File</summary>
+			<description> URI of last active file</description>
+		</key>
 
 		<key name="vertically-center-tasks" type="b">
 			<default>false</default>
@@ -87,8 +96,18 @@
 				Whether to render pango markup in task descriptions
 			</description>
 		</key>
+
 		<key name="sorting-priority" type="as">
 			<default>["DUE_DATE", "CREATION_DATE", "DESCRIPTION", "COMPLETION_DATE"]</default>
 		</key>
+
+		<key name="default-filter-option" enum="net.hemish.kaar.FilterOption">
+			<default>"ALL"</default>
+			<summary>Default Filter Option</summary>
+			<description>
+				The default filter option to choose for each file
+			</description>
+		</key>
+
 	</schema>
 </schemalist>

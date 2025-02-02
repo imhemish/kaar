@@ -18,6 +18,11 @@ template $KaarPreferencesDialog: Adw.PreferencesDialog {
                 title: _("Restore session on startup");
                 subtitle: _("Whether to try to restore files opened in last session or not");
             }
+
+            Adw.ComboRow default_filter_option {
+              title: _("Default Filter Option");
+              subtitle: _("The default filter option to choose for each file");
+            }
         }
 
         Adw.PreferencesGroup {

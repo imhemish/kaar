@@ -59,7 +59,8 @@ kaar_sources = [
   'filtering.py',
   'sorting.py',
   'tab.py',
-  'pseudo_async.py'
+  'pseudo_async.py',
+  'enums.py'
 ]
 
 install_data(kaar_sources, install_dir: moduledir)

@@ -1,14 +1,11 @@
 from gi.repository import Gio, GObject
 from .model import TodoTask
+from .enums import FilterOption
 
 class Filtering(GObject.Object):
 
-    # This does not hold any purpose, its just here to remind me of all
-    # filters that i have put
-    #filtering_types = ['all', 'due', 'complete', 'incomplete']
-
     #Default filtering is all
-    current_filtering: str = 'all'
+    current_filtering: FilterOption = FilterOption.ALL
     contexts: list = []
     projects: list = []
     _should_hide_hidden_tasks = False
@@ -31,7 +28,7 @@ class Filtering(GObject.Object):
         # Notifies the models that filtering has changed
         self.changed_callback = changed_callback
 
-    def set_current_filtering(self, filter: str):
+    def set_current_filtering(self, filter: FilterOption):
         self.current_filtering = filter
         self.changed_callback()
     
@@ -48,16 +45,16 @@ class Filtering(GObject.Object):
         # because attributes.get returns a list and not a single element
         flag = False
 
-        if self.current_filtering == 'all':
+        if self.current_filtering == FilterOption.ALL:
             flag = True
 
-        elif self.current_filtering == 'due':
+        elif self.current_filtering == FilterOption.DUE:
             flag = bool(object.attributes.get('due'))
 
-        elif self.current_filtering == 'complete':
+        elif self.current_filtering == FilterOption.COMPLETE:
             flag = bool(object.completed)
         
-        elif self.current_filtering == 'incomplete':
+        elif self.current_filtering == FilterOption.INCOMPLETE:
             flag = bool(not object.completed)
 
         for project in self.projects:

@@ -20,6 +20,7 @@
 from gi.repository import Adw, Gtk, Gio, Gdk
 from .model import TodoTask
 from gettext import gettext as _
+from .enums import FilterOption
 
 @Gtk.Template(resource_path='/net/hemish/kaar/blp/ui.ui')
 class KaarWindow(Adw.ApplicationWindow):
@@ -73,7 +74,7 @@ class KaarWindow(Adw.ApplicationWindow):
         self.search_bar.set_key_capture_widget(self.tab_view)
 
         ######## List of contexts and projects in sidebar for filtering ########
-        self.filters_box.connect("row-selected", lambda *args: self.tab_view.get_selected_page().get_child().filtering.set_current_filtering(args[1].get_name()))
+        self.filters_box.connect("row-selected", lambda *args: self.tab_view.get_selected_page().get_child().filtering.set_current_filtering(FilterOption[args[1].get_name()]))
         self.contexts_box.connect("selected-rows-changed", lambda *args: self.tab_view.get_selected_page().get_child().filtering.set_contexts([row.get_title() for row in args[0].get_selected_rows()]))
         self.projects_box.connect("selected-rows-changed", lambda *args: self.tab_view.get_selected_page().get_child().filtering.set_projects([row.get_title() for row in args[0].get_selected_rows()]))
 
@@ -81,7 +82,8 @@ class KaarWindow(Adw.ApplicationWindow):
         self.projects_box.connect("unselect-all", lambda *args: self.tab_view.get_selected_page().get_child().filtering.set_projects([]))
         
         # Select first row, i.e. All Tasks
-        self.filters_box.select_row(self.filters_box.get_row_at_index(0))
+        default_filter_val = self.settings.get_enum("default-filter-option")
+        self.filters_box.select_row(self.filters_box.get_row_at_index(default_filter_val))
 
         self.contexts_box.bind_model(self.contexts_model, self.create_flow_box_item, None, None)
         self.projects_box.bind_model(self.projects_model, self.create_flow_box_item, None, None)
