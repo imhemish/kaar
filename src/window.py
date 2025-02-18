@@ -92,7 +92,7 @@ class KaarWindow(Adw.ApplicationWindow):
         ############################################################################
 
         ######## Registering the actions ########
-        self.create_action("delete", self.delete_task, ['<primary>d', 'Delete'] )
+        self.create_action("delete", self.delete_task, ['<primary>d'] )
         self.create_action('new', self.new_task, ['<primary>n'])
         self.create_action('edit', self.edit_task, ['<primary>e', 'F2'])
         self.create_action('complete', self.complete_task, ['<primary>x'])
