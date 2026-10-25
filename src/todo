@@ -4,3 +4,17 @@ TODO: about todo.txt in menu
 TODO: fix new task contexts and projects
 
 TODO: If autosave is disabled, when the user reloads, confirm if to read from disk as there are changes that need to be saved
+
+TODO: upgrade to newer libadwaita widgets
+
+TODO: fix icons
+
+TODO: add option between interactive add/edit and text edit
+
+TODO: async file handling
+
+TODO: display errors while parsing todo
+
+TODO: select the newly created todo item (so if users wants to delte it, then they directly delete that one instead of deleting mistakenly the previous selected one)
+
+TODO: show the tick button even if no text changes have been there
