@@ -1,0 +1,61 @@
+using Gtk 4.0;
+using Adw 1;
+
+Adw.ShortcutsDialog shortcuts_dialog {
+    Adw.ShortcutsSection {
+        title: _("General");
+
+        Adw.ShortcutsItem {
+            title: _("Quit");
+            action-name: "app.quit";
+        }
+    }
+
+    Adw.ShortcutsSection {
+        title: _("Tasks");
+
+        Adw.ShortcutsItem {
+            title: _("Add new task");
+            action-name: "win.new";
+        }
+
+        Adw.ShortcutsItem {
+            title: _("Edit selected task");
+            action-name: "win.edit";
+        }
+
+        Adw.ShortcutsItem {
+            title: _("Delete selected task");
+            action-name: "win.delete";
+        }
+
+        Adw.ShortcutsItem {
+            title: _("Toggle completion of selected task");
+            action-name: "win.complete";
+        }
+
+        Adw.ShortcutsItem {
+            title: _("Toggle hidden tasks");
+            action-name: "app.hide";
+        }
+    }
+
+    Adw.ShortcutsSection {
+        title: _("File");
+
+        Adw.ShortcutsItem {
+            title: _("Save");
+            action-name: "win.save";
+        }
+
+        Adw.ShortcutsItem {
+            title: _("Reload");
+            action-name: "win.reload";
+        }
+
+        Adw.ShortcutsItem {
+            title: _("Close Tab");
+            action-name: "win.close_tab";
+        }
+    }
+}

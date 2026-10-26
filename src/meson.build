@@ -7,7 +7,8 @@ blueprints = custom_target('blueprints',
    'blp/ui.blp',
    'blp/task.blp',
    'blp/preferences.blp',
-   'blp/tab.blp'
+    'blp/tab.blp',
+    'blp/shortcuts-dialog.blp'
   ),
   output: '.',
   command: [find_program('blueprint-compiler'), 'batch-compile', '@OUTPUT@', '@CURRENT_SOURCE_DIR@', '@INPUT@'],
