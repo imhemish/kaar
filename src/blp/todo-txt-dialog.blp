@@ -1,0 +1,104 @@
+using Gtk 4.0;
+using Adw 1;
+
+Adw.Dialog todo_txt_dialog {
+    title: _("About todo.txt format");
+    content-width: 520;
+    content-height: 620;
+
+    child: Adw.ToolbarView {
+        [top]
+        Adw.HeaderBar {}
+
+        content: Gtk.ScrolledWindow {
+            hscrollbar-policy: never;
+
+            Gtk.Box {
+            orientation: vertical;
+            spacing: 22;
+            margin-start: 24;
+            margin-end: 24;
+            margin-top: 20;
+            margin-bottom: 24;
+
+            Gtk.Label {
+                label: _("A simple format for keeping tasks readable, portable and easy to edit anywhere.");
+                wrap: true;
+                xalign: 0;
+                styles [
+                    "body"
+                ]
+            }
+
+            Adw.PreferencesGroup {
+                title: _("A task is one line");
+                description: _("Write plain text, then add optional markers to organize or prioritize it.");
+
+                Adw.ActionRow {
+                    title: _("Call the dentist");
+                    subtitle: _("A task can be ordinary text.");
+                }
+
+                Adw.ActionRow {
+                    title: _("(A) Call the dentist");
+                    subtitle: _("A priority goes at the start of the task.");
+                }
+
+                Adw.ActionRow {
+                    title: _("2026-10-27 Call the dentist");
+                    subtitle: _("A creation date follows the priority, when present.");
+                }
+
+                Adw.ActionRow {
+                    title: _("x 2026-10-28 2026-10-27 Call the dentist");
+                    subtitle: _("A finished task starts with x, then its completion date and creation date.");
+                }
+            }
+
+            Adw.PreferencesGroup {
+                title: _("Add useful markers");
+                description: _("Markers stay in the same line as the task.");
+
+                Adw.ActionRow {
+                    title: _("+work");
+                    subtitle: _("A project label.");
+                }
+
+                Adw.ActionRow {
+                    title: _("@office");
+                    subtitle: _("A context label.");
+                }
+
+                Adw.ActionRow {
+                    title: _("due:2026-11-02");
+                    subtitle: _("A due date written as YYYY-MM-DD.");
+                }
+
+                Adw.ActionRow {
+                    title: _("+garden @yard h:1 Garden project");
+                    subtitle: _("h:1 is a an extension, not standard todo.txt. It hides this placeholder while keeping its project and context available until you add tasks to them.");
+                }
+            }
+
+            Gtk.Button {
+                action-name: "app.todo_txt_website";
+                halign: fill;
+
+                accessibility {
+                    label: _("Read more at todotxt.org");
+                }
+
+                styles [
+                    "suggested-action",
+                    "pill"
+                ]
+
+                Adw.ButtonContent {
+                    icon-name: "web-browser-symbolic";
+                    label: _("Read more at todotxt.org");
+                }
+            }
+            }
+        };
+    };
+}

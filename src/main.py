@@ -41,6 +41,8 @@ class KaarApplication(Adw.Application):
         self.create_action('quit', lambda *_: self.quit(), ['<primary>q'])
         self.create_action('about', self.on_about_action)
         self.create_action('preferences', self.on_preferences_action)
+        self.create_action('todo_txt', self.on_todo_txt_action)
+        self.create_action('todo_txt_website', self.on_todo_txt_website_action)
         
         self.create_action('hide', self.hide_tasks, ['<primary>h'])
 
@@ -86,6 +88,15 @@ class KaarApplication(Adw.Application):
         """Callback for the app.preferences action."""
         preferences = KaarPreferencesDialog(self.settings)
         preferences.present(self.props.active_window)
+
+    def on_todo_txt_action(self, widget, _):
+        builder = Gtk.Builder.new_from_resource("/net/hemish/kaar/blp/todo-txt-dialog.ui")
+        dialog: Adw.Dialog = builder.get_object("todo_txt_dialog")
+        dialog.present(self.props.active_window)
+
+    def on_todo_txt_website_action(self, widget, _):
+        launcher = Gtk.UriLauncher.new("http://todotxt.org")
+        launcher.launch(self.props.active_window, None, None, None)
     
     
     

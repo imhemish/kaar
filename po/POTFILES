@@ -3,6 +3,7 @@ src/net.hemish.kaar.metainfo.xml.in
 data/net.hemish.kaar.gschema.xml
 src/blp/tab.blp
 src/blp/preferences.blp
+src/blp/todo-txt-dialog.blp
 src/blp/task.blp
 src/blp/ui.blp
 src/tab.py
