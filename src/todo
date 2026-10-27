@@ -12,4 +12,4 @@ TODO: display errors while parsing todo
 
 TODO: select the newly created todo item (so if users wants to delte it, then they directly delete that one instead of deleting mistakenly the previous selected one)
 
-TODO: show the tick button even if no text changes have been there
+TODO: compare edit while changing from edit -> view to check if there is actually an edit, to save from a heavy write operation

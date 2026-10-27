@@ -10,6 +10,7 @@ from typing import List, Optional
 class TaskStack(Gtk.Stack):
     __gtype_name__ = "TaskStack"
     entry_row: Adw.EntryRow = Gtk.Template.Child()
+    apply_button: Gtk.Button = Gtk.Template.Child()
     task_label: Gtk.Label = Gtk.Template.Child()
     check_button: Gtk.CheckButton = Gtk.Template.Child()
     priority_label: Gtk.Label = Gtk.Template.Child()
@@ -34,6 +35,11 @@ class TaskStack(Gtk.Stack):
         self.signal_handlers: List[tuple] = []
 
         self.entry_row.connect("apply", self.on_entry_apply)
+        self.entry_row.connect("entry-activated", self.on_entry_apply)
+        self.apply_button.connect("clicked", self.on_entry_apply)
+        key_controller = Gtk.EventControllerKey()
+        key_controller.connect("key-pressed", self.on_entry_key_pressed)
+        self.entry_row.add_controller(key_controller)
         self.connect("notify::visible-child-name", self.on_view_change)
 
         # Shows right click actions like delete, toggle editing
@@ -46,6 +52,12 @@ class TaskStack(Gtk.Stack):
     def on_entry_apply(self, *args):
         print("entry apply")
         self.set_visible_child_name("view")
+
+    def on_entry_key_pressed(self, controller, keyval, keycode, state):
+        if keyval == Gdk.KEY_Escape and self.get_visible_child_name() == "edit":
+            self.set_visible_child_name("view")
+            return True
+        return False
     
     # this is required because i can not create a bidirectional binding between
     # task_object.line and entry_row.text it causes circular dependencies due 
@@ -59,6 +71,7 @@ class TaskStack(Gtk.Stack):
             print("view changed to edit mode")
             self.entry_row.set_text(str(self.object))
             self.entry_row.grab_focus()
+            self.entry_row.set_position(-1)
         else:
             print("view changed to view mode")
 

@@ -83,7 +83,18 @@ template $TaskStack: Gtk.Stack {
         name: "edit";
 
         child: Adw.EntryRow entry_row {
-            show-apply-button: true;
+            show-apply-button: false;
+
+            Gtk.Button apply_button {
+                valign: center;
+                icon-name: "object-select-symbolic";
+                tooltip-text: _("Apply");
+
+                styles [
+                    "suggested-action",
+                    "circular"
+                ]
+            }
         };
     }
 }
