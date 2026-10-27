@@ -212,14 +212,16 @@ class KaarWindow(Adw.ApplicationWindow):
         task = TodoTask()
         tabchild = self.tab_view.get_selected_page().get_child()
 
-        if tabchild.filtering.current_filtering == "complete":
+        if tabchild.filtering.current_filtering in (FilterOption.COMPLETE, "complete"):
             task.is_completed = True
 
         # if you are in a filtered view, append those
-        for string_object in self.projects_model:
-            task.add_project(string_object.get_string())
-        for string_object in self.contexts_model:
-            task.add_context(string_object.get_string())
+        for row in self.projects_box.get_selected_rows():
+            task.add_project(row.get_title())
+        for row in self.contexts_box.get_selected_rows():
+            task.add_context(row.get_title())
+
+        task.line = str(task)
 
         tabchild.list_store.append(task)
         print("new task appended")
