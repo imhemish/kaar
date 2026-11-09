@@ -1,15 +1,18 @@
 <?xml version='1.0' encoding='utf-8'?>
-<component type="desktop">
-  <!--Created with jdAppStreamEdit 8.0-->
+<component type="desktop-application">
+  <!--Created with jdAppStreamEdit 10.0-->
   <id>net.hemish.kaar</id>
   <name>Kaar</name>
   <summary>Maintain tasks in todo.txt format</summary>
-  <developer_name>Hemish</developer_name>
-  <launchable type="desktop-id">net.hemish.kaar.desktop</launchable>
+  <developer id="">
+    <name>Hemish</name>
+  </developer>
   <metadata_license>CC0-1.0</metadata_license>
   <project_license>GPL-3.0-or-later</project_license>
   <update_contact>hemish04082005@gmail.com</update_contact>
-  
+  <description>
+    <p>A modern and simple app for managing your todo.txt files.</p>
+  </description>
   <url type="homepage">https://github.com/imhemish/kaar</url>
   <url type="bugtracker">https://github.com/imhemish/kaar/issues</url>
   <url type="vcs-browser">https://github.com/imhemish/kaar</url>
@@ -20,16 +23,18 @@
     <category>GNOME</category>
     <category>GTK</category>
   </categories>
-  <requires>
-    <internet>offline-only</internet>
-  </requires>
   <supports>
     <control>pointing</control>
     <control>keyboard</control>
     <control>touch</control>
     <internet>offline-only</internet>
   </supports>
+  <requires>
+    <internet>offline-only</internet>
+  </requires>
   <content_rating type="oars-1.1"/>
+  <launchable type="desktop-id">net.hemish.kaar.desktop</launchable>
+  <provides/>
   <keywords>
     <keyword>todo.txt</keyword>
     <keyword>todotxt</keyword>
@@ -38,7 +43,6 @@
     <keyword>work</keyword>
   </keywords>
   <custom>
-    <value key="Purism::form_factor">workstation</value>
     <value key="Purism::form_factor">mobile</value>
   </custom>
 </component>
