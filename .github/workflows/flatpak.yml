@@ -1,0 +1,39 @@
+name: Build Flatpak
+
+on:
+  push:
+    branches: [ master, main ]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  flatpak:
+    name: Flatpak (${{ matrix.variant.arch }})
+    runs-on: ${{ matrix.variant.runner }}
+    container:
+      image: ghcr.io/flathub-infra/flatpak-github-actions:gnome-51
+      options: --privileged
+    strategy:
+      fail-fast: false
+      matrix:
+        variant:
+          - arch: x86_64
+            runner: ubuntu-24.04
+          - arch: aarch64
+            runner: ubuntu-24.04-arm
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Build Flatpak Bundle
+        uses: flatpak/flatpak-github-actions/flatpak-builder@v6
+        with:
+          bundle: net.hemish.kaar-${{ matrix.variant.arch }}.flatpak
+          manifest-path: net.hemish.kaar.json
+          arch: ${{ matrix.variant.arch }}
+          upload-artifact: true
+          artifact-name: net.hemish.kaar-${{ matrix.variant.arch }}.flatpak
+          verbose: true
