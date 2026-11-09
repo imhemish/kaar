@@ -1,7 +1,5 @@
 TODO: test sorting and implement down arrow in preferences
 
-TODO: If autosave is disabled, when the user reloads, confirm if to read from disk as there are changes that need to be saved
-
 TODO: fix icons
 
 TODO: add option between interactive add/edit and text edit
@@ -10,6 +8,14 @@ TODO: async file handling
 
 TODO: display errors while parsing todo
 
+Data protection
+
+TODO: don't allow opening a file with same path and show a dialog a toast that it is already open
+
 TODO: select the newly created todo item (so if users wants to delte it, then they directly delete that one instead of deleting mistakenly the previous selected one)
+
+TODO: If autosave is disabled, when the user reloads, confirm if to read from disk as there are changes that need to be saved
+
+Optmisations
 
 TODO: compare edit while changing from edit -> view to check if there is actually an edit, to save from a heavy write operation
